@@ -1,0 +1,8 @@
+{
+    "value always count": "Start me",
+    "hello": 20,
+    "try": {
+        "change": 4
+    },
+    "arr": [3, 4, 2, "hey!"]
+}
