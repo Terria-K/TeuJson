@@ -75,6 +75,7 @@ public sealed class JsonTextReader : JsonReader, IDisposable
 
             // Get the text
             builder.Clear();
+            var first = next;
             builder.Append(next);
             while (ReadChar(out next) && !("\r\n,").Contains(next)) 
             {
@@ -82,29 +83,63 @@ public sealed class JsonTextReader : JsonReader, IDisposable
             }
             var str = builder.ToString();
 
-            if (str[0] == 't') 
+            if (first == 't') 
             {
                 Token = JsonToken.Boolean;
                 Value = true;
                 return true;
             }
 
-            if (str[0] == 'f') 
+            if (first == 'f') 
             {
                 Token = JsonToken.Boolean;
                 Value = false;
                 return true;
             }
 
-            if (str[0] >= '0' && str[0] <= '9') 
+            if (ReadNumbers()) 
             {
                 Token = JsonToken.Number;
-                Value = int.Parse(str);
-                return true;
+                if (str.Contains(".")) 
+                {
+                    if (float.TryParse(str, out float fValue))
+                    {
+                        Value = fValue;
+                        return true;
+                    }
+
+                    if (double.TryParse(str, out double dValue))
+                    {
+                        Value = dValue;
+                        return true;
+                    }
+                }
+                if (int.TryParse(str, out int iValue))
+                {
+                    Value = iValue;
+                    return true;
+                }
+
+                if (long.TryParse(str, out long lValue))
+                {
+                    Value = lValue;
+                    return true;
+                }
+            }
+            bool ReadNumbers() 
+            {
+                return first == '0' 
+                || char.IsDigit(first) 
+                || first == '-'
+                || first == '.'
+                || first == 'e'
+                || first == '+';
             }
             throw new Exception("Value not found!");
         }
         return false;
+
+
     }
 
     private bool ReadChar(out char next) 

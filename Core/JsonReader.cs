@@ -6,13 +6,13 @@ namespace JsonT;
 public abstract class JsonReader 
 {
     // will have json value soon
-    public Dictionary<string, JsonToken> Tokenized = new Dictionary<string, JsonToken>();
     public JsonToken Token;
     public int Position;
     public object? Value;
 
-    public JsonToken ReadObject() 
+    public JsonValue ReadObject() 
     {
+        var value = new JsonObject();
         while (ReadInternal() && Token != JsonToken.RParent) 
         {
             if (Token == JsonToken.LParent) 
@@ -24,34 +24,29 @@ public abstract class JsonReader
             var key = Value as string;
             if (key != null) 
             {
-                Tokenized[key] = ReadValue();
-                Console.WriteLine($"Key: {key}, Value: {Tokenized[key]}");
+                value[key] = ReadValue();
             }
         }
-        return Token;
+        return value;
     }
 
-    public JsonToken ReadArray() 
+    public JsonArray ReadArray() 
     {
-        var list = new List<JsonToken>();
+        var list = new JsonArray();
         while (ReadInternal() && Token != JsonToken.RBracket)
             list.Add(ReadValueFromToken());
-        foreach (var l in list) 
-        {
-            Console.WriteLine("Array: " + l);
-        }
-        return JsonToken.RBracket;
+        
+        return list;
     }
 
-    public JsonToken ReadValue() 
+    public JsonValue ReadValue() 
     {
         ReadInternal();
         var token = ReadValueFromToken();
-        Console.WriteLine(Value);
         return token;
     }
 
-    private JsonToken ReadValueFromToken() 
+    private JsonValue ReadValueFromToken() 
     {
         switch (Token) 
         {
@@ -60,14 +55,23 @@ public abstract class JsonReader
             case JsonToken.LBracket:
                 return ReadArray();
         }
-        // for the time being
-        if (Value is bool b)
-            return JsonToken.Boolean;
         
-        return Value switch {
-            int => JsonToken.Number,
-            string => JsonToken.String,
-            _ => JsonToken.Null
+        return Value switch 
+        {
+            bool value => value,
+            byte value => value,
+            short value => value,
+            int value => value,
+            long value => value,
+            sbyte value => value,
+            ushort value => value,
+            uint value => value,
+            ulong value => value,
+            float value => value,
+            double value => value,
+            decimal value => value,
+            string value => value,
+            _ => JsonNull.NullReference
         };
     }
 

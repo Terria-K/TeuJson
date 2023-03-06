@@ -8,6 +8,8 @@ public enum JsonToken
     Key,
     LBracket,
     RBracket,
+    Object,
+    Array,
     String,
     Number,
     Boolean,

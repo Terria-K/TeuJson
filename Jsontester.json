@@ -1,8 +1,14 @@
 {
-    "value always count": "Start me",
-    "hello": 20,
-    "try": {
-        "change": 4
+    "hello_world": "Start me",
+    "number": 20,
+    "boolean": true,
+    "object": {
+        "decimals": 4.2,
+        "can_go_deeper": {
+            "deep": {
+                "bool": false
+            }
+        }
     },
-    "arr": [3, 4, 2, "hey!"]
+    "arr": [3, 4, 2, "hey im a string!", 2.5, false]
 }
