@@ -3,9 +3,21 @@ using System.IO;
 
 namespace JsonT;
 
+public struct JsonTextWriterOptions 
+{
+    public static JsonTextWriterOptions Default => new JsonTextWriterOptions 
+    {
+        ArrayDepth = 0,
+        Minimal = false
+    };
+    public int ArrayDepth;
+    public bool Minimal;
+}
+
 public sealed class JsonTextWriter : JsonWriter, IDisposable
 {
     private readonly TextWriter writer;
+    private bool minimal;
     private int indent;
     private int arrayIndent;
     private int arrayDepth = 0;
@@ -18,10 +30,24 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable
         writer = new StreamWriter(fs);
     }
 
+    private JsonTextWriter(Stream fs, JsonTextWriterOptions options) 
+    {
+        writer = new StreamWriter(fs);
+        arrayDepth = options.ArrayDepth;
+        minimal = options.Minimal;
+    }
+
     public static void WriteToFile(string path, JsonValue value) 
     {
         using var fs = File.Create(path);
         using var textWriter = new JsonTextWriter(fs);
+        textWriter.WriteJson(value);
+    }
+
+    public static void WriteToFile(string path, JsonValue value, JsonTextWriterOptions options) 
+    {
+        using var fs = File.Create(path);
+        using var textWriter = new JsonTextWriter(fs, options);
         textWriter.WriteJson(value);
     }
 
@@ -31,8 +57,16 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable
         textWriter.WriteJson(value);
     }
 
+    public static void WriteToFile(Stream fs, JsonValue value, JsonTextWriterOptions options) 
+    {
+        using var textWriter = new JsonTextWriter(fs, options);
+        textWriter.WriteJson(value);
+    }
+
     private void Newline() 
     {
+        if (minimal)
+            return;
         writer.Write("\n");
         for (int i = 0; i < indent; i++)
             writer.Write("\t");

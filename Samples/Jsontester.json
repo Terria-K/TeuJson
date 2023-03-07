@@ -6,9 +6,10 @@
         "decimals": 4.2,
         "can_go_deeper": {
             "deep": {
-                "bool": false
-            }
-        }
-    },
+                "bool": false,
+                "single": {
+                    "must": 3,
+                    "another_object": {
+                        "falsy": false}}}}},"long": 18446744073709551615,
     "arr": [3, 4, 2, "hey im a string!", 2.5, false]
 }

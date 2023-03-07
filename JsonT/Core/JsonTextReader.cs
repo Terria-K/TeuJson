@@ -7,19 +7,24 @@ namespace JsonT;
 public sealed class JsonTextReader : JsonReader, IDisposable
 {
     private readonly TextReader reader;
-    private readonly Stream stream;
     private readonly StringBuilder builder = new StringBuilder();
 
-    public JsonTextReader(string path) 
+    private JsonTextReader(Stream fs) 
     {
-        stream = File.OpenRead(path);
-        reader = new StreamReader(stream);
+        reader = new StreamReader(fs);
     }
 
-    public JsonTextReader(Stream fs) 
+    public static JsonValue FromFile(string path) 
     {
-        this.stream = fs;
-        reader = new StreamReader(fs);
+        using var reader = File.OpenRead(path);
+        using var textReader = new JsonTextReader(reader);
+        return textReader.ReadObject(); 
+    }
+
+    public static JsonValue FromStream(Stream fs) 
+    {
+        using var textReader = new JsonTextReader(fs);
+        return textReader.ReadObject(); 
     }
 
     protected override bool ReadInternal()
@@ -77,10 +82,12 @@ public sealed class JsonTextReader : JsonReader, IDisposable
             builder.Clear();
             var first = next;
             builder.Append(next);
-            while (ReadChar(out next) && !("\r\n,").Contains(next)) 
+            while (PeekChar(out next) && !("\r\n,}").Contains(next)) 
             {
                 builder.Append(next);
+                SkipChar();
             }
+            // Read the text
             var str = builder.ToString();
 
             if (first == 't') 
@@ -125,6 +132,16 @@ public sealed class JsonTextReader : JsonReader, IDisposable
                     Value = lValue;
                     return true;
                 }
+                if (uint.TryParse(str, out uint uIValue)) 
+                {
+                    Value = uIValue;
+                    return true;
+                }
+                if (ulong .TryParse(str, out ulong uLValue)) 
+                {
+                    Value = uLValue;
+                    return true;
+                }
             }
             bool ReadNumbers() 
             {
@@ -165,6 +182,5 @@ public sealed class JsonTextReader : JsonReader, IDisposable
     public void Dispose()
     {
         reader.Dispose();
-        stream.Dispose();
     }
 }

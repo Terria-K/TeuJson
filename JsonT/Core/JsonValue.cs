@@ -35,7 +35,7 @@ public abstract class JsonValue
     public abstract JsonValue this[string key] { get; set; }
     public abstract JsonValue this[int idx] { get; set; }
 
-    public JsonValue(JsonToken token) 
+    public JsonValue(JsonToken token, JsonHint hint = JsonHint.Dynamic) 
     {
         Token = token;
     }

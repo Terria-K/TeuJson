@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/net7.0/JsonT.dll",
+            "program": "${workspaceFolder}/Samples/bin/Debug/net7.0/Samples.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
