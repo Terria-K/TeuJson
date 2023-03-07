@@ -5,10 +5,16 @@
 	"more text": "in blocks",
 	"boolean": true,
 	"object": {
-		"decimals": 4.2,
+		"decimals": -4.2,
 		"can_go_deeper": {
 			"deep": {
-				"bool": false
+				"bool": false,
+				"single": {
+					"must": 3,
+					"another_object": {
+						"falsy": false
+					}
+				}
 			}
 		}
 	},
@@ -19,8 +25,6 @@
 		2, 
 		"hey im a string!", 
 		2.5, 
-		false, 
-		false, 
 		false
 	]
 }

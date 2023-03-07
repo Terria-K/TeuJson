@@ -82,7 +82,7 @@ public sealed class JsonTextReader : JsonReader, IDisposable
             builder.Clear();
             var first = next;
             builder.Append(next);
-            while (PeekChar(out next) && !("\r\n,}").Contains(next)) 
+            while (PeekChar(out next) && !("\r\n,}]").Contains(next)) 
             {
                 builder.Append(next);
                 SkipChar();
@@ -90,14 +90,14 @@ public sealed class JsonTextReader : JsonReader, IDisposable
             // Read the text
             var str = builder.ToString();
 
-            if (first == 't') 
+            if (str == "true") 
             {
                 Token = JsonToken.Boolean;
                 Value = true;
                 return true;
             }
 
-            if (first == 'f') 
+            if (str == "false") 
             {
                 Token = JsonToken.Boolean;
                 Value = false;
@@ -152,7 +152,7 @@ public sealed class JsonTextReader : JsonReader, IDisposable
                 || first == 'e'
                 || first == '+';
             }
-            throw new Exception("Value not found!");
+            throw new Exception($"Value not found or invalid on Line {Line} Column {Column}!");
         }
         return false;
 
@@ -163,7 +163,13 @@ public sealed class JsonTextReader : JsonReader, IDisposable
     {
         int read = reader.Read();
         next = (char)read;
-        Position++;
+        if (next == '\n') 
+        {
+            Column = 0;
+            Line++;
+        }
+        Column++;
+
         return read != -1;
     }
 

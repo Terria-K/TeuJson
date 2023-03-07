@@ -38,4 +38,11 @@ public sealed class JsonObject : JsonValue<Dictionary<string, JsonValue>>
         sb.AppendLine("}");
         return sb.ToString();
     }
+
+    public override Dictionary<string, JsonValue> ToDictionary()
+    {
+        return Value;
+    }
+
+    public override JsonObject AsJsonObject => this;
 }

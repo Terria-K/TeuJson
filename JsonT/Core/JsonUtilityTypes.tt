@@ -1,0 +1,137 @@
+<#@ output extension=".cs"#>
+<#@ import namespace="System.Collections.Generic" #>
+
+<#
+    Dictionary<string, string> types = new Dictionary<string, string>() 
+    {
+        {"byte", "Byte"},
+        {"short", "Int16"},
+        {"int", "Int32"},
+        {"long", "Int64"},
+        {"sbyte", "Sbyte"},
+        {"ushort", "UInt16"},
+        {"uint", "UInt32"},
+        {"ulong", "UInt64"},
+        {"float", "Single"},
+        {"double", "Double"},
+        {"string", "String"},
+        {"bool", "Boolean"}
+    };
+
+    Dictionary<string, string> sensitiveTypes = new Dictionary<string, string>() 
+    {
+        {"decimal", "Decimal"},
+        {"char", "Char"},
+    };
+#>
+
+namespace JsonT;
+
+using System.Collections.Generic;
+
+public static partial class JsonUtility 
+{
+
+    <#
+        foreach (var type in types) 
+        {
+    #>
+public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var array = value.AsJsonArray;
+        var arrayCount = array.Count;
+        var valueArray = new <#=type.Key#>[arrayCount];
+        for (int i = 0; i < arrayCount; i++) 
+        {
+            valueArray[i] = array[i];
+        }
+        return valueArray;
+    }
+
+    public static List<<#=type.Key#>>? ConvertToList<#=type.Value#>(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var array = value.AsJsonArray;
+        var arrayCount = array.Count;
+        var list = new List<<#=type.Key#>>(arrayCount);
+        for (int i = 0; i < arrayCount; i++) 
+        {
+            list.Add(array[i]);
+        }
+        return list;
+    }
+
+    public static <#=type.Key#>[,]? ConvertToArray<#=type.Value#>2D(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var arrayX = value.AsJsonArray;
+        var arrayY = arrayX[0].AsJsonArray;
+        var array2D = new <#=type.Key#>[arrayX.Count, arrayY.Count];
+        for (int i = 0; i < arrayX.Count; i++) 
+        {
+            for (int j = 0; j < arrayY.Count; j++) 
+            {
+                array2D[i, j] = arrayX[i].AsJsonArray[j];
+            }
+        }
+        return array2D;
+    }
+    <#
+        }
+    #>
+
+    <#
+        foreach (var type in sensitiveTypes) 
+        {
+    #>
+public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var array = value.AsJsonArray;
+        var arrayCount = array.Count;
+        var valueArray = new <#=type.Key#>[arrayCount];
+        for (int i = 0; i < arrayCount; i++) 
+        {
+            valueArray[i] = array[i].As<#=type.Value#>;
+        }
+        return valueArray;
+    }
+    public static List<<#=type.Key#>>? ConvertToList<#=type.Value#>(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var array = value.AsJsonArray;
+        var arrayCount = array.Count;
+        var list = new List<<#=type.Key#>>(arrayCount);
+        for (int i = 0; i < arrayCount; i++) 
+        {
+            list.Add(array[i].As<#=type.Value#>);
+        }
+        return list;
+    }
+
+    public static <#=type.Key#>[,]? ConvertToArray<#=type.Value#>2D(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var arrayX = value.AsJsonArray;
+        var arrayY = arrayX[0].AsJsonArray;
+        var array2D = new <#=type.Key#>[arrayX.Count, arrayY.Count];
+        for (int i = 0; i < arrayX.Count; i++) 
+        {
+            for (int j = 0; j < arrayY.Count; j++) 
+            {
+                array2D[i, j] = arrayX[i].AsJsonArray[j].As<#=type.Value#>;
+            }
+        }
+        return array2D;
+    }
+    <#
+        }
+    #>
+}

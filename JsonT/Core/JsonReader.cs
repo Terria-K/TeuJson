@@ -6,7 +6,8 @@ namespace JsonT;
 public abstract class JsonReader 
 {
     public JsonToken Token;
-    public int Position;
+    public int Line = 1;
+    public int Column;
     public object? Value;
 
     public JsonValue ReadObject() 
@@ -18,7 +19,7 @@ public abstract class JsonReader
                 continue;
 
             if (Token != JsonToken.Key)
-                throw new Exception($"Expected a key, found: {Token}");
+                throw new Exception($"Expected a key, found: {Token} on Line {Line} Column {Column}");
 
             var key = Value as string;
             if (key != null) 

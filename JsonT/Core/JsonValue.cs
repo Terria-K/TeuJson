@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,12 +31,14 @@ public abstract class JsonValue
     public abstract decimal AsDecimal { get; }
     public abstract bool AsBool { get; }
     public abstract string AsString { get; }
+    public abstract JsonArray AsJsonArray { get; }
+    public abstract JsonObject AsJsonObject { get; }
 
 
     public abstract JsonValue this[string key] { get; set; }
     public abstract JsonValue this[int idx] { get; set; }
 
-    public JsonValue(JsonToken token, JsonHint hint = JsonHint.Dynamic) 
+    public JsonValue(JsonToken token) 
     {
         Token = token;
     }
@@ -48,11 +51,15 @@ public abstract class JsonValue
     public abstract void Add(JsonValue value);
     public abstract void Remove(JsonValue value);
     public abstract bool Contains(JsonValue value);
+    public abstract JsonValue[] ToArray();
+    public abstract List<JsonValue> ToList();
+    public abstract Dictionary<string, JsonValue> ToDictionary();
     public static implicit operator JsonValue(bool value) => new JsonValue<bool>(JsonToken.Boolean, value);
     public static implicit operator JsonValue(decimal value) => new JsonValue<decimal>(JsonToken.Number, value);
     public static implicit operator JsonValue(float value) => new JsonValue<float>(JsonToken.Number, value);
     public static implicit operator JsonValue(double value) => new JsonValue<double>(JsonToken.Number, value);
     public static implicit operator JsonValue(byte value) => new JsonValue<byte>(JsonToken.Number, value);
+    public static implicit operator JsonValue(sbyte value) => new JsonValue<sbyte>(JsonToken.Number, value);
     public static implicit operator JsonValue(char value) => new JsonValue<char>(JsonToken.Number, value);
     public static implicit operator JsonValue(short value) => new JsonValue<short>(JsonToken.Number, value);
     public static implicit operator JsonValue(ushort value) => new JsonValue<ushort>(JsonToken.Number, value);
@@ -65,6 +72,22 @@ public abstract class JsonValue
     public static implicit operator JsonValue(string? value) => new JsonValue<string>(JsonToken.String, value ?? "");
     public static implicit operator JsonValue(List<JsonValue> value) => new JsonArray(value);
     public static implicit operator JsonValue(JsonValue[] value) => new JsonArray(value);
+
+    public static implicit operator bool(JsonValue value) => value.AsBool;
+    public static implicit operator float(JsonValue value) => value.AsFloat;
+    public static implicit operator double(JsonValue value) => value.AsDouble;
+    public static implicit operator byte(JsonValue value) => value.AsByte;
+    public static implicit operator sbyte(JsonValue value) => value.AsSbyte;
+    public static implicit operator char(JsonValue value) => value.AsChar;
+    public static implicit operator short(JsonValue value) => value.AsShort;
+    public static implicit operator ushort(JsonValue value) => value.AsUShort;
+    public static implicit operator int(JsonValue value) => value.AsInt;
+    public static implicit operator nint(JsonValue value) => value.AsNullInt;
+    public static implicit operator uint(JsonValue value) => value.AsUInt;
+    public static implicit operator nuint(JsonValue value) => value.AsUNullInt;
+    public static implicit operator long(JsonValue value) => value.AsLong;
+    public static implicit operator ulong(JsonValue value) => value.AsULong;
+    public static implicit operator string(JsonValue value) => value.AsString;
 }
 
 public class JsonValue<T> : JsonValue
@@ -282,6 +305,10 @@ public class JsonValue<T> : JsonValue
         }
     }
 
+    public override JsonArray AsJsonArray => throw new InvalidOperationException();
+
+    public override JsonObject AsJsonObject => throw new InvalidOperationException();
+
     public override int Count => 0;
 
     public override IEnumerable<string> Keys => Enumerable.Empty<string>();
@@ -302,6 +329,21 @@ public class JsonValue<T> : JsonValue
     }
 
     public override void Remove(JsonValue value)
+    {
+        throw new System.InvalidOperationException();
+    }
+
+    public override JsonValue[] ToArray()
+    {
+        throw new System.InvalidOperationException();
+    }
+
+    public override Dictionary<string, JsonValue> ToDictionary()
+    {
+        throw new System.InvalidOperationException();
+    }
+
+    public override List<JsonValue> ToList()
     {
         throw new System.InvalidOperationException();
     }

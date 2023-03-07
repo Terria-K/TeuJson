@@ -1,0 +1,88 @@
+<#@ output extension=".cs" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#
+    List<string> types = new List<string>() 
+    {
+        "Byte",
+        "Int16",
+        "Int32",
+        "Int64",
+        "SByte",
+        "UInt16",
+        "UInt32",
+        "UInt64",
+        "Single",
+        "Double",
+        "Decimal",
+        "Char",
+        "String",
+        "Boolean",
+    };
+
+    List<string> smallTypes = new List<string>() 
+    {
+        "byte", "short", "int", "long", "sbyte", "ushort", "uint", "ulong", "float", "double", "decimal",
+        "char", "string", "bool"
+    };
+#>
+using System;
+namespace JsonT.Generator;
+
+partial class JsonTGenerator 
+{
+    private static string ArrayCheck(string typeName) 
+    {
+        return typeName switch 
+        {
+            <#
+            for (int i = 0; i < types.Count; i++)
+            {
+                var small = smallTypes[i];
+                var big = types[i];
+            #>
+"<#=small#>[]" => ".ConvertToArray<#=big#>()",
+            <#
+            }
+            #>
+
+            _ => ".ConvertToArray()",
+        };
+    }
+
+    private static string Array2DCheck(string typeName) 
+    {
+        return typeName switch 
+        {
+            <#
+            for (int i = 0; i < types.Count; i++)
+            {
+                var small = smallTypes[i];
+                var big = types[i];
+            #>
+"<#=small#>[,]" => ".ConvertToArray<#=big#>()",
+            <#
+            }
+            #>
+
+            _ => ".ConvertToArray2D()",
+        };
+    }
+
+    private static string ListCheck(string typeName) 
+    {
+        return typeName switch 
+        {
+            <#
+                foreach (var type in types) 
+                {
+            #>
+nameof(<#=type#>) => ".ConvertToList<#=type#>()",
+            <#
+                }
+            #>
+
+            _ => ".ConvertToList()",
+        };
+    }
+}
+

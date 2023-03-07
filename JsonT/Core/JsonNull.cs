@@ -61,6 +61,9 @@ public sealed class JsonNull : JsonValue
 
     public override IEnumerable<KeyValuePair<string, JsonValue>> Pairs => Enumerable.Empty<KeyValuePair<string, JsonValue>>();
 
+    public override JsonArray AsJsonArray => new JsonArray();
+
+    public override JsonObject AsJsonObject => new JsonObject();
 
     public override void Add(JsonValue value)
     {
@@ -75,5 +78,20 @@ public sealed class JsonNull : JsonValue
     public override void Remove(JsonValue value)
     {
         throw new System.NotImplementedException();
+    }
+
+    public override JsonValue[] ToArray()
+    {
+        throw new System.NullReferenceException();
+    }
+
+    public override Dictionary<string, JsonValue> ToDictionary()
+    {
+        throw new System.NullReferenceException();
+    }
+
+    public override List<JsonValue> ToList()
+    {
+        throw new System.NullReferenceException();
     }
 }
