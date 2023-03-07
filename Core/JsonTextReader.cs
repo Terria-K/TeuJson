@@ -6,7 +6,7 @@ namespace JsonT;
 
 public sealed class JsonTextReader : JsonReader, IDisposable
 {
-    private readonly StreamReader reader;
+    private readonly TextReader reader;
     private readonly Stream stream;
     private readonly StringBuilder builder = new StringBuilder();
 

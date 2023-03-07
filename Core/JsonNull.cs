@@ -49,6 +49,10 @@ public sealed class JsonNull : JsonValue
 
     public override string AsString => string.Empty;
 
+    public override nint AsNullInt => 0;
+
+    public override nuint AsUNullInt => 0;
+
     public override int Count => 0;
 
     public override IEnumerable<string> Keys => Enumerable.Empty<string>();
@@ -56,6 +60,7 @@ public sealed class JsonNull : JsonValue
     public override IEnumerable<JsonValue> Values => Enumerable.Empty<JsonValue>();
 
     public override IEnumerable<KeyValuePair<string, JsonValue>> Pairs => Enumerable.Empty<KeyValuePair<string, JsonValue>>();
+
 
     public override void Add(JsonValue value)
     {

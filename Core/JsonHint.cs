@@ -16,5 +16,7 @@ public enum JsonHint : byte
     Double,
     Decimal,
     String,
-    Pointer
+    Pointer,
+    UnsignedPointer,
+    Dynamic = 64,
 }

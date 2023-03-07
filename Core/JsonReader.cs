@@ -5,7 +5,6 @@ namespace JsonT;
 
 public abstract class JsonReader 
 {
-    // will have json value soon
     public JsonToken Token;
     public int Position;
     public object? Value;
@@ -30,7 +29,7 @@ public abstract class JsonReader
         return value;
     }
 
-    public JsonArray ReadArray() 
+    private JsonArray ReadArray() 
     {
         var list = new JsonArray();
         while (ReadInternal() && Token != JsonToken.RBracket)
@@ -39,7 +38,7 @@ public abstract class JsonReader
         return list;
     }
 
-    public JsonValue ReadValue() 
+    private JsonValue ReadValue() 
     {
         ReadInternal();
         var token = ReadValueFromToken();

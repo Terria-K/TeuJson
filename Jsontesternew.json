@@ -1,0 +1,25 @@
+{
+	"hello_world": "Start me",
+	"number": 20,
+	"text": "hey!",
+	"more text": "in blocks",
+	"boolean": true,
+	"object": {
+		"decimals": 4.2,
+		"can_go_deeper": {
+			"deep": {
+				"bool": false
+			}
+		}
+	},
+	"arr": [
+		3, 
+		4, 
+		2, 
+		"hey im a string!", 
+		2.5, 
+		false, 
+		false
+	],
+	"pointer": 93953976516
+}

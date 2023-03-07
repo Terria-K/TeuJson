@@ -1,10 +1,17 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 using var stream = File.OpenRead("Jsontester.json");
 using var jsonReader = new JsonT.JsonTextReader(stream);
 var value = jsonReader.ReadObject();
 
-Console.WriteLine(value.ToString());
 
-Console.ReadLine();
+
+unsafe {
+    int val = 2;
+    int* ptr = &val;
+
+    nint nPtr = (nint)ptr;
+    value["pointer"] = nPtr;
+}
+
+JsonT.JsonTextWriter.WriteToFile("Jsontesternew.json", value);

@@ -18,11 +18,13 @@ public abstract class JsonValue
     public abstract byte AsByte { get; }
     public abstract short AsShort { get; }
     public abstract int AsInt { get; }
+    public abstract nint AsNullInt { get; }
     public abstract long AsLong { get; }
     public abstract sbyte AsSbyte { get; }
     public abstract ushort AsUShort { get; }
     public abstract uint AsUInt { get; }
     public abstract ulong AsULong { get; }
+    public abstract nuint AsUNullInt { get; }
     public abstract float AsFloat { get; }
     public abstract double AsDouble { get; }
     public abstract decimal AsDecimal { get; }
@@ -55,9 +57,11 @@ public abstract class JsonValue
     public static implicit operator JsonValue(short value) => new JsonValue<short>(JsonToken.Number, value);
     public static implicit operator JsonValue(ushort value) => new JsonValue<ushort>(JsonToken.Number, value);
     public static implicit operator JsonValue(int value) => new JsonValue<int>(JsonToken.Number, value);
+    public static implicit operator JsonValue(nint value) => new JsonValue<nint>(JsonToken.Number, value);
     public static implicit operator JsonValue(uint value) => new JsonValue<uint>(JsonToken.Number, value);
     public static implicit operator JsonValue(long value) => new JsonValue<long>(JsonToken.Number, value);
     public static implicit operator JsonValue(ulong value) => new JsonValue<ulong>(JsonToken.Number, value);
+    public static implicit operator JsonValue(nuint value) => new JsonValue<nuint>(JsonToken.Number, value);
     public static implicit operator JsonValue(string? value) => new JsonValue<string>(JsonToken.String, value ?? "");
     public static implicit operator JsonValue(List<JsonValue> value) => new JsonArray(value);
     public static implicit operator JsonValue(JsonValue[] value) => new JsonArray(value);
@@ -134,6 +138,19 @@ public class JsonValue<T> : JsonValue
         }
     }
 
+    public override nint AsNullInt 
+    {
+        get 
+        {
+            if (IsNumber && Value is nint value) 
+                return value;
+            
+            if (IsString && Value is string str && nint.TryParse(str, out nint result))
+                return result;
+            return 0;
+        }
+    }
+
     public override long AsLong
     {
         get 
@@ -199,6 +216,18 @@ public class JsonValue<T> : JsonValue
         }
     }
 
+    public override nuint AsUNullInt 
+    {
+        get 
+        {
+            if (IsNumber && Value is nuint value)  
+                return value;
+            if (IsString && Value is string str && nuint.TryParse(str, out nuint result))
+                return result;
+            return 0; 
+        }
+    }
+
     public override float AsFloat 
     {
         get 
@@ -240,6 +269,7 @@ public class JsonValue<T> : JsonValue
 
     public override bool AsBool => (Value is bool value ? value : false);
 
+
     public override string AsString 
     {
         get 
@@ -259,6 +289,7 @@ public class JsonValue<T> : JsonValue
     public override IEnumerable<JsonValue> Values => Enumerable.Empty<JsonValue>();
 
     public override IEnumerable<KeyValuePair<string, JsonValue>> Pairs => Enumerable.Empty<KeyValuePair<string, JsonValue>>();
+
 
     public override void Add(JsonValue value)
     {

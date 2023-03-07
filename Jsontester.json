@@ -1,6 +1,6 @@
 {
-    "hello_world": "Start me",
-    "number": 20,
+    "hello_world": "Start me", "number": 20, "text": "hey!",
+    "more text": "in blocks",
     "boolean": true,
     "object": {
         "decimals": 4.2,
