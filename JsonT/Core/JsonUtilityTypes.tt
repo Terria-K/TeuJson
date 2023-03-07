@@ -134,4 +134,5 @@ public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue valu
     <#
         }
     #>
+
 }
