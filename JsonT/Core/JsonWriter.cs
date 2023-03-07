@@ -49,7 +49,7 @@ public abstract class JsonWriter
                 EndArray();
                 return;
             case JsonToken.Boolean:
-                WriteValue(value.AsBool);
+                WriteValue(value.AsBoolean);
                 return;
             case JsonToken.String:
                 WriteValue(value.AsString);
@@ -57,7 +57,7 @@ public abstract class JsonWriter
             case JsonToken.Number:
                 if (value is JsonValue<bool> Bool)
                 {
-                    WriteValue(Bool.AsBool);
+                    WriteValue(Bool.AsBoolean);
                     return;
                 }
                 if (value is JsonValue<decimal> Decimal)
@@ -67,7 +67,7 @@ public abstract class JsonWriter
                 }
                 if (value is JsonValue<float> Float)
                 {
-                    WriteValue(Float.AsFloat);
+                    WriteValue(Float.AsSingle);
                     return;
                 }
                 if (value is JsonValue<double> Double)
@@ -87,42 +87,42 @@ public abstract class JsonWriter
                 }
                 if (value is JsonValue<short> Short)
                 {
-                    WriteValue(Short.AsShort);
+                    WriteValue(Short.AsInt16);
                     return;
                 }
                 if (value is JsonValue<ushort> UShort)
                 {
-                    WriteValue(UShort.AsUShort);
+                    WriteValue(UShort.AsUInt16);
                     return;
                 }
                 if (value is JsonValue<int> Int)
                 {
-                    WriteValue(Int.AsInt);
+                    WriteValue(Int.AsInt32);
                     return;
                 }
                 if (value is JsonValue<nint> NInt)
                 {
-                    WriteValue(NInt.AsNullInt);
+                    WriteValue(NInt.AsIntPtr);
                     return;
                 }
                 if (value is JsonValue<uint> UInt)
                 {
-                    WriteValue(UInt.AsUInt);
+                    WriteValue(UInt.AsUInt32);
                     return;
                 }
                 if (value is JsonValue<nuint> NUInt)
                 {
-                    WriteValue(NUInt.AsUNullInt);
+                    WriteValue(NUInt.AsUIntPtr);
                     return;
                 }
                 if (value is JsonValue<long> Long)
                 {
-                    WriteValue(Long.AsLong);
+                    WriteValue(Long.AsInt64);
                     return;
                 }
                 if (value is JsonValue<ulong> ULong)
                 {
-                    WriteValue(ULong.AsULong);
+                    WriteValue(ULong.AsUInt32);
                     return;
                 }
                 break;

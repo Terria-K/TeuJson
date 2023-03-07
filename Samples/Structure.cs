@@ -1,8 +1,7 @@
-using System.Collections.Generic;
 using JsonT;
 using JsonT.Attributes;
 
-[JsonTSerializable]
+[JsonTSerializable(Deserializable = true, Serializable = true)]
 public partial class Structure 
 {
     [Name("array")]

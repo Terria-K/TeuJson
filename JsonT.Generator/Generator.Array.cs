@@ -3,8 +3,12 @@ namespace JsonT.Generator;
 
 partial class JsonTGenerator 
 {
-    private static string ArrayCheck(string typeName) 
+    private static string ArrayCheck(string typeName, bool isSerialize) 
     {
+        if (isSerialize) 
+        {
+            return ".ConvertToJsonArray()";
+        }
         return typeName switch 
         {
             "byte[]" => ".ConvertToArrayByte()",
@@ -26,8 +30,12 @@ partial class JsonTGenerator
         };
     }
 
-    private static string Array2DCheck(string typeName) 
+    private static string Array2DCheck(string typeName, bool isSerialize) 
     {
+        if (isSerialize) 
+        {
+            return ".ConvertToJsonArray()";
+        }
         return typeName switch 
         {
             "byte[,]" => ".ConvertToArrayByte()",
@@ -49,8 +57,12 @@ partial class JsonTGenerator
         };
     }
 
-    private static string ListCheck(string typeName) 
+    private static string ListCheck(string typeName, bool isSerialize) 
     {
+        if (isSerialize) 
+        {
+            return ".ConvertToJsonArray()";
+        }
         return typeName switch 
         {
             nameof(Byte) => ".ConvertToListByte()",

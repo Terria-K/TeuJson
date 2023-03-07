@@ -4,7 +4,6 @@ namespace JsonT;
 
 public static partial class JsonUtility 
 {
-#region Convert-Deserialize
     public static T? Convert<T>(this JsonValue value) 
     where T : IJsonTDeserializable, new()
     {
@@ -14,9 +13,7 @@ public static partial class JsonUtility
         obj.Deserialize(value.AsJsonObject);
         return obj;
     }
-#endregion
 
-#region ToDictionary
     public static Dictionary<string, JsonValue>? ToDictionary(this JsonValue value)
     {
         if (value.IsNull) 
@@ -43,9 +40,7 @@ public static partial class JsonUtility
         }
         return dict;
     }
-#endregion
 
-#region ConvertToArray
 
     public static T[]? ConvertToArray<T>(this JsonValue value) 
     where T : IJsonTDeserializable, new()
@@ -61,9 +56,7 @@ public static partial class JsonUtility
         }
         return objectArray;
     }
-#endregion
 
-#region ConvertToArray2D
     public static T[,]? ConvertToArray2D<T>(this JsonValue value) 
     where T : IJsonTDeserializable, new()
     {
@@ -98,9 +91,7 @@ public static partial class JsonUtility
         }
         return intArray2D;
     }
-#endregion
 
-#region List
     public static List<T>? ConvertToList<T>(this JsonValue value) 
     where T : IJsonTDeserializable, new()
     {
@@ -115,5 +106,36 @@ public static partial class JsonUtility
         }
         return objectArray;
     }
-#endregion
+
+    public static JsonArray ConvertToJsonArray<T>(this List<T> array) 
+    where T : IJsonTSerializable
+    {
+        var jsonArray = new JsonArray();
+        foreach (T v in array) 
+        {
+            jsonArray.Add(v.Serialize());
+        }
+        return jsonArray;
+    }
+
+    public static JsonObject ToJsonObject<T>(this Dictionary<string, T> value)
+    where T : IJsonTSerializable
+    {
+        var jsonObj = new JsonObject();
+        foreach (var cObj in value) 
+        {
+            jsonObj[cObj.Key] = cObj.Value.Serialize();
+        }
+        return jsonObj;
+    }
+
+    public static JsonObject ToJsonObject(this Dictionary<string, JsonValue> value)
+    {
+        var jsonObj = new JsonObject();
+        foreach (var cObj in value) 
+        {
+            jsonObj[cObj.Key] = cObj.Value;
+        }
+        return jsonObj;
+    }
 }

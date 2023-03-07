@@ -17,19 +17,19 @@ public abstract class JsonValue
 
     public abstract char AsChar { get; }
     public abstract byte AsByte { get; }
-    public abstract short AsShort { get; }
-    public abstract int AsInt { get; }
-    public abstract nint AsNullInt { get; }
-    public abstract long AsLong { get; }
-    public abstract sbyte AsSbyte { get; }
-    public abstract ushort AsUShort { get; }
-    public abstract uint AsUInt { get; }
-    public abstract ulong AsULong { get; }
-    public abstract nuint AsUNullInt { get; }
-    public abstract float AsFloat { get; }
+    public abstract short AsInt16 { get; }
+    public abstract int AsInt32 { get; }
+    public abstract nint AsIntPtr { get; }
+    public abstract long AsInt64 { get; }
+    public abstract sbyte AsSByte { get; }
+    public abstract ushort AsUInt16 { get; }
+    public abstract uint AsUInt32 { get; }
+    public abstract ulong AsUInt64 { get; }
+    public abstract nuint AsUIntPtr { get; }
+    public abstract float AsSingle { get; }
     public abstract double AsDouble { get; }
     public abstract decimal AsDecimal { get; }
-    public abstract bool AsBool { get; }
+    public abstract bool AsBoolean { get; }
     public abstract string AsString { get; }
     public abstract JsonArray AsJsonArray { get; }
     public abstract JsonObject AsJsonObject { get; }
@@ -73,20 +73,20 @@ public abstract class JsonValue
     public static implicit operator JsonValue(List<JsonValue> value) => new JsonArray(value);
     public static implicit operator JsonValue(JsonValue[] value) => new JsonArray(value);
 
-    public static implicit operator bool(JsonValue value) => value.AsBool;
-    public static implicit operator float(JsonValue value) => value.AsFloat;
+    public static implicit operator bool(JsonValue value) => value.AsBoolean;
+    public static implicit operator float(JsonValue value) => value.AsSingle;
     public static implicit operator double(JsonValue value) => value.AsDouble;
     public static implicit operator byte(JsonValue value) => value.AsByte;
-    public static implicit operator sbyte(JsonValue value) => value.AsSbyte;
+    public static implicit operator sbyte(JsonValue value) => value.AsSByte;
     public static implicit operator char(JsonValue value) => value.AsChar;
-    public static implicit operator short(JsonValue value) => value.AsShort;
-    public static implicit operator ushort(JsonValue value) => value.AsUShort;
-    public static implicit operator int(JsonValue value) => value.AsInt;
-    public static implicit operator nint(JsonValue value) => value.AsNullInt;
-    public static implicit operator uint(JsonValue value) => value.AsUInt;
-    public static implicit operator nuint(JsonValue value) => value.AsUNullInt;
-    public static implicit operator long(JsonValue value) => value.AsLong;
-    public static implicit operator ulong(JsonValue value) => value.AsULong;
+    public static implicit operator short(JsonValue value) => value.AsInt16;
+    public static implicit operator ushort(JsonValue value) => value.AsUInt16;
+    public static implicit operator int(JsonValue value) => value.AsInt32;
+    public static implicit operator nint(JsonValue value) => value.AsIntPtr;
+    public static implicit operator uint(JsonValue value) => value.AsUInt32;
+    public static implicit operator nuint(JsonValue value) => value.AsUIntPtr;
+    public static implicit operator long(JsonValue value) => value.AsInt64;
+    public static implicit operator ulong(JsonValue value) => value.AsUInt64;
     public static implicit operator string(JsonValue value) => value.AsString;
 }
 
@@ -135,7 +135,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override short AsShort 
+    public override short AsInt16 
     {
         get 
         {
@@ -148,7 +148,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override int AsInt     
+    public override int AsInt32     
     {
         get 
         {
@@ -161,7 +161,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override nint AsNullInt 
+    public override nint AsIntPtr 
     {
         get 
         {
@@ -174,7 +174,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override long AsLong
+    public override long AsInt64
     {
         get 
         {
@@ -187,7 +187,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override sbyte AsSbyte    
+    public override sbyte AsSByte    
     {
         get 
         {
@@ -200,7 +200,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override ushort AsUShort 
+    public override ushort AsUInt16 
     {
         get 
         {
@@ -213,7 +213,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override uint AsUInt 
+    public override uint AsUInt32 
     {
         get 
         {
@@ -226,7 +226,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override ulong AsULong 
+    public override ulong AsUInt64 
     {
         get 
         {
@@ -239,7 +239,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override nuint AsUNullInt 
+    public override nuint AsUIntPtr 
     {
         get 
         {
@@ -251,7 +251,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override float AsFloat 
+    public override float AsSingle 
     {
         get 
         {
@@ -290,7 +290,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override bool AsBool => (Value is bool value ? value : false);
+    public override bool AsBoolean => (Value is bool value ? value : false);
 
 
     public override string AsString 
