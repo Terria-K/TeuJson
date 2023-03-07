@@ -17,6 +17,8 @@
         {"bool", "Boolean"},
         {"decimal", "Decimal"},
         {"char", "Char"},
+        {"nint", "IntPtr"},
+        {"nuint", "UIntPtr"},
     };
 #>
 using System.Collections.Generic;

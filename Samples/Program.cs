@@ -21,3 +21,7 @@ Console.WriteLine("Number: " + structure.Number);
 Console.WriteLine("Text: " + structure.Text);
 Console.WriteLine("TrueOrFalse: " + structure.TrueOrFalse);
 Console.WriteLine("Field: " + structure.Field);
+
+var structureObject = structure.Serialize();
+
+JsonTextWriter.WriteToFile("Samples/JsonStructurewrite.json", structureObject);

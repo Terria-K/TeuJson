@@ -17,12 +17,14 @@
         "Char",
         "String",
         "Boolean",
+        "IntPtr",
+        "UIntPtr"
     };
 
     List<string> smallTypes = new List<string>() 
     {
         "byte", "short", "int", "long", "sbyte", "ushort", "uint", "ulong", "float", "double", "decimal",
-        "char", "string", "bool"
+        "char", "string", "bool", "nint", "nuint"
     };
 #>
 using System;

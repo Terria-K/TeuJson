@@ -1265,5 +1265,185 @@ public static partial class JsonUtility
         return jsonObj;
     }
 
+    public static nint[]? ConvertToArrayIntPtr(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var array = value.AsJsonArray;
+        var arrayCount = array.Count;
+        var valueArray = new nint[arrayCount];
+        for (int i = 0; i < arrayCount; i++) 
+        {
+            valueArray[i] = array[i].AsIntPtr;
+        }
+        return valueArray;
+    }
+
+    public static List<nint>? ConvertToListIntPtr(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var array = value.AsJsonArray;
+        var arrayCount = array.Count;
+        var list = new List<nint>(arrayCount);
+        for (int i = 0; i < arrayCount; i++) 
+        {
+            list.Add(array[i].AsIntPtr);
+        }
+        return list;
+    }
+
+    public static nint[,]? ConvertToArrayIntPtr2D(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var arrayX = value.AsJsonArray;
+        var arrayY = arrayX[0].AsJsonArray;
+        var array2D = new nint[arrayX.Count, arrayY.Count];
+        for (int i = 0; i < arrayX.Count; i++) 
+        {
+            for (int j = 0; j < arrayY.Count; j++) 
+            {
+                array2D[i, j] = arrayX[i].AsJsonArray[j].AsIntPtr;
+            }
+        }
+        return array2D;
+    }
+
+    public static JsonArray ConvertToJsonArray(this List<nint> array) 
+    {
+        var jsonArray = new JsonArray();
+        foreach (nint v in array) 
+        {
+            jsonArray.Add(v);
+        }
+        return jsonArray;
+    }
+
+    public static JsonArray ConvertToJsonArray(this nint[] array) 
+    {
+        var jsonArray = new JsonArray();
+        foreach (nint v in array) 
+        {
+            jsonArray.Add(v);
+        }
+        return jsonArray;
+    }
+
+    public static JsonArray ConvertToJsonArray2D(this nint[,] array) 
+    {
+        var jsonArray = new JsonArray();
+        for (int i = 0; i < array.GetLength(0); i++) 
+        {
+            var jsonArray2 = new JsonArray();
+            for (int j = 0; j < array.GetLength(1); j++) 
+            {
+                jsonArray2.Add(array[i, j]);
+            }
+            jsonArray.Add(jsonArray2);
+        }
+        return jsonArray;
+    }
+
+    public static JsonObject ToJsonObject(this Dictionary<string, nint> value)
+    {
+        var jsonObj = new JsonObject();
+        foreach (var cObj in value) 
+        {
+            jsonObj[cObj.Key] = cObj.Value;
+        }
+        return jsonObj;
+    }
+
+    public static nuint[]? ConvertToArrayUIntPtr(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var array = value.AsJsonArray;
+        var arrayCount = array.Count;
+        var valueArray = new nuint[arrayCount];
+        for (int i = 0; i < arrayCount; i++) 
+        {
+            valueArray[i] = array[i].AsUIntPtr;
+        }
+        return valueArray;
+    }
+
+    public static List<nuint>? ConvertToListUIntPtr(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var array = value.AsJsonArray;
+        var arrayCount = array.Count;
+        var list = new List<nuint>(arrayCount);
+        for (int i = 0; i < arrayCount; i++) 
+        {
+            list.Add(array[i].AsUIntPtr);
+        }
+        return list;
+    }
+
+    public static nuint[,]? ConvertToArrayUIntPtr2D(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return null;
+        var arrayX = value.AsJsonArray;
+        var arrayY = arrayX[0].AsJsonArray;
+        var array2D = new nuint[arrayX.Count, arrayY.Count];
+        for (int i = 0; i < arrayX.Count; i++) 
+        {
+            for (int j = 0; j < arrayY.Count; j++) 
+            {
+                array2D[i, j] = arrayX[i].AsJsonArray[j].AsUIntPtr;
+            }
+        }
+        return array2D;
+    }
+
+    public static JsonArray ConvertToJsonArray(this List<nuint> array) 
+    {
+        var jsonArray = new JsonArray();
+        foreach (nuint v in array) 
+        {
+            jsonArray.Add(v);
+        }
+        return jsonArray;
+    }
+
+    public static JsonArray ConvertToJsonArray(this nuint[] array) 
+    {
+        var jsonArray = new JsonArray();
+        foreach (nuint v in array) 
+        {
+            jsonArray.Add(v);
+        }
+        return jsonArray;
+    }
+
+    public static JsonArray ConvertToJsonArray2D(this nuint[,] array) 
+    {
+        var jsonArray = new JsonArray();
+        for (int i = 0; i < array.GetLength(0); i++) 
+        {
+            var jsonArray2 = new JsonArray();
+            for (int j = 0; j < array.GetLength(1); j++) 
+            {
+                jsonArray2.Add(array[i, j]);
+            }
+            jsonArray.Add(jsonArray2);
+        }
+        return jsonArray;
+    }
+
+    public static JsonObject ToJsonObject(this Dictionary<string, nuint> value)
+    {
+        var jsonObj = new JsonObject();
+        foreach (var cObj in value) 
+        {
+            jsonObj[cObj.Key] = cObj.Value;
+        }
+        return jsonObj;
+    }
+
     
 }

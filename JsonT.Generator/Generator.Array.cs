@@ -25,6 +25,8 @@ partial class JsonTGenerator
             "char[]" => ".ConvertToArrayChar()",
             "string[]" => ".ConvertToArrayString()",
             "bool[]" => ".ConvertToArrayBoolean()",
+            "nint[]" => ".ConvertToArrayIntPtr()",
+            "nuint[]" => ".ConvertToArrayUIntPtr()",
             
             _ => ".ConvertToArray()",
         };
@@ -52,6 +54,8 @@ partial class JsonTGenerator
             "char[,]" => ".ConvertToArrayChar()",
             "string[,]" => ".ConvertToArrayString()",
             "bool[,]" => ".ConvertToArrayBoolean()",
+            "nint[,]" => ".ConvertToArrayIntPtr()",
+            "nuint[,]" => ".ConvertToArrayUIntPtr()",
             
             _ => ".ConvertToArray2D()",
         };
@@ -79,6 +83,8 @@ partial class JsonTGenerator
             nameof(Char) => ".ConvertToListChar()",
             nameof(String) => ".ConvertToListString()",
             nameof(Boolean) => ".ConvertToListBoolean()",
+            nameof(IntPtr) => ".ConvertToListIntPtr()",
+            nameof(UIntPtr) => ".ConvertToListUIntPtr()",
             
             _ => ".ConvertToList()",
         };
