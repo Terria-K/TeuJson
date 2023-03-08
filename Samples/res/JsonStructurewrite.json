@@ -8,7 +8,7 @@
 	"Number": 4,
 	"Text": "hello_world",
 	"falsy": false,
-	"otherName": "This is my field",
+	"otherName": "This is my field not any other",
 	"Span": 0,
 	"Position": {
 		"x": 0,
@@ -25,5 +25,6 @@
 			"Y": 
 			10
 		}
-	]
+	],
+	"IsNull": true
 }

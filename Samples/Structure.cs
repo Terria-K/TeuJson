@@ -29,6 +29,9 @@ public partial class Structure
     // Constant should work too!
     [Custom(CustomConverters.Use)]
     public List<Vector2>? Positions { get; set; }
+
+    [Custom(CustomConverters.Use, Write = "CustomizedBooleanWriter", Read = "CustomizedBoolean")]
+    public bool IsNull { get; set; }
 }
 
 public static class LocalConverter 

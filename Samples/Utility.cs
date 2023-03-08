@@ -13,7 +13,19 @@ public static partial class CustomConverters
 // There isn't much a helpful tips anywhere online, just a full of blogs about source generator.
     public const string Use = "Utility.CustomConverters";
 
+    public static bool CustomizedBoolean(this JsonValue value) 
+    {
+        if (value.IsNull)
+            return true;
+        return false;
+    }
 
+    public static JsonValue CustomizedBooleanWriter(bool value) 
+    {
+        if (value)
+            return true;
+        return new JsonNull();
+    }
 
     public static Vector2 ToVector2(this JsonValue value) 
     {

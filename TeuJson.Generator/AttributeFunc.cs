@@ -105,20 +105,39 @@ public static class AttributeFunc
         var converter = string.Empty;
         if (!data.ConstructorArguments.IsEmpty) 
         {
-            var args = data.ConstructorArguments;
-            foreach (var arg in args) 
+            var arg = data.ConstructorArguments[0];
+            
+            var typedConstant = arg.Value;
+            if (typedConstant != null) 
             {
-                var typedConstant = arg.Value;
-                if (typedConstant is null)
-                    continue;
                 directCall = true;
                 var converterType = (string)typedConstant;
                 converter = converterType;
             }
-            directCall = true;
+            string? write = string.Empty;
+            string? read = string.Empty;
+            if (!data.NamedArguments.IsEmpty) 
+            {
+                var args = data.NamedArguments;
+                foreach (var argument in args) 
+                {
+                    var typedConst = argument.Value;
+                    if (argument.Key == "Write")
+                        write = (string?)typedConst.Value;
+                    else if (argument.Key == "Read")
+                        read = (string?)typedConst.Value;
+                }
+            }
 
-            if (serializable)
-                return (directCall, $"{converter}.ToJson");
+
+            if (serializable) 
+            {
+                if (string.IsNullOrEmpty(write))
+                    return (directCall, $"{converter}.ToJson");
+                return (directCall, $"{converter}.{write}");
+            }
+            if (!string.IsNullOrEmpty(read))
+                return (directCall, $"{converter}.{read}");
             return (directCall, $"{converter}.To{typeName}");
         }
         if (serializable)
