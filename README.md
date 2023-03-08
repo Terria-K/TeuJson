@@ -63,6 +63,10 @@ You can create your own converters by defining a function inside of a static cla
 namespace Maths;
 public static class MyMathConverter 
 {
+// Converters are named sensitive, it must follow the naming convetion in order to work.
+// Writer = JsonValue ToJson(this <T> value);
+// Reader = <T> To<T>(this JsonValue value);
+
     public static JsonValue ToJson(this Vector2 value) 
     {
         // Json object is similar to Dictionary.
