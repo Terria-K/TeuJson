@@ -10,5 +10,9 @@
 	"falsy": false,
 	"otherName": "This is my field",
 	"Span": 0,
-	"Position": [ ]
+	"Position": {
+		"x": 0,
+		"y": 0
+	},
+	"Positions": [ ]
 }

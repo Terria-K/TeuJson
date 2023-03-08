@@ -13,18 +13,7 @@ public static partial class CustomConverters
 // There isn't much a helpful tips anywhere online, just a full of blogs about source generator.
     public const string Use = "Utility.CustomConverters";
 
-    public static TimeSpan ToTimeSpan(this JsonValue value) 
-    {
-        if (value.IsNumber)
-            return TimeSpan.FromTicks(value.AsInt64);
-        return TimeSpan.Zero;
-    }
 
-    public static JsonValue ToJson(this TimeSpan value) 
-    {
-        var ticks = value.Ticks;
-        return new JsonValue<long>(JsonToken.Number, ticks);
-    }
 
     public static Vector2 ToVector2(this JsonValue value) 
     {

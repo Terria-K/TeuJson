@@ -19,8 +19,30 @@ public partial class Structure
     [Name("otherName")]
     [TeuObject]
     public string? Field;
-    [Custom(CustomConverters.Use)]
+    // Local Converters.
+    [Custom]
     public TimeSpan Span { get; set; }
+
+    // Converters outside of a namespace of a structure class need to use the fully qualified name of a converter class.
+    [Custom("Utility.CustomConverters")]
+    public Vector2 Position { get; set; }
+    // Constant should work too!
     [Custom(CustomConverters.Use)]
-    public List<Vector2>? Position { get; set; }
+    public List<Vector2>? Positions { get; set; }
+}
+
+public static class LocalConverter 
+{
+    public static TimeSpan ToTimeSpan(this JsonValue value) 
+    {
+        if (value.IsNumber)
+            return TimeSpan.FromTicks(value.AsInt64);
+        return TimeSpan.Zero;
+    }
+
+    public static JsonValue ToJson(this TimeSpan value) 
+    {
+        var ticks = value.Ticks;
+        return new JsonValue<long>(JsonToken.Number, ticks);
+    }
 }
