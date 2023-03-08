@@ -25,6 +25,8 @@ internal static class RoslynExtensions
             namespaceName = ns.Name + "." + namespaceName;
             ns = containing;
         }
+        if (namespaceName.Length > 0)
+            return namespaceName.Remove(namespaceName.Length - 1);
         return namespaceName;
     }
 

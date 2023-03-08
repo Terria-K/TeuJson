@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Structural;
 using TeuJson;
 
 var reader = JsonTextReader.FromFile("Samples/res/Jsontester.json");

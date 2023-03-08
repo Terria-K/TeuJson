@@ -14,7 +14,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var typeProvider = context.SyntaxProvider
+        var teuJsonProvider = context.SyntaxProvider
             .CreateSyntaxProvider(
                 static (node, _) => node is TypeDeclarationSyntax syntax
                     && syntax.AttributeLists.Count > 0
@@ -31,18 +31,20 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                             
                             var namedTypeSymbol = attribSymbol.ContainingType;
                             var fullname = attribSymbol.ToDisplayString();
-                            if (fullname == "TeuJson.Attributes.TeuJsonSerializableAttribute.TeuJsonSerializableAttribute()")
+
+                            if (fullname == 
+                            "TeuJson.Attributes.TeuJsonSerializableAttribute.TeuJsonSerializableAttribute()")
                                 return jsonSyntax;
                         }
                     }
                     return null;
                 }
             ).Where(m => m is not null);
-
-        var compilation = context.CompilationProvider.Combine(typeProvider.Collect());
+        
+        var teuJsonCompilation = context.CompilationProvider.Combine(teuJsonProvider.Collect());
 
         context.RegisterSourceOutput(
-            compilation, static (ctx, source) => Generate(ctx, source.Left, source.Right)
+            teuJsonCompilation, static (ctx, source) => Generate(ctx, source.Left, source.Right)
         );
     }
 
@@ -52,11 +54,10 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             return;
         var attribute = comp.GetTypeByMetadataName("TeuJson.Attributes.TeuJsonSerializableAttribute");
 
-        if (attribute is null) 
+        if (attribute is null)  
             return;
-        
 
-        foreach (var symbol in GetSymbols(comp, syn))
+        foreach (var symbol in GetSymbols(comp, syn, "TeuJsonSerializable"))
         {
             var data = symbol.GetAttributes()[0];
             var option = AttributeFunc.GetOptions(data);
@@ -107,6 +108,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             else type = null;
 
             var additionalCall = "";
+            var directCall = false;
 
             foreach (var attr in sym.GetAttributes())
             {
@@ -123,7 +125,15 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 }
                 if (attributeClassName == "CustomAttribute") 
                 {
-                    additionalCall = AttributeFunc.GetCustomConverter(isSerialize, type?.Name);
+                    (directCall, additionalCall) = AttributeFunc.GetCustomConverter(isSerialize, type?.Name, attr);
+                    if (directCall) 
+                    {
+                        if (isSerialize)
+                            sb.AppendLine($"[\"{name}\"] = {additionalCall}({sym.Name}),");
+                        else
+                            sb.AppendLine($"{sym.Name} = {additionalCall}(obj[\"{name}\"]);");
+                        goto Ignore;
+                    }
                 }
             }
             if (type is not null && type is INamedTypeSymbol typeSymbol)
@@ -167,7 +177,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
     }
 
     private static IEnumerable<INamedTypeSymbol> GetSymbols(
-        Compilation compilation, ImmutableArray<TypeDeclarationSyntax?> syn) 
+        Compilation compilation, ImmutableArray<TypeDeclarationSyntax?> syn, string attribute) 
     {
         foreach (var partialClass in syn) 
         {
@@ -178,7 +188,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             if (symbol is null)
                 continue;
 
-            if (HasAttributes(symbol, "TeuJsonSerializable"))
+            if (HasAttributes(symbol, attribute))
                 yield return symbol;
         }
     }

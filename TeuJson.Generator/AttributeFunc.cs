@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using System;
 using System.Linq;
 
 namespace TeuJson.Generator;
@@ -98,11 +99,31 @@ public static class AttributeFunc
         };
     }
 
-    public static string GetCustomConverter(bool serializable, string? typeName) 
+    public static (bool, string) GetCustomConverter(bool serializable, string? typeName, AttributeData data) 
     {
+        var directCall = false;
+        var converter = string.Empty;
+        if (!data.ConstructorArguments.IsEmpty) 
+        {
+            var args = data.ConstructorArguments;
+            foreach (var arg in args) 
+            {
+                var typedConstant = arg.Value;
+                if (typedConstant is null)
+                    continue;
+                directCall = true;
+                var converterType = (string)typedConstant;
+                converter = converterType;
+            }
+            directCall = true;
+
+            if (serializable)
+                return (directCall, $"{converter}.ToJson");
+            return (directCall, $"{converter}.To{typeName}");
+        }
         if (serializable)
-            return $".ToJson()";
-        return $".To{typeName}()";
+            return (directCall, $".ToJson()");
+        return (directCall, $".To{typeName}()");
     }
 
     public static string GetStatusInterface(bool serializable) 
