@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Numerics;
 using Structural;
 using TeuJson;
 
@@ -28,6 +30,8 @@ Debug.Assert(structure.Number == 4);
 Debug.Assert(structure.Text == "hello_world");
 Debug.Assert(!structure.TrueOrFalse);
 Debug.Assert(structure.Field == "This is my field");
+
+structure.Positions = new List<Vector2>() { new Vector2(0, 2), new Vector2(25, 10)};
 
 var structureObject = structure.Serialize();
 
