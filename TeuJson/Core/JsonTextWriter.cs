@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace JsonT;
+namespace TeuJson;
 
 public struct JsonTextWriterOptions 
 {

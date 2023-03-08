@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace JsonT;
+namespace TeuJson;
 
 public sealed class JsonTextReader : JsonReader, IDisposable
 {

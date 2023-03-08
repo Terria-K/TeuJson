@@ -28,7 +28,7 @@
     };
 #>
 using System;
-namespace JsonT.Generator;
+namespace TeuJson.Generator;
 
 partial class JsonTGenerator 
 {

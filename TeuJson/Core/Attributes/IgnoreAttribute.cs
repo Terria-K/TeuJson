@@ -1,6 +1,6 @@
 using System;
 
-namespace JsonT.Attributes;
+namespace TeuJson.Attributes;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-public sealed class TObjectAttribute : Attribute {}
+public sealed class IgnoreAttribute : Attribute {}

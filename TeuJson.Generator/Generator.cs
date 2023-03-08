@@ -2,16 +2,15 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System;
-using System.Diagnostics;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace JsonT.Generator;
+namespace TeuJson.Generator;
 
 [Generator]
-public sealed partial class JsonTGenerator : IIncrementalGenerator
+public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -32,7 +31,7 @@ public sealed partial class JsonTGenerator : IIncrementalGenerator
                             
                             var namedTypeSymbol = attribSymbol.ContainingType;
                             var fullname = attribSymbol.ToDisplayString();
-                            if (fullname == "JsonT.Attributes.JsonTSerializableAttribute.JsonTSerializableAttribute()")
+                            if (fullname == "TeuJson.Attributes.TeuJsonSerializableAttribute.TeuJsonSerializableAttribute()")
                                 return jsonSyntax;
                         }
                     }
@@ -51,7 +50,7 @@ public sealed partial class JsonTGenerator : IIncrementalGenerator
     {
         if (syn.IsDefaultOrEmpty)
             return;
-        var attribute = comp.GetTypeByMetadataName("JsonT.Attributes.JsonTSerializableAttribute");
+        var attribute = comp.GetTypeByMetadataName("TeuJson.Attributes.TeuJsonSerializableAttribute");
 
         if (attribute is null) 
             return;
@@ -65,8 +64,7 @@ public sealed partial class JsonTGenerator : IIncrementalGenerator
 
             var sb = new StringBuilder();
             sb.AppendLine("// Source Generated code");
-            sb.AppendLine("using System;");
-            sb.AppendLine("using JsonT;");
+            sb.AppendLine("using TeuJson;");
             var ns = symbol.GetSymbolNamespace();
             if (!string.IsNullOrEmpty(ns))
                 sb.AppendLine("namespace " + ns + ";");
@@ -97,7 +95,7 @@ public sealed partial class JsonTGenerator : IIncrementalGenerator
             if (sym is not IPropertySymbol && sym is not IFieldSymbol)
                 continue;
 
-            if (sym is IFieldSymbol && !sym.HasAttributeName("TObject"))
+            if (sym is IFieldSymbol && !sym.HasAttributeName("TeuObject"))
                 continue;
 
             var name = sym.Name;
@@ -180,18 +178,11 @@ public sealed partial class JsonTGenerator : IIncrementalGenerator
             if (symbol is null)
                 continue;
 
-            if (HasAttributes(symbol, "JsonTSerializable"))
+            if (HasAttributes(symbol, "TeuJsonSerializable"))
                 yield return symbol;
         }
     }
 
     private static bool HasAttributes(ISymbol symbol, string attributeName) => 
         symbol.GetAttributes().Any(attr => attr.AttributeClass!.Name.StartsWith(attributeName));
-}
-
-public enum SupportedTypes 
-{
-    Int, Boolean, Float, Double, Char, String, Other,
-    Int2D, Boolean2D, Float2D, Double2D, Char2D, String2D, Other2D,
-    ListInt, ListBoolean, ListFloat, ListDouble, ListString, ListOther
 }

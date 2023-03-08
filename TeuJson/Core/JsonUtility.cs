@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 
-namespace JsonT;
+namespace TeuJson;
 
 public static partial class JsonUtility 
 {
     public static T? Convert<T>(this JsonValue value) 
-    where T : IJsonTDeserializable, new()
+    where T : ITeuJsonDeserializable, new()
     {
         if (value.IsNull) 
             return default;
@@ -28,7 +28,7 @@ public static partial class JsonUtility
     }
 
     public static Dictionary<string, T>? ToDictionary<T>(this JsonValue value)
-    where T : IJsonTDeserializable, new()
+    where T : ITeuJsonDeserializable, new()
     {
         if (value.IsNull) 
             return null;
@@ -43,7 +43,7 @@ public static partial class JsonUtility
 
 
     public static T[]? ConvertToArray<T>(this JsonValue value) 
-    where T : IJsonTDeserializable, new()
+    where T : ITeuJsonDeserializable, new()
     {
         if (value.IsNull)
             return null;
@@ -58,7 +58,7 @@ public static partial class JsonUtility
     }
 
     public static T[,]? ConvertToArray2D<T>(this JsonValue value) 
-    where T : IJsonTDeserializable, new()
+    where T : ITeuJsonDeserializable, new()
     {
         if (value.IsNull)
             return null;
@@ -93,7 +93,7 @@ public static partial class JsonUtility
     }
 
     public static List<T>? ConvertToList<T>(this JsonValue value) 
-    where T : IJsonTDeserializable, new()
+    where T : ITeuJsonDeserializable, new()
     {
         if (value.IsNull)
             return null;
@@ -108,7 +108,7 @@ public static partial class JsonUtility
     }
 
     public static JsonArray ConvertToJsonArray<T>(this List<T> array) 
-    where T : IJsonTSerializable
+    where T : ITeuJsonSerializable
     {
         var jsonArray = new JsonArray();
         foreach (T v in array) 
@@ -119,7 +119,7 @@ public static partial class JsonUtility
     }
 
     public static JsonObject ToJsonObject<T>(this Dictionary<string, T> value)
-    where T : IJsonTSerializable
+    where T : ITeuJsonSerializable
     {
         var jsonObj = new JsonObject();
         foreach (var cObj in value) 

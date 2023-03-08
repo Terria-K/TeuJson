@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using System.Linq;
 
-namespace JsonT;
+namespace TeuJson.Generator;
 
 public static class AttributeFunc 
 {
@@ -108,8 +108,8 @@ public static class AttributeFunc
     public static string GetStatusInterface(bool serializable) 
     {
         if (serializable)
-            return "IJsonTSerializable";
-        return "IJsonTDeserializable";
+            return "ITeuJsonSerializable";
+        return "ITeuJsonDeserializable";
     }
 
     public static string GetStatusMethod(bool serializable) 

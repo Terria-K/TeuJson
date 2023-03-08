@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace JsonT;
+namespace TeuJson;
 
 public sealed class JsonObject : JsonValue<Dictionary<string, JsonValue>>
 {

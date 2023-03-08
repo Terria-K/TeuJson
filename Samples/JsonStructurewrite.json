@@ -8,6 +8,9 @@
 	"Number": 4,
 	"Text": "hello_world",
 	"falsy": false,
-	"otherName": "This is my field",
-	"Span": 0
+	"Span": 0,
+	"Position": {
+		"x": 0,
+		"y": 0
+	}
 }

@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace JsonT.Generator;
+namespace TeuJson.Generator;
 
 internal static class RoslynExtensions 
 {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace JsonT;
+namespace TeuJson;
 
 public abstract class JsonValue 
 {

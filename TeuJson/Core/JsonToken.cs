@@ -1,4 +1,4 @@
-namespace JsonT;
+namespace TeuJson;
 
 public enum JsonToken 
 {

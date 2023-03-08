@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace JsonT;
+namespace TeuJson;
 
 public abstract class JsonReader 
 {

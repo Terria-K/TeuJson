@@ -1,5 +1,5 @@
 ﻿using System;
-using JsonT;
+using TeuJson;
 
 var reader = JsonTextReader.FromFile("Samples/Jsontester.json");
 

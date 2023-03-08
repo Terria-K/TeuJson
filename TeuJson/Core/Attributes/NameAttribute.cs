@@ -1,6 +1,6 @@
 using System;
 
-namespace JsonT.Attributes;
+namespace TeuJson.Attributes;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public class NameAttribute : Attribute 

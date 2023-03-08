@@ -1,7 +1,8 @@
 using System;
-namespace JsonT.Generator;
 
-partial class JsonTGenerator 
+namespace TeuJson.Generator;
+
+partial class TeuJsonGenerator 
 {
     private static string ArrayCheck(string typeName, bool isSerialize) 
     {

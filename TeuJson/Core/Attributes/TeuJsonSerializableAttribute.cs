@@ -1,9 +1,9 @@
 using System;
 
-namespace JsonT.Attributes;
+namespace TeuJson.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-public sealed class JsonTSerializableAttribute : Attribute 
+public sealed class TeuJsonSerializableAttribute : Attribute 
 {
     public bool Serializable 
     {
@@ -19,5 +19,5 @@ public sealed class JsonTSerializableAttribute : Attribute
     private bool serialization;
 
 
-    public JsonTSerializableAttribute() {}
+    public TeuJsonSerializableAttribute() {}
 }

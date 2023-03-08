@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace JsonT;
+namespace TeuJson;
 
 
 public static partial class JsonUtility 

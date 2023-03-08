@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../JsonT/JsonT.csproj" />
-    <ProjectReference Include="../JsonT.Generator/JsonT.Generator.csproj"
+    <ProjectReference Include="../TeuJson/TeuJson.csproj" />
+    <ProjectReference Include="../TeuJson.Generator/TeuJson.Generator.csproj"
     ReferenceOutputAssembly="false"
     OutputItemType="Analyzer"  />
   </ItemGroup>

@@ -1,18 +1,18 @@
 using System.IO;
 
-namespace JsonT;
+namespace TeuJson;
 
 public class JsonConvert 
 {
     public static T DeserializeFromFile<T>(string path) 
-    where T : IJsonTDeserializable, new()
+    where T : ITeuJsonDeserializable, new()
     {
         var converter = JsonTextReader.FromFile(path);
         return Deserialize<T>(converter.AsJsonObject);
     }
 
     public static T DeserializeFromStream<T>(Stream stream) 
-    where T : IJsonTDeserializable, new()
+    where T : ITeuJsonDeserializable, new()
     {
         var converter = JsonTextReader.FromStream(stream);
         return Deserialize<T>(converter.AsJsonObject);
@@ -37,7 +37,7 @@ public class JsonConvert
     // }
 
     public static T Deserialize<T>(JsonObject jsObj)
-    where T : IJsonTDeserializable, new() 
+    where T : ITeuJsonDeserializable, new() 
     {
         var obj = new T();
         obj.Deserialize(jsObj);
@@ -45,7 +45,7 @@ public class JsonConvert
     }
 
     public static T Deserialize<T>(JsonValue jsObj)
-    where T : IJsonTDeserializable, new() 
+    where T : ITeuJsonDeserializable, new() 
     {
         var obj = new T();
         obj.Deserialize(jsObj.AsJsonObject);
