@@ -49,8 +49,7 @@ var serialized = person.Serialize();
 JsonTextWriter.WriteToFile("person.json", person);
 
 var johnJson = JsonTextReader.FromFile("person.json");
-var john = new Person();
-john.Deserialize(johnJson.AsJsonObject);
+var john = JsonConvert.Deserialize<Person>(johnJson);
 ```
 
 The output of the file will be:

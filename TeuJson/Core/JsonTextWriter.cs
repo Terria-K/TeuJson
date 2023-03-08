@@ -51,13 +51,13 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable
         textWriter.WriteJson(value);
     }
 
-    public static void WriteToFile(Stream fs, JsonValue value) 
+    public static void WriteToStream(Stream fs, JsonValue value) 
     {
         using var textWriter = new JsonTextWriter(fs);
         textWriter.WriteJson(value);
     }
 
-    public static void WriteToFile(Stream fs, JsonValue value, JsonTextWriterOptions options) 
+    public static void WriteToStream(Stream fs, JsonValue value, JsonTextWriterOptions options) 
     {
         using var textWriter = new JsonTextWriter(fs, options);
         textWriter.WriteJson(value);

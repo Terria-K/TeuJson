@@ -13,8 +13,7 @@ var minimalReader = JsonTextReader.FromFile("Samples/res/JsontesterMinimal.json"
 JsonTextWriter.WriteToFile("Samples/res/Jsontesterwrite.json", reader);
 
 var readingStructure = JsonTextReader.FromFile("Samples/res/JsonStructure.json");
-var structure = new Structure();
-structure.Deserialize(readingStructure.AsJsonObject);
+var structure = JsonConvert.Deserialize<Structure>(readingStructure);
 
 var numberToAssert = new int[4] { 2, 3, 1, 5};
 
@@ -33,15 +32,14 @@ Debug.Assert(structure.Field == "This is my field");
 
 structure.Positions = new List<Vector2>() { new Vector2(0, 2), new Vector2(25, 10)};
 
-var structureObject = structure.Serialize();
+var structureObject = JsonConvert.Serialize(structure);
 
 JsonTextWriter.WriteToFile("Samples/res/JsonStructurewrite.json", structureObject);
 
 JsonBinaryWriter.WriteToFile("Samples/res/JsonStructure.bin", structureObject);
 
 var readingStructureBin = JsonBinaryReader.FromFile("Samples/res/JsonStructure.bin");
-var structureBin = new Structure();
-structure.Deserialize(readingStructureBin.AsJsonObject);
+var structureBin = JsonConvert.Deserialize<Structure>(readingStructureBin);
 
 if (structureBin.Array is not null) 
 {
