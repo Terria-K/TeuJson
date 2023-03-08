@@ -28,7 +28,7 @@ partial class TeuJsonGenerator
             "nint[]" => ".ConvertToArrayIntPtr()",
             "nuint[]" => ".ConvertToArrayUIntPtr()",
             
-            _ => ".ConvertToArray()",
+            _ => $".ConvertToArray<{typeName.Replace("[]", "")}>()",
         };
     }
 
@@ -57,7 +57,7 @@ partial class TeuJsonGenerator
             "nint[*,*]" => ".ConvertToArrayIntPtr2D()",
             "nuint[*,*]" => ".ConvertToArrayUIntPtr2D()",
             
-            _ => ".ConvertToArray2D()",
+            _ => $".ConvertToArray2D<{typeName.Replace("[*,*]", "")}>()",
         };
     }
 

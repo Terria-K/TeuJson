@@ -34,7 +34,11 @@ public partial class Structure
     public bool IsNull { get; set; }
 
     public int[,]? Array2D { get; set; }
+    public EmptyStructure[]? Structures { get; set; }
 }
+
+[TeuJsonSerializable(Deserializable = true, Serializable = true)]
+public partial struct EmptyStructure {}
 
 public static class LocalConverter 
 {

@@ -45,7 +45,7 @@ public static partial class JsonUtility
     public static T[]? ConvertToArray<T>(this JsonValue value) 
     where T : ITeuJsonDeserializable, new()
     {
-        if (value.IsNull)
+        if (value.IsNull || value.Count <= 0)
             return null;
         var array = value.AsJsonArray;
         var arrayCount = array.Count; 
@@ -60,7 +60,7 @@ public static partial class JsonUtility
     public static T[,]? ConvertToArray2D<T>(this JsonValue value) 
     where T : ITeuJsonDeserializable, new()
     {
-        if (value.IsNull)
+        if (value.IsNull || value.Count <= 0)
             return null;
         var arrayX = value.AsJsonArray;
         var arrayY = arrayX[0].AsJsonArray;
@@ -77,7 +77,7 @@ public static partial class JsonUtility
 
     public static int[,]? ConvertToArrayInt2D(this JsonValue value) 
     {
-        if (value.IsNull)
+        if (value.IsNull || value.Count <= 0)
             return null;
         var arrayX = value.AsJsonArray;
         var arrayY = arrayX[0].AsJsonArray;
@@ -95,7 +95,7 @@ public static partial class JsonUtility
     public static List<T>? ConvertToList<T>(this JsonValue value) 
     where T : ITeuJsonDeserializable, new()
     {
-        if (value.IsNull)
+        if (value.IsNull || value.Count <= 0)
             return null;
         var array = value.AsJsonArray;
         var arrayCount = array.Count; 
@@ -107,9 +107,24 @@ public static partial class JsonUtility
         return objectArray;
     }
 
+    public static JsonArray ConvertToJsonArray<T>(this T[] array) 
+    where T : ITeuJsonSerializable
+    {
+        if (array == null)
+            return new JsonArray();
+        var jsonArray = new JsonArray();
+        foreach (T v in array) 
+        {
+            jsonArray.Add(v.Serialize());
+        }
+        return jsonArray;
+    }
+
     public static JsonArray ConvertToJsonArray<T>(this List<T> array) 
     where T : ITeuJsonSerializable
     {
+        if (array == null)
+            return new JsonArray();
         var jsonArray = new JsonArray();
         foreach (T v in array) 
         {
@@ -121,6 +136,8 @@ public static partial class JsonUtility
     public static JsonObject ToJsonObject<T>(this Dictionary<string, T> value)
     where T : ITeuJsonSerializable
     {
+        if (value == null)
+            return new JsonObject();
         var jsonObj = new JsonObject();
         foreach (var cObj in value) 
         {
@@ -131,6 +148,8 @@ public static partial class JsonUtility
 
     public static JsonObject ToJsonObject(this Dictionary<string, JsonValue> value)
     {
+        if (value == null)
+            return new JsonObject();
         var jsonObj = new JsonObject();
         foreach (var cObj in value) 
         {
