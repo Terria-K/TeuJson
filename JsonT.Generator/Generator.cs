@@ -119,9 +119,13 @@ public sealed partial class JsonTGenerator : IIncrementalGenerator
                     // Idk how to get out of the 1st loop 
                     goto Ignore;
 
-                else if (attributeClassName == "NameAttribute")
+                if (attributeClassName == "NameAttribute")
                 {
                     name = AttributeFunc.TName(name, attr);
+                }
+                if (attributeClassName == "CustomAttribute") 
+                {
+                    additionalCall = AttributeFunc.GetCustomConverter(isSerialize, type?.Name);
                 }
             }
             if (type is not null && type is INamedTypeSymbol typeSymbol)

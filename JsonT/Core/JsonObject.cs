@@ -12,13 +12,23 @@ public sealed class JsonObject : JsonValue<Dictionary<string, JsonValue>>
 
     public override JsonValue this[string key] 
     { 
-        get => Value[key]; 
+        get 
+        {
+            if (Value.TryGetValue(key, out JsonValue? value))
+                return value;
+            return JsonNull.NullReference;
+        }
         set => Value[key] = value; 
     }
 
     public override JsonValue this[int idx] 
     { 
-        get => Value["x__" + idx]; 
+        get         
+        {
+            if (Value.TryGetValue("x__" + idx, out JsonValue? value))
+                return value;
+            return JsonNull.NullReference;
+        } 
         set => Value["x__" + idx] = value; 
     }
 

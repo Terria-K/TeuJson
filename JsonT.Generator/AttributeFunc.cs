@@ -98,6 +98,13 @@ public static class AttributeFunc
         };
     }
 
+    public static string GetCustomConverter(bool serializable, string? typeName) 
+    {
+        if (serializable)
+            return $".{typeName}ToJson()";
+        return $".ConvertTo{typeName}()";
+    }
+
     public static string GetStatusInterface(bool serializable) 
     {
         if (serializable)

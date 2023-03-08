@@ -9,9 +9,10 @@
   <ItemGroup>
     <ProjectReference Include="../JsonT/JsonT.csproj" />
     <ProjectReference Include="../JsonT.Generator/JsonT.Generator.csproj"
+    ReferenceOutputAssembly="false"
     OutputItemType="Analyzer"  />
   </ItemGroup>
-<!-- ReferenceOutputAssembly="false" -->
+
 
   <PropertyGroup>
     <CompilerGeneratedFilesOutputPath>$(MSBuildProjectDirectory)/Generated</CompilerGeneratedFilesOutputPath>
