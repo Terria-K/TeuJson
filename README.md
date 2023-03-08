@@ -1,7 +1,7 @@
 # TeuJson
 A Reflection-less and Lightweight Json Library using source generator.
 
-[![Nuget](https://img.shields.io/nuget/v/Arch?style=for-the-badge)](https://www.nuget.org/packages/TeuJson/)
+[![Nuget](https://img.shields.io/nuget/v/TeuJson?style=for-the-badge)](https://www.nuget.org/packages/TeuJson/)
 
 ### Installation
 Install these two required packages.
