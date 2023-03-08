@@ -97,9 +97,9 @@ public partial class Player
 {
     [Name("name")]
     public string Name { get; set; }
-    [Name("position")]
     // Name must be fully qualified
     [Custom("Maths.MyMathConverter")]
+    [Name("position")]
     public Vector2 Position { get; set;}
 }
 ```
