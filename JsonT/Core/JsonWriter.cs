@@ -29,6 +29,11 @@ public abstract class JsonWriter
 
     public void WriteJson(JsonValue value) 
     {
+        if (value == null) 
+        {
+            WriteNull();
+            return;
+        }
         switch (value.Token) 
         {
             case JsonToken.Object:

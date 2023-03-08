@@ -21,14 +21,14 @@ public partial class Structure
 
 public static class CustomConverters 
 {
-    public static TimeSpan ConvertToTimeSpan(this JsonValue value) 
+    public static TimeSpan ToTimeSpan(this JsonValue value) 
     {
         if (value.IsNumber)
             return TimeSpan.FromTicks(value.AsInt64);
         return TimeSpan.Zero;
     }
 
-    public static JsonValue TimeSpanToJson(this TimeSpan value) 
+    public static JsonValue ToJson(this TimeSpan value) 
     {
         var ticks = value.Ticks;
         return new JsonValue<long>(JsonToken.Number, ticks);

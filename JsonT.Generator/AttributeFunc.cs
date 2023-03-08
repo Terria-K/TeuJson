@@ -101,8 +101,8 @@ public static class AttributeFunc
     public static string GetCustomConverter(bool serializable, string? typeName) 
     {
         if (serializable)
-            return $".{typeName}ToJson()";
-        return $".ConvertTo{typeName}()";
+            return $".ToJson()";
+        return $".To{typeName}()";
     }
 
     public static string GetStatusInterface(bool serializable) 
