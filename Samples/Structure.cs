@@ -12,7 +12,7 @@ public partial class Structure
     [Name("falsy")]
     public bool TrueOrFalse { get; set; }
     [Name("otherName")]
-    [TObject]
+    [TeuObject]
     public string? Field;
     [Custom]
     public TimeSpan Span { get; set; }
