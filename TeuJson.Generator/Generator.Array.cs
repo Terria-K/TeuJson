@@ -1,8 +1,7 @@
 using System;
-
 namespace TeuJson.Generator;
 
-partial class TeuJsonGenerator 
+partial class TeuJsonGenerator
 {
     private static string ArrayCheck(string typeName, bool isSerialize) 
     {
@@ -37,26 +36,26 @@ partial class TeuJsonGenerator
     {
         if (isSerialize) 
         {
-            return ".ConvertToJsonArray()";
+            return ".ConvertToJsonArray2D()";
         }
         return typeName switch 
         {
-            "byte[,]" => ".ConvertToArrayByte()",
-            "short[,]" => ".ConvertToArrayInt16()",
-            "int[,]" => ".ConvertToArrayInt32()",
-            "long[,]" => ".ConvertToArrayInt64()",
-            "sbyte[,]" => ".ConvertToArraySByte()",
-            "ushort[,]" => ".ConvertToArrayUInt16()",
-            "uint[,]" => ".ConvertToArrayUInt32()",
-            "ulong[,]" => ".ConvertToArrayUInt64()",
-            "float[,]" => ".ConvertToArraySingle()",
-            "double[,]" => ".ConvertToArrayDouble()",
-            "decimal[,]" => ".ConvertToArrayDecimal()",
-            "char[,]" => ".ConvertToArrayChar()",
-            "string[,]" => ".ConvertToArrayString()",
-            "bool[,]" => ".ConvertToArrayBoolean()",
-            "nint[,]" => ".ConvertToArrayIntPtr()",
-            "nuint[,]" => ".ConvertToArrayUIntPtr()",
+            "byte[*,*]" => ".ConvertToArrayByte2D()",
+            "short[*,*]" => ".ConvertToArrayInt162D()",
+            "int[*,*]" => ".ConvertToArrayInt322D()",
+            "long[*,*]" => ".ConvertToArrayInt642D()",
+            "sbyte[*,*]" => ".ConvertToArraySByte2D()",
+            "ushort[*,*]" => ".ConvertToArrayUInt162D()",
+            "uint[*,*]" => ".ConvertToArrayUInt322D()",
+            "ulong[*,*]" => ".ConvertToArrayUInt642D()",
+            "float[*,*]" => ".ConvertToArraySingle2D()",
+            "double[*,*]" => ".ConvertToArrayDouble2D()",
+            "decimal[*,*]" => ".ConvertToArrayDecimal2D()",
+            "char[*,*]" => ".ConvertToArrayChar2D()",
+            "string[*,*]" => ".ConvertToArrayString2D()",
+            "bool[*,*]" => ".ConvertToArrayBoolean2D()",
+            "nint[*,*]" => ".ConvertToArrayIntPtr2D()",
+            "nuint[*,*]" => ".ConvertToArrayUIntPtr2D()",
             
             _ => ".ConvertToArray2D()",
         };

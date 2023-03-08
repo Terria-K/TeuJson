@@ -9,9 +9,10 @@
   <ItemGroup>
     <ProjectReference Include="../TeuJson/TeuJson.csproj" />
     <ProjectReference Include="../TeuJson.Generator/TeuJson.Generator.csproj"
-    ReferenceOutputAssembly="false"
+
     OutputItemType="Analyzer"  />
   </ItemGroup>
+    <!-- ReferenceOutputAssembly="false" -->
 
 
 

@@ -32,6 +32,8 @@ public partial class Structure
 
     [Custom(CustomConverters.Use, Write = "CustomizedBooleanWriter", Read = "CustomizedBoolean")]
     public bool IsNull { get; set; }
+
+    public int[,]? Array2D { get; set; }
 }
 
 public static class LocalConverter 
