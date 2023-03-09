@@ -12,6 +12,24 @@ namespace TeuJson.Generator;
 [Generator]
 public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 {
+    private static readonly DiagnosticDescriptor ThreeArgumentsRule 
+        = new("TE001", "Three type arguments are not supported.", 
+            "Three type arguments are not supported", "Usage", DiagnosticSeverity.Error, true, "Use one type argument to fix this error.");
+
+    private static readonly DiagnosticDescriptor KeyTypeRule
+        = new("TE002", "Key types are not supported.", 
+            "Key types other than string are not supported", "Usage", DiagnosticSeverity.Error, true, "Use string as a key type instead.");
+
+    private static readonly DiagnosticDescriptor RecordRule
+        = new("TE004", "Record is not yet supported.", 
+            "Record is not yet supported, but it will come in the future.", 
+            "Usage", DiagnosticSeverity.Warning, true, "Mark it as class or struct.");
+
+    private static readonly DiagnosticDescriptor StructIfNull
+        = new("TE005", "Struct type does not need to have [IfNull] Atrribute", 
+            "Structs are not nullable, it doesn't makes sense to have this attribute.", 
+            "Usage", DiagnosticSeverity.Warning, true, "Remove the [IfNull] Attribute");
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var teuJsonProvider = context.SyntaxProvider
@@ -60,7 +78,9 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         foreach (var symbol in GetSymbols(comp, syn, "TeuJsonSerializable"))
         {
             var data = symbol.GetAttributes()[0];
-            var option = AttributeFunc.GetOptions(data);
+            var option = AttributeFunc.GetOptions(ctx, symbol, data);
+            if (!option.Deserializable && !option.Serializable)
+                continue;
             var members = symbol.GetMembers().OfType<ISymbol>().ToList();
 
             var sb = new StringBuilder();
@@ -87,6 +107,12 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         bool isSerialize 
     )
     {
+        var classOrStruct = symbol.ClassOrStruct();
+        if (classOrStruct == "record") 
+        {
+            ctx.ReportDiagnostic(Diagnostic.Create(RecordRule, symbol.Locations[0]));
+            return;
+        }
 
         sb.AppendLine($"partial {symbol.ClassOrStruct()} {symbol.Name} : {AttributeFunc.GetStatusInterface(isSerialize)}");
         sb.AppendLine("{");
@@ -111,7 +137,6 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             else type = null;
 
             var additionalCall = "";
-            var directCall = false;
             bool ifNull = false;
 
             foreach (var attr in sym.GetAttributes())
@@ -129,6 +154,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 }
                 if (attributeClassName == "CustomAttribute") 
                 {
+                    bool directCall;
                     (directCall, additionalCall) = AttributeFunc.GetCustomConverter(isSerialize, type?.Name, attr);
                     if (directCall) 
                     {
@@ -141,6 +167,17 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 }
                 if (attributeClassName == "IfNullAttribute") 
                 {
+                    if (sym is IPropertySymbol p && p.Type is INamedTypeSymbol named) 
+                    {
+                        if (named.ClassOrStruct() == "struct")
+                            ctx.ReportDiagnostic(Diagnostic.Create(StructIfNull, sym.Locations[0]));
+                    }
+                    else if (sym is IFieldSymbol f && f.Type is INamedTypeSymbol namedF) 
+                    {
+                        if (namedF.ClassOrStruct() == "struct")
+                            ctx.ReportDiagnostic(Diagnostic.Create(StructIfNull, sym.Locations[0]));
+                    }
+                        
                     ifNull = AttributeFunc.IfNull(attr);
                 }
             }
@@ -156,14 +193,22 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                         additionalCall = ListCheck(typeArguments[0].ToDisplayString(NullableFlowState.None), isSerialize);
                     else if (typeArguments.Length == 2) 
                     {
-                        if (typeSymbol.TypeArguments[0].Name != "String")
-                            throw new NotSupportedException("Key types other than System.String are not supported!");
+                        if (typeSymbol.TypeArguments[0].Name != "String") 
+                        {
+                            ctx.ReportDiagnostic(Diagnostic.Create(KeyTypeRule, sym.Locations[0]));
+                            goto Ignore;
+                        }
+
                         var typeName = typeSymbol.TypeArguments[1].ToDisplayString(NullableFlowState.None);
                         additionalCall = AttributeFunc.GetMethodToCallForDictionary(isSerialize, typeName);
                     }
 
                     else
-                        throw new Exception("Three type arguments is not supported!");
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(ThreeArgumentsRule, sym.Locations[0]));
+                        goto Ignore;
+                    }
+
                 }
             }
             else if (type is IArrayTypeSymbol arrayTypeSymbol)
@@ -180,7 +225,6 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 additionalCall = AttributeFunc.GetMethodToCall(isSerialize, n);
                 if (isSerialize) 
                 {
-
                     if (sym is IPropertySymbol pr && pr.Type is INamedTypeSymbol typeS && typeS.ClassOrStruct() == "class") 
                     {
                         sb.AppendLine($"if ({sym.Name} != null)");

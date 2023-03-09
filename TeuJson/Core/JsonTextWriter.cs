@@ -6,7 +6,7 @@ namespace TeuJson;
 
 public struct JsonTextWriterOptions 
 {
-    public static JsonTextWriterOptions Default => new JsonTextWriterOptions 
+    public static JsonTextWriterOptions Default => new()
     {
         ArrayDepth = 0,
         Minimal = false
@@ -22,10 +22,11 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
 #endif
 {
     private readonly TextWriter writer;
-    private bool minimal;
+    private readonly bool minimal;
+    private readonly int arrayDepth = 0;
     private int indent;
     private int arrayIndent;
-    private int arrayDepth = 0;
+
     private bool arrayBegin;
     private bool wasValue;
     private bool wasBracket;

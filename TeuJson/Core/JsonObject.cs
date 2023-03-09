@@ -43,7 +43,7 @@ public sealed class JsonObject : JsonValue<Dictionary<string, JsonValue>>
         sb.AppendLine("{");
         foreach (var obj in Value) 
         {
-            sb.AppendLine($"\"{obj.Key}\": {obj.Value.ToString()}");
+            sb.AppendLine($"\"{obj.Key}\": {obj.Value}");
         }
         sb.AppendLine("}");
         return sb.ToString();

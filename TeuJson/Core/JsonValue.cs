@@ -302,7 +302,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-    public override bool AsBoolean => (Value is bool value ? value : false);
+    public override bool AsBoolean => Value is bool value && value;
 
 
     public override string AsString 

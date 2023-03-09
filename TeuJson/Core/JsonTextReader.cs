@@ -8,7 +8,7 @@ namespace TeuJson;
 public sealed class JsonTextReader : JsonReader, IDisposable
 {
     private readonly TextReader reader;
-    private readonly StringBuilder builder = new StringBuilder();
+    private readonly StringBuilder builder = new();
 
     private JsonTextReader(Stream fs) 
     {

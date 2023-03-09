@@ -58,6 +58,8 @@ internal static class RoslynExtensions
     {
         if (symbol.IsValueType)
             return "struct";
+        else if (symbol.IsRecord)
+            return "record";
         return "class";
     }
 }

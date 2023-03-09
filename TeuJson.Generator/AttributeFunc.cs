@@ -6,6 +6,11 @@ namespace TeuJson.Generator;
 
 public static class AttributeFunc 
 {
+    private static readonly DiagnosticDescriptor WillNotWork
+        = new("TE003", "Two serialization options are disabled.", 
+            "Two serialization options in this class are disabled", "Usage", DiagnosticSeverity.Warning, true, 
+            "Enable one of the serialization option explicitly to make it work.");
+
     public static string TName(string name, AttributeData data) 
     {
         string final = "";
@@ -75,7 +80,7 @@ public static class AttributeFunc
         return false;
     }
 
-    public static JsonOptions GetOptions(AttributeData data) 
+    public static JsonOptions GetOptions(SourceProductionContext ctx, INamedTypeSymbol symbol, AttributeData data) 
     {
         bool serializable = false;
         bool deserializable = false;
@@ -94,6 +99,8 @@ public static class AttributeFunc
                 
             }
         }
+        if (!serializable && !deserializable)
+            ctx.ReportDiagnostic(Diagnostic.Create(WillNotWork, symbol.Locations[0]));
         return new JsonOptions 
         {
             Serializable = serializable,
@@ -188,13 +195,13 @@ public static class AttributeFunc
                 var val = (IfNullOptions)value;
                 return val switch 
                 {
-                    IfNullOptions.Ignore => false,
-                    IfNullOptions.NullPersist => true,
-                    _ => false
+                    IfNullOptions.Ignore => true,
+                    IfNullOptions.NullPersist => false,
+                    _ => true
                 };
             }
         }
-        return false;
+        return true;
     }
 }
 

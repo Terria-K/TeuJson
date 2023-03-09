@@ -20,8 +20,7 @@ public abstract class JsonReader
             if (Token != JsonToken.Key)
                 throw new Exception($"Expected a key, found: {Token} on Line {Line} Column {Column}");
 
-            var key = Value as string;
-            if (key != null) 
+            if (Value is string key)
             {
                 value[key] = ReadValue();
             }
@@ -47,6 +46,7 @@ public abstract class JsonReader
 
     private JsonValue ReadValueFromToken() 
     {
+#pragma warning disable IDE0066
         switch (Token) 
         {
             case JsonToken.LParent:
@@ -54,6 +54,7 @@ public abstract class JsonReader
             case JsonToken.LBracket:
                 return ReadArray();
         }
+#pragma warning restore
         
         return Value switch 
         {

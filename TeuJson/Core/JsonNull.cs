@@ -5,7 +5,7 @@ namespace TeuJson;
 
 public sealed class JsonNull : JsonValue
 {
-    internal static JsonNull NullReference = new JsonNull();
+    internal static JsonNull NullReference = new();
     public JsonNull() : base(JsonToken.Null)
     {
     }
@@ -62,9 +62,9 @@ public sealed class JsonNull : JsonValue
 
     public override IEnumerable<KeyValuePair<string, JsonValue>> Pairs => Enumerable.Empty<KeyValuePair<string, JsonValue>>();
 
-    public override JsonArray AsJsonArray => new JsonArray();
+    public override JsonArray AsJsonArray => new();
 
-    public override JsonObject AsJsonObject => new JsonObject();
+    public override JsonObject AsJsonObject => new();
 
     public override void Add(JsonValue value)
     {

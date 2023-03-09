@@ -33,6 +33,6 @@
 	"ValueDictionary": { },
 	"Values": { },
 	"RawValue": null,
-	"DefaultValue": 0,
-	"IgnoreMe": null
+	"NullableStructure": null,
+	"DefaultValue": 0
 }

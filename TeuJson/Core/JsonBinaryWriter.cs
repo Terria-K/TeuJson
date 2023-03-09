@@ -11,7 +11,7 @@ public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable
 public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable, IAsyncDisposable
 #endif
 {
-    private readonly Stack<long> positions = new Stack<long>();
+    private readonly Stack<long> positions = new();
     private readonly BinaryWriter writer;
 
     private JsonBinaryWriter(Stream fs) 

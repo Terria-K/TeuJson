@@ -45,25 +45,21 @@ public partial class Structure
     public NullishStructure? NullableStructure { get; set; }
 
     [TeuObject]
+    [IfNull(IfNullOptions.NullPersist)]
     public int DefaultValue;
 
     [IfNull(IfNullOptions.Ignore)]
     [TeuObject]
     public NullishStructure? IgnoreMe;
-    public JsonValue NoNull() 
-    {
-        return new JsonNull();
-    }
 }
 
 [TeuJsonSerializable(Deserializable = true, Serializable = true)]
 public partial struct EmptyStructure {}
 [TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public partial class NullishStructure 
-{
-    [Ignore]
-    public static NullishStructure Default = new NullishStructure();
-}
+public partial class NullishStructure {}
+
+[TeuJsonSerializable]
+public partial class TestWillNotWork {}
 
 public static class LocalConverter 
 {
