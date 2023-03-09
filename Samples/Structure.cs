@@ -35,6 +35,9 @@ public partial class Structure
 
     public int[,]? Array2D { get; set; }
     public EmptyStructure[]? Structures { get; set; }
+    public EmptyStructure StructureObject { get; set; }
+    public Dictionary<string, EmptyStructure>? Diction { get; set; }
+
 }
 
 [TeuJsonSerializable(Deserializable = true, Serializable = true)]

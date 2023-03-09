@@ -146,8 +146,14 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     // List
                     if (typeArguments.Length == 1)
                         additionalCall = ListCheck(typeArguments[0].Name, isSerialize);
-                    else if (typeArguments.Length == 2)
-                        additionalCall = AttributeFunc.GetMethodToCallForDictionary(isSerialize);
+                    else if (typeArguments.Length == 2) 
+                    {
+                        if (typeSymbol.TypeArguments[0].Name != "String")
+                            throw new NotSupportedException("Key types other than System.String are not supported!");
+                        var typeName = typeSymbol.TypeArguments[1].Name;
+                        additionalCall = AttributeFunc.GetMethodToCallForDictionary(isSerialize, typeName);
+                    }
+
                     else
                         throw new Exception("Three type arguments is not supported!");
                 }
@@ -161,9 +167,9 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     additionalCall = Array2DCheck(arrayName, isSerialize);
             }
 
-            if (AttributeFunc.CheckIfDeserializable(sym, attribute, isSerialize))
+            if (AttributeFunc.CheckIfDeserializable(sym, attribute, isSerialize, out string n))
             {
-                additionalCall = AttributeFunc.GetMethodToCall(isSerialize);
+                additionalCall = AttributeFunc.GetMethodToCall(isSerialize, n);
             }
             if (isSerialize)
                 sb.AppendLine($"[\"{name}\"] = {sym.Name}{additionalCall},");

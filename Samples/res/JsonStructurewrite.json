@@ -1,4 +1,6 @@
 {
+	"StructureObject": { },
+	"Diction": { },
 	"array": [
 		2, 
 		3, 
@@ -27,5 +29,6 @@
 		}
 	],
 	"IsNull": true,
-	"Array2D": [ ]
+	"Array2D": [ ],
+	"Structures": [ ]
 }

@@ -49,15 +49,16 @@ public static class AttributeFunc
         return false;
     }
 
-    public static bool CheckIfDeserializable(ISymbol symbol, INamedTypeSymbol? json, bool isSerialize) 
+    public static bool CheckIfDeserializable(ISymbol symbol, INamedTypeSymbol? json, bool isSerialize, out string name) 
     {
         var interfaceToCheck = GetStatusInterface(isSerialize);
-        var interfaceAttribute = interfaceToCheck + "Attribute";
+        var interfaceAttribute = "TeuJsonSerializableAttribute";
         if (symbol is IPropertySymbol prop) 
         {
             if (prop.Type.Interfaces.Any(x => x.Name == interfaceToCheck) || 
             prop.Type.GetAttributes().Any(x => x.AttributeClass?.Name == interfaceAttribute))
             {
+                name = prop.Type.Name;
                 return true;
             }
         }
@@ -66,10 +67,11 @@ public static class AttributeFunc
             if (field.Type.Interfaces.Any(x => x.Name == interfaceToCheck) || 
             field.Type.GetAttributes().Any(x => x.AttributeClass?.Name == interfaceAttribute))
             {
+                name = field.Type.Name;
                 return true;
             }
         }
-
+        name = "Unknown";
         return false;
     }
 
@@ -166,18 +168,18 @@ public static class AttributeFunc
         return "}";
     }
 
-    public static string GetMethodToCall(bool serializable) 
+    public static string GetMethodToCall(bool serializable, string symbolName) 
     {
         if (serializable)
             return ".Serialize()";
-        return ".Deserialize(obj)";
+        return $".Convert<{symbolName}>()";
     }
 
-    public static string GetMethodToCallForDictionary(bool serializable) 
+    public static string GetMethodToCallForDictionary(bool serializable, string symbolName) 
     {
         if (serializable)
             return ".ToJsonObject()";
-        return ".ToDictionary()";
+        return $".ToDictionary<{symbolName}>()";
     }
 }
 
