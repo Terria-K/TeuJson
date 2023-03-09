@@ -60,11 +60,6 @@ public abstract class JsonWriter
                 WriteValue(value.AsString);
                 return;
             case JsonToken.Number:
-                if (value is JsonValue<bool> Bool)
-                {
-                    WriteValue(Bool.AsBoolean);
-                    return;
-                }
                 if (value is JsonValue<decimal> Decimal)
                 {
                     WriteValue(Decimal.AsDecimal);
@@ -129,7 +124,7 @@ public abstract class JsonWriter
                 }
                 if (value is JsonValue<ulong> ULong)
                 {
-                    WriteValue(ULong.AsUInt32);
+                    WriteValue(ULong.AsUInt64);
                     return;
                 }
                 break;

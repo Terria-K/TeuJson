@@ -1,3 +1,4 @@
+#pragma warning disable IDE0060
 using System;
 
 namespace TeuJson.Attributes;
@@ -7,6 +8,7 @@ public class CustomAttribute : Attribute
 {
     public string? Write;
     public string? Read;
+
     public CustomAttribute(string converter) {}
 
 

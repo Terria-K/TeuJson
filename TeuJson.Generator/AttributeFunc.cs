@@ -11,7 +11,7 @@ public static class AttributeFunc
             "Two serialization options in this class are disabled", "Usage", DiagnosticSeverity.Warning, true, 
             "Enable one of the serialization option explicitly to make it work.");
 
-    public static string TName(string name, AttributeData data) 
+    public static string TName(AttributeData data) 
     {
         string final = "";
         if (!data.ConstructorArguments.IsEmpty) 
@@ -54,7 +54,7 @@ public static class AttributeFunc
         return false;
     }
 
-    public static bool CheckIfDeserializable(ISymbol symbol, INamedTypeSymbol? json, bool isSerialize, out string name) 
+    public static bool CheckIfDeserializable(ISymbol symbol, bool isSerialize, out string name) 
     {
         var interfaceToCheck = GetStatusInterface(isSerialize);
         var interfaceAttribute = "TeuJsonSerializableAttribute";

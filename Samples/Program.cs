@@ -7,8 +7,6 @@ using TeuJson;
 
 var reader = JsonTextReader.FromFile("Samples/res/Jsontester.json");
 
-var minimalReader = JsonTextReader.FromFile("Samples/res/JsontesterMinimal.json");
-
 
 JsonTextWriter.WriteToFile("Samples/res/Jsontesterwrite.json", reader);
 

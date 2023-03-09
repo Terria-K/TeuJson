@@ -91,16 +91,15 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 sb.AppendLine("namespace " + ns + ";");
 
             if (option.Deserializable)
-                GenerateSource(ctx, attribute, symbol, members, sb, false);
+                GenerateSource(ctx, symbol, members, sb, false);
             if (option.Serializable) 
-                GenerateSource(ctx, attribute, symbol, members, sb, true);
+                GenerateSource(ctx, symbol, members, sb, true);
             ctx.AddSource($"{symbol.Name}.g.cs", sb.ToString());
         }
     }
 
     private static void GenerateSource(
         SourceProductionContext ctx, 
-        INamedTypeSymbol? attribute, 
         INamedTypeSymbol symbol, 
         List<ISymbol> members,
         StringBuilder sb,
@@ -150,7 +149,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 
                 if (attributeClassName == "NameAttribute")
                 {
-                    name = AttributeFunc.TName(name, attr);
+                    name = AttributeFunc.TName(attr);
                 }
                 if (attributeClassName == "CustomAttribute") 
                 {
@@ -220,7 +219,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     additionalCall = Array2DCheck(arrayName, isSerialize);
             }
 
-            if (AttributeFunc.CheckIfDeserializable(sym, attribute, isSerialize, out string n))
+            if (AttributeFunc.CheckIfDeserializable(sym, isSerialize, out string n))
             {
                 additionalCall = AttributeFunc.GetMethodToCall(isSerialize, n);
                 if (isSerialize) 

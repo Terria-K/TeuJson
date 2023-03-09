@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace TeuJson;
@@ -109,20 +110,24 @@ public class JsonValue<T> : JsonValue
     public override JsonValue this[string key] 
     { 
         get => JsonNull.NullReference;
-        set => throw new System.InvalidOperationException(); 
+        set => throw new InvalidOperationException(); 
     }
     public override JsonValue this[int idx] 
     { 
         get => JsonNull.NullReference;
-        set => throw new System.InvalidOperationException(); 
+        set => throw new InvalidOperationException(); 
     }
 
     public override char AsChar 
     {
         get 
         {
-            if (IsNumber && Value is char value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is char value)
+                    return value;
+                return Convert.ToChar(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && char.TryParse(str, out char result))
                 return result;
@@ -134,8 +139,12 @@ public class JsonValue<T> : JsonValue
     {
         get 
         {
-            if (IsNumber && Value is byte value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is byte value)
+                    return value;
+                return Convert.ToByte(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && byte.TryParse(str, out byte result))
                 return result;
@@ -147,8 +156,12 @@ public class JsonValue<T> : JsonValue
     {
         get 
         {
-            if (IsNumber && Value is short value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is short value)
+                    return value;
+                return Convert.ToInt16(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && short.TryParse(str, out short result))
                 return result;
@@ -160,8 +173,12 @@ public class JsonValue<T> : JsonValue
     {
         get 
         {
-            if (IsNumber && Value is int value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is int value)
+                    return value;
+                return Convert.ToInt32(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && int.TryParse(str, out int result))
                 return result;
@@ -188,8 +205,12 @@ public class JsonValue<T> : JsonValue
     {
         get 
         {
-            if (IsNumber && Value is long value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is long value)
+                    return value;
+                return Convert.ToInt64(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && long.TryParse(str, out long result))
                 return result;
@@ -201,8 +222,12 @@ public class JsonValue<T> : JsonValue
     {
         get 
         {
-            if (IsNumber && Value is sbyte value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is sbyte value)
+                    return value;
+                return Convert.ToSByte(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && sbyte.TryParse(str, out sbyte result))
                 return result;
@@ -214,8 +239,12 @@ public class JsonValue<T> : JsonValue
     {
         get 
         {
-            if (IsNumber && Value is ushort value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is ushort value)
+                    return value;
+                return Convert.ToUInt16(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && ushort.TryParse(str, out ushort result))
                 return result;
@@ -227,8 +256,12 @@ public class JsonValue<T> : JsonValue
     {
         get 
         {
-            if (IsNumber && Value is uint value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is uint value)
+                    return value;
+                return Convert.ToUInt32(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && uint.TryParse(str, out uint result))
                 return result;
@@ -240,8 +273,12 @@ public class JsonValue<T> : JsonValue
     {
         get 
         {
-            if (IsNumber && Value is ulong value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is ulong value)
+                    return value;
+                return Convert.ToUInt64(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && ulong.TryParse(str, out ulong result))
                 return result;
@@ -267,8 +304,12 @@ public class JsonValue<T> : JsonValue
     {
         get 
         {
-            if (IsNumber && Value is float value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is float value)
+                    return value;
+                return Convert.ToSingle(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && float.TryParse(str, out float result))
                 return result;
@@ -280,8 +321,12 @@ public class JsonValue<T> : JsonValue
     {
         get 
         {
-            if (IsNumber && Value is double value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is double value)
+                    return value;
+                return Convert.ToDouble(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && double.TryParse(str, out double result))
                 return result;
@@ -293,8 +338,12 @@ public class JsonValue<T> : JsonValue
     {
         get 
         {
-            if (IsNumber && Value is decimal value) 
-                return value;
+            if (IsNumber) 
+            {
+                if (Value is decimal value)
+                    return value;
+                return Convert.ToDecimal(Value, NumberFormatInfo.InvariantInfo);
+            }
             
             if (IsString && Value is string str && decimal.TryParse(str, out decimal result))
                 return result;
