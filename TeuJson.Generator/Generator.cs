@@ -87,10 +87,13 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         bool isSerialize 
     )
     {
+
         sb.AppendLine($"partial {symbol.ClassOrStruct()} {symbol.Name} : {AttributeFunc.GetStatusInterface(isSerialize)}");
         sb.AppendLine("{");
         sb.AppendLine(AttributeFunc.GetStatusMethod(isSerialize));
         sb.AppendLine("{");
+        if (isSerialize) 
+            sb.AppendLine("var __builder = new JsonObject();");
         foreach (var sym in members)
         {
             if (sym is not IPropertySymbol && sym is not IFieldSymbol)
@@ -109,6 +112,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 
             var additionalCall = "";
             var directCall = false;
+            bool ifNull = false;
 
             foreach (var attr in sym.GetAttributes())
             {
@@ -129,11 +133,15 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     if (directCall) 
                     {
                         if (isSerialize)
-                            sb.AppendLine($"[\"{name}\"] = {additionalCall}({sym.Name}),");
+                            sb.AppendLine($"__builder[\"{name}\"] = {additionalCall}({sym.Name});");
                         else
                             sb.AppendLine($"{sym.Name} = {additionalCall}(obj[\"{name}\"]);");
                         goto Ignore;
                     }
+                }
+                if (attributeClassName == "IfNullAttribute") 
+                {
+                    ifNull = AttributeFunc.IfNull(attr);
                 }
             }
             if (type is not null && type is INamedTypeSymbol typeSymbol)
@@ -170,15 +178,41 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             if (AttributeFunc.CheckIfDeserializable(sym, attribute, isSerialize, out string n))
             {
                 additionalCall = AttributeFunc.GetMethodToCall(isSerialize, n);
+                if (isSerialize) 
+                {
+
+                    if (sym is IPropertySymbol pr && pr.Type is INamedTypeSymbol typeS && typeS.ClassOrStruct() == "class") 
+                    {
+                        sb.AppendLine($"if ({sym.Name} != null)");
+                        sb.AppendLine($"__builder[\"{name}\"] = {sym.Name}{additionalCall};");
+                        if (ifNull)
+                            goto Ignore;
+                        sb.AppendLine($"else");
+                        sb.AppendLine($"__builder[\"{name}\"] = new JsonNull();");
+                    }
+                    else if (sym is IFieldSymbol fs && fs.Type is INamedTypeSymbol fsTypeS && fsTypeS.ClassOrStruct() == "class")  
+                    {
+                        sb.AppendLine($"if ({sym.Name} != null)");
+                        sb.AppendLine($"__builder[\"{name}\"] = {sym.Name}{additionalCall};");
+                        if (ifNull)
+                            goto Ignore;
+                        sb.AppendLine($"else");
+                        sb.AppendLine($"__builder[\"{name}\"] = new JsonNull();");
+                    }
+                    goto Ignore;
+                }
+
             }
             if (isSerialize)
-                sb.AppendLine($"[\"{name}\"] = {sym.Name}{additionalCall},");
+                sb.AppendLine($"__builder[\"{name}\"] = {sym.Name}{additionalCall};");
             else
                 sb.AppendLine($"{sym.Name} = obj[\"{name}\"]{additionalCall};");
             Ignore:
             sb.Append("");
         }
-        sb.AppendLine(AttributeFunc.GetFunctionEnd(isSerialize));
+        if (isSerialize)
+            sb.AppendLine("return __builder;");
+        sb.AppendLine("}");
         sb.AppendLine("}");
     }
 

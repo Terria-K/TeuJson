@@ -105,14 +105,15 @@ public abstract class JsonWriter
                     WriteValue(Int.AsInt32);
                     return;
                 }
-                if (value is JsonValue<nint> NInt)
-                {
-                    WriteValue(NInt.AsIntPtr);
-                    return;
-                }
                 if (value is JsonValue<uint> UInt)
                 {
                     WriteValue(UInt.AsUInt32);
+                    return;
+                }
+#if !NETFRAMEWORK
+                if (value is JsonValue<nint> NInt)
+                {
+                    WriteValue(NInt.AsIntPtr);
                     return;
                 }
                 if (value is JsonValue<nuint> NUInt)
@@ -120,6 +121,7 @@ public abstract class JsonWriter
                     WriteValue(NUInt.AsUIntPtr);
                     return;
                 }
+#endif
                 if (value is JsonValue<long> Long)
                 {
                     WriteValue(Long.AsInt64);

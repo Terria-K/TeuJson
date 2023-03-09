@@ -41,10 +41,29 @@ public partial class Structure
     public Dictionary<string, JsonValue>? Values { get; set; }
     public JsonValue? RawValue { get; set; }
 
+    [IfNull(IfNullOptions.NullPersist)]
+    public NullishStructure? NullableStructure { get; set; }
+
+    [TeuObject]
+    public int DefaultValue;
+
+    [IfNull(IfNullOptions.Ignore)]
+    [TeuObject]
+    public NullishStructure? IgnoreMe;
+    public JsonValue NoNull() 
+    {
+        return new JsonNull();
+    }
 }
 
 [TeuJsonSerializable(Deserializable = true, Serializable = true)]
 public partial struct EmptyStructure {}
+[TeuJsonSerializable(Deserializable = true, Serializable = true)]
+public partial class NullishStructure 
+{
+    [Ignore]
+    public static NullishStructure Default = new NullishStructure();
+}
 
 public static class LocalConverter 
 {

@@ -1377,7 +1377,8 @@ public static partial class JsonUtility
         return jsonObj;
     }
 
-    public static nint[]? ConvertToArrayIntPtr(this JsonValue value) 
+    #if !NETFRAMEWORK
+        public static nint[]? ConvertToArrayIntPtr(this JsonValue value) 
     {
         if (value.IsNull || value.Count <= 0)
             return null;
@@ -1474,8 +1475,7 @@ public static partial class JsonUtility
         }
         return jsonObj;
     }
-
-    public static nuint[]? ConvertToArrayUIntPtr(this JsonValue value) 
+        public static nuint[]? ConvertToArrayUIntPtr(this JsonValue value) 
     {
         if (value.IsNull || value.Count <= 0)
             return null;
@@ -1572,6 +1572,6 @@ public static partial class JsonUtility
         }
         return jsonObj;
     }
+    #endif
 
-    
 }

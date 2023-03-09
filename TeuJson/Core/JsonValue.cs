@@ -19,13 +19,11 @@ public abstract class JsonValue
     public abstract byte AsByte { get; }
     public abstract short AsInt16 { get; }
     public abstract int AsInt32 { get; }
-    public abstract nint AsIntPtr { get; }
     public abstract long AsInt64 { get; }
     public abstract sbyte AsSByte { get; }
     public abstract ushort AsUInt16 { get; }
     public abstract uint AsUInt32 { get; }
     public abstract ulong AsUInt64 { get; }
-    public abstract nuint AsUIntPtr { get; }
     public abstract float AsSingle { get; }
     public abstract double AsDouble { get; }
     public abstract decimal AsDecimal { get; }
@@ -33,6 +31,11 @@ public abstract class JsonValue
     public abstract string AsString { get; }
     public abstract JsonArray AsJsonArray { get; }
     public abstract JsonObject AsJsonObject { get; }
+
+#if !NETFRAMEWORK
+    public abstract nint AsIntPtr { get; }
+    public abstract nuint AsUIntPtr { get; }
+#endif
 
 
     public abstract JsonValue this[string key] { get; set; }
@@ -64,14 +67,17 @@ public abstract class JsonValue
     public static implicit operator JsonValue(short value) => new JsonValue<short>(JsonToken.Number, value);
     public static implicit operator JsonValue(ushort value) => new JsonValue<ushort>(JsonToken.Number, value);
     public static implicit operator JsonValue(int value) => new JsonValue<int>(JsonToken.Number, value);
-    public static implicit operator JsonValue(nint value) => new JsonValue<nint>(JsonToken.Number, value);
     public static implicit operator JsonValue(uint value) => new JsonValue<uint>(JsonToken.Number, value);
     public static implicit operator JsonValue(long value) => new JsonValue<long>(JsonToken.Number, value);
     public static implicit operator JsonValue(ulong value) => new JsonValue<ulong>(JsonToken.Number, value);
-    public static implicit operator JsonValue(nuint value) => new JsonValue<nuint>(JsonToken.Number, value);
+
     public static implicit operator JsonValue(string? value) => new JsonValue<string>(JsonToken.String, value ?? "");
     public static implicit operator JsonValue(List<JsonValue> value) => new JsonArray(value);
     public static implicit operator JsonValue(JsonValue[] value) => new JsonArray(value);
+#if !NETFRAMEWORK
+    public static implicit operator JsonValue(nint value) => new JsonValue<nint>(JsonToken.Number, value);
+    public static implicit operator JsonValue(nuint value) => new JsonValue<nuint>(JsonToken.Number, value);
+#endif
 
     public static implicit operator bool(JsonValue value) => value.AsBoolean;
     public static implicit operator float(JsonValue value) => value.AsSingle;
@@ -82,12 +88,14 @@ public abstract class JsonValue
     public static implicit operator short(JsonValue value) => value.AsInt16;
     public static implicit operator ushort(JsonValue value) => value.AsUInt16;
     public static implicit operator int(JsonValue value) => value.AsInt32;
-    public static implicit operator nint(JsonValue value) => value.AsIntPtr;
     public static implicit operator uint(JsonValue value) => value.AsUInt32;
-    public static implicit operator nuint(JsonValue value) => value.AsUIntPtr;
     public static implicit operator long(JsonValue value) => value.AsInt64;
     public static implicit operator ulong(JsonValue value) => value.AsUInt64;
     public static implicit operator string(JsonValue value) => value.AsString;
+#if !NETFRAMEWORK
+    public static implicit operator nint(JsonValue value) => value.AsIntPtr;
+    public static implicit operator nuint(JsonValue value) => value.AsUIntPtr;
+#endif
 }
 
 public class JsonValue<T> : JsonValue
@@ -161,6 +169,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
+#if !NETFRAMEWORK
     public override nint AsIntPtr 
     {
         get 
@@ -173,6 +182,7 @@ public class JsonValue<T> : JsonValue
             return 0;
         }
     }
+#endif
 
     public override long AsInt64
     {
@@ -239,6 +249,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
+#if !NETFRAMEWORK
     public override nuint AsUIntPtr 
     {
         get 
@@ -250,6 +261,7 @@ public class JsonValue<T> : JsonValue
             return 0; 
         }
     }
+#endif
 
     public override float AsSingle 
     {

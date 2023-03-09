@@ -1,5 +1,7 @@
+using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TeuJson;
 
@@ -54,6 +56,16 @@ public class JsonConvert
 
     public static JsonValue Serialize(ITeuJsonSerializable serializable) 
     {
+        if (serializable == null)
+            return JsonNull.NullReference;
+        return serializable.Serialize();
+    }
+
+    public static JsonValue Serialize(ITeuJsonSerializable serializable, Func<JsonValue>? defaultImpl = null) 
+    {
+        if (serializable == null) 
+            return defaultImpl?.Invoke() ?? JsonNull.NullReference;
+        
         return serializable.Serialize();
     }
 
@@ -72,4 +84,22 @@ public class JsonConvert
             Minimal = !pretty
         });
     }
+
+#if !NETFRAMEWORK
+    public static async Task SerializeToFileAsync(ITeuJsonSerializable serializable, string path, bool pretty = true) 
+    {
+        await JsonTextWriter.WriteToFileAsync(path, serializable.Serialize(), new JsonTextWriterOptions 
+        {
+            Minimal = !pretty
+        });
+    }
+
+    public static async Task SerializeToStreamAsync(JsonValue value, Stream fs, bool pretty = true) 
+    {
+        await JsonTextWriter.WriteToStreamAsync(fs, value, new JsonTextWriterOptions 
+        {
+            Minimal = !pretty
+        });
+    }
+#endif
 }

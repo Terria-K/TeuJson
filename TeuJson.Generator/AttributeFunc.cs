@@ -157,15 +157,8 @@ public static class AttributeFunc
     public static string GetStatusMethod(bool serializable) 
     {
         if (serializable)
-            return "public JsonObject Serialize() => new JsonObject";
+            return "public JsonObject Serialize()";
         return "public void Deserialize(JsonObject obj)";
-    }
-
-    public static string GetFunctionEnd(bool serializable) 
-    {
-        if (serializable)
-            return "};";
-        return "}";
     }
 
     public static string GetMethodToCall(bool serializable, string symbolName) 
@@ -184,10 +177,41 @@ public static class AttributeFunc
             return $".AsDictionary()";
         return $".ToDictionary<{symbolName}>()";
     }
+
+    public static bool IfNull(AttributeData data) 
+    {
+        if (!data.ConstructorArguments.IsEmpty) 
+        {
+            var value = data.ConstructorArguments[0].Value;
+            if (value != null) 
+            {
+                var val = (IfNullOptions)value;
+                return val switch 
+                {
+                    IfNullOptions.Ignore => false,
+                    IfNullOptions.NullPersist => true,
+                    _ => false
+                };
+            }
+        }
+        return false;
+    }
 }
 
 public struct JsonOptions 
 {
     public bool Serializable;
     public bool Deserializable;
+}
+
+public struct DefaultImplementationOptions 
+{
+    public bool Ignore;
+    public string Call;
+}
+
+public enum IfNullOptions 
+{
+    NullPersist,
+    Ignore
 }

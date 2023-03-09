@@ -30,8 +30,9 @@
 	"Array2D": [ ],
 	"Structures": [ ],
 	"StructureList": [ ],
-	"StructureObject": { },
 	"ValueDictionary": { },
 	"Values": { },
-	"RawValue": null
+	"RawValue": null,
+	"DefaultValue": 0,
+	"IgnoreMe": null
 }

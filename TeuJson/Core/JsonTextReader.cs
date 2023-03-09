@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TeuJson;
 
@@ -82,7 +83,12 @@ public sealed class JsonTextReader : JsonReader, IDisposable
             builder.Clear();
             var first = next;
             builder.Append(next);
+#if !NETFRAMEWORK
             while (PeekChar(out next) && !("\r\n,}]").Contains(next)) 
+#else
+            while (PeekChar(out next) && !("\r\n,}]").Contains(next.ToString())) 
+#endif
+
             {
                 builder.Append(next);
                 SkipChar();

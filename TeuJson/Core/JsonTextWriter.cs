@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace TeuJson;
 
@@ -14,7 +15,11 @@ public struct JsonTextWriterOptions
     public bool Minimal;
 }
 
+#if NETFRAMEWORK
 public sealed class JsonTextWriter : JsonWriter, IDisposable
+#else
+public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
+#endif
 {
     private readonly TextWriter writer;
     private bool minimal;
@@ -62,6 +67,39 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable
         using var textWriter = new JsonTextWriter(fs, options);
         textWriter.WriteJson(value);
     }
+
+#if !NETFRAMEWORK
+    public static async Task WriteToFileAsync(string path, JsonValue value) 
+    {
+        using var fs = File.Create(path);
+        await using var textWriter = new JsonTextWriter(fs);
+        textWriter.WriteJson(value);
+    }
+
+    public static async Task WriteToFileAsync(string path, JsonValue value, JsonTextWriterOptions options) 
+    {
+        using var fs = File.Create(path);
+        await using var textWriter = new JsonTextWriter(fs, options);
+        textWriter.WriteJson(value);
+    }
+
+    public static async Task WriteToStreamAsync(Stream fs, JsonValue value) 
+    {
+        await using var textWriter = new JsonTextWriter(fs);
+        textWriter.WriteJson(value);
+    }
+
+    public static async Task WriteToStreamAsync(Stream fs, JsonValue value, JsonTextWriterOptions options) 
+    {
+        await using var textWriter = new JsonTextWriter(fs, options);
+        textWriter.WriteJson(value);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await writer.DisposeAsync();
+    }
+#endif
 
     private void Newline() 
     {
