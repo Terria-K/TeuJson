@@ -29,6 +29,7 @@
 	"IsNull": true,
 	"Array2D": [ ],
 	"Structures": [ ],
+	"StructureList": [ ],
 	"StructureObject": { },
 	"ValueDictionary": { },
 	"Values": { },

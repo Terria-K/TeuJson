@@ -51,7 +51,7 @@ partial class TeuJsonGenerator
             }
             #>
 
-            _ => ".ConvertToArray()",
+            _ => $".ConvertToArray<{typeName.Replace("[]", "")}>()",
         };
     }
 
@@ -74,7 +74,7 @@ partial class TeuJsonGenerator
             }
             #>
 
-            _ => ".ConvertToArray2D()",
+            _ => $".ConvertToArray2D<{typeName.Replace("[*,*]", "")}>()",
         };
     }
 
@@ -95,7 +95,7 @@ nameof(<#=type#>) => ".ConvertToList<#=type#>()",
                 }
             #>
 
-            _ => ".ConvertToList()",
+            _ => $".ConvertToList<{typeName}>()",
         };
     }
 }

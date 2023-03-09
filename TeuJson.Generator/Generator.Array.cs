@@ -86,7 +86,7 @@ partial class TeuJsonGenerator
             nameof(IntPtr) => ".ConvertToListIntPtr()",
             nameof(UIntPtr) => ".ConvertToListUIntPtr()",
             
-            _ => ".ConvertToList()",
+            _ => $".ConvertToList<{typeName}>()",
         };
     }
 }
