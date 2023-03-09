@@ -41,6 +41,19 @@ public static partial class JsonUtility
         return dict;
     }
 
+    public static Dictionary<string, JsonValue>? AsDictionary(this JsonValue value)
+    {
+        if (value.IsNull) 
+            return null;
+        var dict = new Dictionary<string, JsonValue>();
+        var jsonObject = value.AsJsonObject;
+        foreach (var jsObj in jsonObject.AsJsonObject.Pairs) 
+        {
+            dict.Add(jsObj.Key, jsObj.Value);
+        }
+        return dict;
+    }
+
 
     public static T[]? ConvertToArray<T>(this JsonValue value) 
     where T : ITeuJsonDeserializable, new()

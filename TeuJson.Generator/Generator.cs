@@ -145,12 +145,12 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 {
                     // List
                     if (typeArguments.Length == 1)
-                        additionalCall = ListCheck(typeArguments[0].Name, isSerialize);
+                        additionalCall = ListCheck(typeArguments[0].ToDisplayString(NullableFlowState.None), isSerialize);
                     else if (typeArguments.Length == 2) 
                     {
                         if (typeSymbol.TypeArguments[0].Name != "String")
                             throw new NotSupportedException("Key types other than System.String are not supported!");
-                        var typeName = typeSymbol.TypeArguments[1].Name;
+                        var typeName = typeSymbol.TypeArguments[1].ToDisplayString(NullableFlowState.None);
                         additionalCall = AttributeFunc.GetMethodToCallForDictionary(isSerialize, typeName);
                     }
 

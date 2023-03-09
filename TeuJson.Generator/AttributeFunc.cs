@@ -58,7 +58,7 @@ public static class AttributeFunc
             if (prop.Type.Interfaces.Any(x => x.Name == interfaceToCheck) || 
             prop.Type.GetAttributes().Any(x => x.AttributeClass?.Name == interfaceAttribute))
             {
-                name = prop.Type.Name;
+                name = prop.Type.ToDisplayString(NullableFlowState.None);
                 return true;
             }
         }
@@ -67,7 +67,7 @@ public static class AttributeFunc
             if (field.Type.Interfaces.Any(x => x.Name == interfaceToCheck) || 
             field.Type.GetAttributes().Any(x => x.AttributeClass?.Name == interfaceAttribute))
             {
-                name = field.Type.Name;
+                name = field.Type.ToDisplayString(NullableFlowState.None);
                 return true;
             }
         }
@@ -177,8 +177,11 @@ public static class AttributeFunc
 
     public static string GetMethodToCallForDictionary(bool serializable, string symbolName) 
     {
+
         if (serializable)
             return ".ToJsonObject()";
+        if (symbolName == "TeuJson.JsonValue")
+            return $".AsDictionary()";
         return $".ToDictionary<{symbolName}>()";
     }
 }
