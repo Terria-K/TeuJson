@@ -166,14 +166,9 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 }
                 if (attributeClassName == "IfNullAttribute") 
                 {
-                    if (sym is IPropertySymbol p && p.Type is INamedTypeSymbol named) 
+                    if (type is INamedTypeSymbol named) 
                     {
                         if (named.ClassOrStruct() == "struct")
-                            ctx.ReportDiagnostic(Diagnostic.Create(StructIfNull, sym.Locations[0]));
-                    }
-                    else if (sym is IFieldSymbol f && f.Type is INamedTypeSymbol namedF) 
-                    {
-                        if (namedF.ClassOrStruct() == "struct")
                             ctx.ReportDiagnostic(Diagnostic.Create(StructIfNull, sym.Locations[0]));
                     }
                         
@@ -219,21 +214,12 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     additionalCall = Array2DCheck(arrayName, isSerialize);
             }
 
-            if (AttributeFunc.CheckIfDeserializable(sym, isSerialize, out string n))
+            if (AttributeFunc.CheckIfDeserializable(type, isSerialize, out string n))
             {
                 additionalCall = AttributeFunc.GetMethodToCall(isSerialize, n);
                 if (isSerialize) 
                 {
-                    if (sym is IPropertySymbol pr && pr.Type is INamedTypeSymbol typeS && typeS.ClassOrStruct() == "class") 
-                    {
-                        sb.AppendLine($"if ({sym.Name} != null)");
-                        sb.AppendLine($"__builder[\"{name}\"] = {sym.Name}{additionalCall};");
-                        if (ifNull)
-                            goto Ignore;
-                        sb.AppendLine($"else");
-                        sb.AppendLine($"__builder[\"{name}\"] = new JsonNull();");
-                    }
-                    else if (sym is IFieldSymbol fs && fs.Type is INamedTypeSymbol fsTypeS && fsTypeS.ClassOrStruct() == "class")  
+                    if (type is INamedTypeSymbol named && named.ClassOrStruct() == "class") 
                     {
                         sb.AppendLine($"if ({sym.Name} != null)");
                         sb.AppendLine($"__builder[\"{name}\"] = {sym.Name}{additionalCall};");

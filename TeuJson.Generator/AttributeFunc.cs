@@ -54,27 +54,20 @@ public static class AttributeFunc
         return false;
     }
 
-    public static bool CheckIfDeserializable(ISymbol symbol, bool isSerialize, out string name) 
+    public static bool CheckIfDeserializable(ITypeSymbol? type, bool isSerialize, out string name) 
     {
         var interfaceToCheck = GetStatusInterface(isSerialize);
         var interfaceAttribute = "TeuJsonSerializableAttribute";
-        if (symbol is IPropertySymbol prop) 
+        if (type == null) 
         {
-            if (prop.Type.Interfaces.Any(x => x.Name == interfaceToCheck) || 
-            prop.Type.GetAttributes().Any(x => x.AttributeClass?.Name == interfaceAttribute))
-            {
-                name = prop.Type.ToDisplayString(NullableFlowState.None);
-                return true;
-            }
+            name = "Unknown";
+            return false;
         }
-        else if (symbol is IFieldSymbol field) 
+        if (type.Interfaces.Any(x => x.Name == interfaceToCheck) || 
+        type.GetAttributes().Any(x => x.AttributeClass?.Name == interfaceAttribute))
         {
-            if (field.Type.Interfaces.Any(x => x.Name == interfaceToCheck) || 
-            field.Type.GetAttributes().Any(x => x.AttributeClass?.Name == interfaceAttribute))
-            {
-                name = field.Type.ToDisplayString(NullableFlowState.None);
-                return true;
-            }
+            name = type.ToDisplayString(NullableFlowState.None);
+            return true;
         }
         name = "Unknown";
         return false;
