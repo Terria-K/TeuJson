@@ -214,7 +214,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     additionalCall = Array2DCheck(arrayName, isSerialize);
             }
 
-            if (AttributeFunc.CheckIfDeserializable(type, isSerialize, out string n))
+            if (type != null && AttributeFunc.CheckIfDeserializable(type, isSerialize, out string n))
             {
                 additionalCall = AttributeFunc.GetMethodToCall(isSerialize, n);
                 if (isSerialize) 
