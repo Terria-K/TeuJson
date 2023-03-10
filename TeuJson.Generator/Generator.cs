@@ -215,9 +215,8 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     additionalCall = Array2DCheck(arrayName, isSerialize);
             }
 
-            if (type != null && AttributeFunc.CheckIfDeserializable(type, isSerialize, out string n))
+            if (type != null && AttributeFunc.CheckIfDeserializable(type, isSerialize))
             {
-                // additionalCall = AttributeFunc.GetMethodToCall(isSerialize, n);
                 if (isSerialize) 
                 {
                     if (type is INamedTypeSymbol named && named.ClassOrStruct() == "class") 
@@ -231,15 +230,12 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     }
                     goto Ignore;
                 }
-                sb.AppendLine($"var @__temp{tempCount} = @__obj[\"${name}\"];");
-                sb.AppendLine($"if (@__temp{tempCount}.IsNull)");
-                sb.AppendLine("{");
+                sb.AppendLine($"var @__temp{tempCount} = @__obj[\"{name}\"];");
                 if (type is INamedTypeSymbol nameType && nameType.ClassOrStruct() == "struct")
                     sb.AppendLine($"{sym.Name} = default;");
                 else
                     sb.AppendLine($"{sym.Name} = null;");
-                sb.AppendLine("}");
-                sb.AppendLine("else");
+                sb.AppendLine($"if (!@__temp{tempCount}.IsNull)");
                 sb.AppendLine("{");
                 sb.AppendLine($"var result = new {type.ToDisplayString(NullableFlowState.None)}();");
                 sb.AppendLine($"result.Deserialize(@__temp{tempCount}.AsJsonObject);");
