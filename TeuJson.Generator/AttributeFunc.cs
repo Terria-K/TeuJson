@@ -153,7 +153,7 @@ public static class AttributeFunc
     {
         if (serializable)
             return "public JsonObject Serialize()";
-        return "public void Deserialize(JsonObject obj)";
+        return "public void Deserialize(JsonObject @__obj)";
     }
 
     public static string GetMethodToCall(bool serializable, string symbolName) 

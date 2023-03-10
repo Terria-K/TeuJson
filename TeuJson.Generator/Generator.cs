@@ -12,6 +12,7 @@ namespace TeuJson.Generator;
 [Generator]
 public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 {
+    private static ulong tempCount;
     private static readonly DiagnosticDescriptor ThreeArgumentsRule 
         = new("TE001", "Three type arguments are not supported.", 
             "Three type arguments are not supported", "Usage", DiagnosticSeverity.Error, true, "Use one type argument to fix this error.");
@@ -160,7 +161,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                         if (isSerialize)
                             sb.AppendLine($"__builder[\"{name}\"] = {additionalCall}({sym.Name});");
                         else
-                            sb.AppendLine($"{sym.Name} = {additionalCall}(obj[\"{name}\"]);");
+                            sb.AppendLine($"{sym.Name} = {additionalCall}(@__obj[\"{name}\"]);");
                         goto Ignore;
                     }
                 }
@@ -216,13 +217,13 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 
             if (type != null && AttributeFunc.CheckIfDeserializable(type, isSerialize, out string n))
             {
-                additionalCall = AttributeFunc.GetMethodToCall(isSerialize, n);
+                // additionalCall = AttributeFunc.GetMethodToCall(isSerialize, n);
                 if (isSerialize) 
                 {
                     if (type is INamedTypeSymbol named && named.ClassOrStruct() == "class") 
                     {
                         sb.AppendLine($"if ({sym.Name} != null)");
-                        sb.AppendLine($"__builder[\"{name}\"] = {sym.Name}{additionalCall};");
+                        sb.AppendLine($"__builder[\"{name}\"] = {sym.Name}.Serialize();");
                         if (ifNull)
                             goto Ignore;
                         sb.AppendLine($"else");
@@ -230,12 +231,27 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     }
                     goto Ignore;
                 }
-
+                sb.AppendLine($"var @__temp{tempCount} = @__obj[\"${name}\"];");
+                sb.AppendLine($"if (@__temp{tempCount}.IsNull)");
+                sb.AppendLine("{");
+                if (type is INamedTypeSymbol nameType && nameType.ClassOrStruct() == "struct")
+                    sb.AppendLine($"{sym.Name} = default;");
+                else
+                    sb.AppendLine($"{sym.Name} = null;");
+                sb.AppendLine("}");
+                sb.AppendLine("else");
+                sb.AppendLine("{");
+                sb.AppendLine($"var result = new {type.ToDisplayString(NullableFlowState.None)}();");
+                sb.AppendLine($"result.Deserialize(@__temp{tempCount}.AsJsonObject);");
+                sb.AppendLine($"{sym.Name} = result;");
+                sb.AppendLine("}");
+                tempCount++;
+                goto Ignore;
             }
             if (isSerialize)
                 sb.AppendLine($"__builder[\"{name}\"] = {sym.Name}{additionalCall};");
             else
-                sb.AppendLine($"{sym.Name} = obj[\"{name}\"]{additionalCall};");
+                sb.AppendLine($"{sym.Name} = @__obj[\"{name}\"]{additionalCall};");
             Ignore:
             sb.Append("");
         }

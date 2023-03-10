@@ -16,7 +16,7 @@
 
 
 
-  <!-- <PropertyGroup>
+  <PropertyGroup>
     <CompilerGeneratedFilesOutputPath>$(MSBuildProjectDirectory)/Generated</CompilerGeneratedFilesOutputPath>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
@@ -26,6 +26,6 @@
       <Compile Remove="@(Generated)" />
     </ItemGroup>
     <Delete Files="@(Generated)" />
-  </Target> -->
+  </Target>
 
 </Project>
