@@ -147,9 +147,9 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             {
                 var abstractMembers = baseType?.GetMembers().OfType<ISymbol>().ToList();
                 if (abstractMembers != null)
-                    WriteMembers(ctx, abstractMembers, sb, isSerialize);
+                    WriteMembers(ctx, abstractMembers, sb, "base", isSerialize);
             }
-            WriteMembers(ctx, members, sb, isSerialize);
+            WriteMembers(ctx, members, sb, "this", isSerialize);
             if (isSerialize)
                 sb.AppendLine("return __builder;");
             sb.AppendLine("}");
@@ -160,7 +160,13 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         sb.AppendLine("}");
     }
 
-    private static void WriteMembers(SourceProductionContext ctx, List<ISymbol> members, StringBuilder sb, bool isSerialize)
+    private static void WriteMembers(
+        SourceProductionContext ctx, 
+        List<ISymbol> members, 
+        StringBuilder sb, 
+        string qualifier,
+        bool isSerialize
+    )
     {
         foreach (var sym in members)
         {
@@ -170,7 +176,8 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             if (sym is IFieldSymbol && !sym.HasAttributeName("TeuObject"))
                 continue;
 
-            var name = sym.Name;
+            var name = $"{sym.Name}";
+            var variableName = $"{qualifier}.{name}";
             ITypeSymbol? type;
             if (sym is IPropertySymbol prop)
                 type = prop.Type;
@@ -201,9 +208,9 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     if (directCall)
                     {
                         if (isSerialize)
-                            sb.AppendLine($"__builder[\"{name}\"] = {additionalCall}({sym.Name});");
+                            sb.AppendLine($"__builder[\"{name}\"] = {additionalCall}({variableName});");
                         else
-                            sb.AppendLine($"{sym.Name} = {additionalCall}(@__obj[\"{name}\"]);");
+                            sb.AppendLine($"{variableName} = {additionalCall}(@__obj[\"{name}\"]);");
                         goto Ignore;
                     }
                 }
@@ -263,8 +270,8 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 {
                     if (type is INamedTypeSymbol named && named.ClassOrStruct() == "class")
                     {
-                        sb.AppendLine($"if ({sym.Name} != null)");
-                        sb.AppendLine($"__builder[\"{name}\"] = {sym.Name}.Serialize();");
+                        sb.AppendLine($"if ({variableName} != null)");
+                        sb.AppendLine($"__builder[\"{name}\"] = {variableName}.Serialize();");
                         if (ifNull)
                             goto Ignore;
                         sb.AppendLine($"else");
@@ -274,22 +281,22 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 }
                 sb.AppendLine($"var @__temp{tempCount} = @__obj[\"{name}\"];");
                 if (type is INamedTypeSymbol nameType && nameType.ClassOrStruct() == "struct")
-                    sb.AppendLine($"{sym.Name} = default;");
+                    sb.AppendLine($"{variableName} = default;");
                 else
-                    sb.AppendLine($"{sym.Name} = null;");
+                    sb.AppendLine($"{variableName} = null;");
                 sb.AppendLine($"if (!@__temp{tempCount}.IsNull)");
                 sb.AppendLine("{");
                 sb.AppendLine($"var result = new {type.ToDisplayString(NullableFlowState.None)}();");
                 sb.AppendLine($"result.Deserialize(@__temp{tempCount}.AsJsonObject);");
-                sb.AppendLine($"{sym.Name} = result;");
+                sb.AppendLine($"{variableName} = result;");
                 sb.AppendLine("}");
                 tempCount++;
                 goto Ignore;
             }
             if (isSerialize)
-                sb.AppendLine($"__builder[\"{name}\"] = {sym.Name}{additionalCall};");
+                sb.AppendLine($"__builder[\"{name}\"] = {variableName}{additionalCall};");
             else
-                sb.AppendLine($"{sym.Name} = @__obj[\"{name}\"]{additionalCall};");
+                sb.AppendLine($"{variableName} = @__obj[\"{name}\"]{additionalCall};");
             Ignore:
             sb.Append("");
         }
