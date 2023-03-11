@@ -34,5 +34,15 @@
 	"Values": { },
 	"RawValue": null,
 	"NullableStructure": null,
-	"DefaultValue": 0
+	"Vec3": {
+		"X": 20,
+		"Y": 15,
+		"Z": 400
+	},
+	"Vec4": {
+		"X": 0,
+		"Y": 0,
+		"Z": 0,
+		"W": 0
+	}
 }

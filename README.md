@@ -62,6 +62,38 @@ The output of the file will be:
 }
 ```
 
+###  What it generates?
+It generates the code like what you've expected, there might be a special cases with classes since they can have null values. All of Serializable classes will use a fully qualified name to instantiate themselves. 
+
+The reason why the methods are `virtual` is because the class might have a derived class which can also be a serializable to override those methods. If you don't want this, mark the `class` as `sealed`. Structs do not have inheritance, so it won't have a `virtual` method.
+
+```c#
+// Source Generated code
+using TeuJson;
+
+partial class Person : ITeuJsonDeserializable
+{
+    public virtual void Deserialize(JsonObject @__obj)
+    {
+        Name = @__obj["name"];
+        Age = @__obj["Age"];
+        City = @__obj["City"];
+    }
+}
+
+partial class Rect4 : ITeuJsonSerializable
+{
+    public virtual JsonObject Serialize()
+    {
+        var __builder = new JsonObject();
+        __builder["name"] = Name;
+        __builder["Age"] = Age;
+        __builder["City"] = City;
+        return __builder;
+    }
+}
+```
+
 ## Custom Converters
 
 You can create your own converters by defining a function inside of a static class. You will not necessarily needed if you have an access to that specific class or struct.
@@ -102,7 +134,7 @@ public static class MyMathConverter
 
 ```C#
 [TeuJsonSerializable(Deserializable = true)]
-public partial class Player 
+public sealed partial class Player 
 {
     [Name("name")]
     public string Name { get; set; }

@@ -29,10 +29,14 @@ Debug.Assert(!structure.TrueOrFalse);
 Debug.Assert(structure.Field == "This is my field");
 
 structure.Positions = new List<Vector2>() { new Vector2(0, 2), new Vector2(25, 10)};
+structure.Vec4 = new Structural.Vector4();
 
 var structureObject = JsonConvert.Serialize(structure);
 
 JsonTextWriter.WriteToFile("Samples/res/JsonStructurewrite.json", structureObject);
+JsonTextWriter.WriteToFile("Samples/res/JsonStructurewriteminimal.json", structureObject, new JsonTextWriterOptions {
+    Minimal = true
+});
 
 JsonBinaryWriter.WriteToFile("Samples/res/JsonStructure.bin", structureObject);
 

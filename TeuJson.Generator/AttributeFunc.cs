@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace TeuJson.Generator;
@@ -147,11 +148,26 @@ public static class AttributeFunc
         return "ITeuJsonDeserializable";
     }
 
-    public static string GetStatusMethod(bool serializable) 
+    public static string GetStatusMethod(bool serializable, bool hasBaseType, bool isAbstract, bool isSealed, string classOrStruct) 
     {
+        if (classOrStruct == "struct") 
+        {
+            if (serializable)
+                return $"public JsonObject Serialize()";
+            return $"public void Deserialize(JsonObject @__obj)";
+        }
         if (serializable)
-            return "public JsonObject Serialize()";
-        return "public void Deserialize(JsonObject @__obj)";
+            return $"public {(hasBaseType ? $"{(isSealed ? "sealed" : "")} override" : $"{GetStatusMethodModifier(isAbstract, isSealed)}")} JsonObject Serialize()";
+        return $"public {(hasBaseType ? $"{(isSealed ? "sealed" : "")} override" : GetStatusMethodModifier(isAbstract, isSealed))} void Deserialize(JsonObject @__obj)";
+    }
+
+    private static string GetStatusMethodModifier(bool isAbstract, bool isSealed) 
+    {
+        if (isSealed)
+            return "";
+        if (isAbstract)
+            return "abstract";
+        return "virtual";
     }
 
     public static string GetMethodToCall(bool serializable, string symbolName) 
@@ -189,6 +205,18 @@ public static class AttributeFunc
         }
         return true;
     }
+
+    public static AttributeData? GetSerializeAttributeData(ImmutableArray<AttributeData> datas)
+    {
+        foreach (var data in datas) 
+        {
+            if (data.AttributeClass?.Name == "TeuJsonSerializableAttribute") 
+            {
+                return data;
+            }
+        }
+        return null;
+    } 
 }
 
 public struct JsonOptions 

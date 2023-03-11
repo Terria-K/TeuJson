@@ -44,13 +44,19 @@ public partial class Structure
     [IfNull(IfNullOptions.NullPersist)]
     public NullishStructure? NullableStructure { get; set; }
 
-    [TeuObject]
+
     [IfNull(IfNullOptions.NullPersist)]
     public int DefaultValue;
 
     [IfNull(IfNullOptions.Ignore)]
     [TeuObject]
     public NullishStructure? IgnoreMe;
+
+    [TeuObject]
+    public Vector3? Vec3;
+
+    [TeuObject]
+    public Vector4? Vec4;
 }
 
 [TeuJsonSerializable(Deserializable = true, Serializable = true)]
@@ -60,6 +66,50 @@ public partial class NullishStructure {}
 
 [TeuJsonSerializable]
 public partial class TestWillNotWork {}
+
+[TeuJsonSerializable(Deserializable = true, Serializable = true)]
+public sealed partial class Rect4 
+{ 
+    public Vector2X? Width { get; set; }
+    public Vector2X? Height { get; set; }
+}
+
+[TeuJsonSerializable(Deserializable = true, Serializable = true)]
+public partial class Vector1 
+{
+    public float X { get; set; }
+}
+
+[TeuJsonSerializable(Deserializable = true, Serializable = true)]
+public sealed partial class Vector2X : Vector1 
+{
+    public float Y { get; set; }
+}
+
+[TeuJsonSerializable(Deserializable = true, Serializable = true)]
+public partial class Vector3 : Vector1 
+{
+    public float Y { get; set; }
+    public float Z { get; set; }
+}
+
+[TeuJsonSerializable(Deserializable = true, Serializable = true)]
+public partial class Vector4 : Vector3 
+{
+    public float W { get; set; }
+}
+
+[TeuJsonSerializable(Deserializable = true, Serializable = true)]
+public abstract partial class AbstractVector 
+{
+    public float X { get; set; }
+}
+
+[TeuJsonSerializable(Deserializable = true, Serializable = true)]
+public sealed partial class Vectorized: AbstractVector
+{
+    public float Hello { get; set; }
+}
 
 public static class LocalConverter 
 {
