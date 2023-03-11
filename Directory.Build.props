@@ -7,7 +7,7 @@
 
     <PropertyGroup>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Version>1.4.0</Version>
+        <Version>1.4.1</Version>
         <RepositoryUrl>https://github.com/Terria-K/TeuJson</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <ProjectUrl>https://github.com/Terria-K/TeuJson</ProjectUrl>
