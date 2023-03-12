@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -8,7 +9,6 @@ public struct JsonTextWriterOptions
 {
     public static JsonTextWriterOptions Default => new()
     {
-        ArrayDepth = 0,
         Minimal = false
     };
     public int ArrayDepth;
@@ -23,9 +23,8 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
 {
     private readonly TextWriter writer;
     private readonly bool minimal;
-    private readonly int arrayDepth = 0;
     private int indent;
-    private int arrayIndent;
+    private Stack<byte> containerStack = new();
 
     private bool arrayBegin;
     private bool wasValue;
@@ -39,7 +38,6 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
     private JsonTextWriter(Stream fs, JsonTextWriterOptions options) 
     {
         writer = new StreamWriter(fs);
-        arrayDepth = options.ArrayDepth;
         minimal = options.Minimal;
     }
 
@@ -119,15 +117,9 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
         {
             Newline();
         }
-        else if (arrayBegin) 
+        else if (arrayBegin && containerStack.Peek() == 0) 
         {
-            if (arrayIndent < arrayDepth)
-                arrayIndent++;
-            else 
-            {
-                arrayIndent = 0;
-                Newline();
-            }
+            Newline();
         }
         
 
@@ -149,13 +141,14 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
         if (wasValue)
             writer.Write(",");
         if (wasBracket)
-            writer.Write(" ");
+            writer.Write("");
         wasBracket = true;
         wasValue = false;
     }
 
     public override void BeginArray()
     {
+        containerStack.Push(0);
         NextBracket();
         writer.Write("[");
         indent++;
@@ -164,6 +157,7 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
 
     public override void BeginObject()
     {
+        containerStack.Push(1);
         NextBracket();
         writer.Write("{");
         indent++;
@@ -176,9 +170,10 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
 
     public override void EndArray()
     {
+        containerStack.Pop();
         indent--;
         if (wasBracket)
-            writer.Write(" ");
+            writer.Write("");
         else   
             Newline();
 
@@ -190,9 +185,10 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
 
     public override void EndObject()
     {
+        containerStack.Pop();
         indent--;
         if (wasBracket)
-            writer.Write(" ");
+            writer.Write("");
         else   
             Newline();
 

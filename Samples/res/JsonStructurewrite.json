@@ -14,24 +14,20 @@
 		"x": 0,
 		"y": 0
 	},
-	"Positions": [ {
-			"X": 
-			0,
-			"Y": 
-			2
+	"Positions": [{
+			"X": 0,
+			"Y": 2
 		},{
-			"X": 
-			25,
-			"Y": 
-			10
+			"X": 25,
+			"Y": 10
 		}
 	],
 	"IsNull": true,
-	"Array2D": [ ],
-	"Structures": [ ],
-	"StructureList": [ ],
-	"ValueDictionary": { },
-	"Values": { },
+	"Array2D": [],
+	"Structures": [],
+	"StructureList": [],
+	"ValueDictionary": {},
+	"Values": {},
 	"RawValue": null,
 	"NullableStructure": null,
 	"Vec3": {
