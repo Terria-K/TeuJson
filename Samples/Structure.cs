@@ -57,6 +57,11 @@ public partial class Structure
 
     [TeuObject]
     public Vector4? Vec4;
+
+    [TeuObject]
+    public Enumeration NumberEnum;
+    [TeuObject]
+    public Enumeration TextEnum = Enumeration.C;
 }
 
 [TeuJsonSerializable(Deserializable = true, Serializable = true)]
@@ -125,4 +130,11 @@ public static class LocalConverter
         var ticks = value.Ticks;
         return new JsonValue<long>(JsonToken.Number, ticks);
     }
+}
+
+public enum Enumeration : byte
+{
+    A,
+    B,
+    C = 4
 }

@@ -89,6 +89,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             var sb = new StringBuilder();
             sb.AppendLine("// Source Generated code");
             sb.AppendLine("using TeuJson;");
+            sb.AppendLine("using System; // Might needed for some type");
             var ns = symbol.GetSymbolNamespace();
             if (!string.IsNullOrEmpty(ns))
                 sb.AppendLine("namespace " + ns + ";");
@@ -250,7 +251,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     else
                     {
                         ctx.ReportDiagnostic(Diagnostic.Create(ThreeArgumentsRule, sym.Locations[0]));
-                        goto Ignore;
+                        continue;
                     }
 
                 }
@@ -273,11 +274,11 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                         sb.AppendLine($"if ({variableName} != null)");
                         sb.AppendLine($"__builder[\"{name}\"] = {variableName}.Serialize();");
                         if (ifNull)
-                            goto Ignore;
+                            continue;
                         sb.AppendLine($"else");
                         sb.AppendLine($"__builder[\"{name}\"] = new JsonNull();");
                     }
-                    goto Ignore;
+                    continue;
                 }
                 sb.AppendLine($"var @__temp{tempCount} = @__obj[\"{name}\"];");
                 if (type is INamedTypeSymbol nameType && nameType.ClassOrStruct() == "struct")
@@ -291,12 +292,48 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 sb.AppendLine($"{variableName} = result;");
                 sb.AppendLine("}");
                 tempCount++;
-                goto Ignore;
+                continue;
             }
-            if (isSerialize)
+            if (isSerialize) 
+            {
+                if (type != null && type.IsValueType && type is INamedTypeSymbol typedSymbol) 
+                {
+                    var enumType = typedSymbol.EnumUnderlyingType;
+                    if (enumType != null) 
+                    {
+
+                        sb.AppendLine(
+                            $"__builder[\"{name}\"] = ({enumType.ToDisplayString()}){variableName}{additionalCall};"
+                        );
+                    }
+                    continue;
+                }
                 sb.AppendLine($"__builder[\"{name}\"] = {variableName}{additionalCall};");
-            else
+            }
+            else 
+            {
+                if (type != null && type.IsValueType && type is INamedTypeSymbol typedSymbol) 
+                {
+                    var enumType = typedSymbol.EnumUnderlyingType;
+                    if (enumType != null) 
+                    {
+                        sb.AppendLine($"JsonValue @__enumTemp{tempCount} = @__obj[\"{name}\"]{additionalCall};");
+                        sb.AppendLine($"if (System.Enum.TryParse(@__enumTemp{tempCount}.AsString, out {typedSymbol.Name} @t{tempCount}))");
+                        sb.AppendLine("{");
+                        sb.AppendLine($"{variableName} = @t{tempCount};");
+                        sb.AppendLine("}");
+                        sb.AppendLine("else");
+                        sb.AppendLine("{");
+                        sb.AppendLine(
+                            $"{variableName} = ({typedSymbol.Name})({enumType.ToDisplayString()})@__enumTemp{tempCount++};");
+                        sb.AppendLine("}");
+
+                    }
+                    continue;
+                }
                 sb.AppendLine($"{variableName} = @__obj[\"{name}\"]{additionalCall};");
+            }
+
             Ignore:
             sb.Append("");
         }

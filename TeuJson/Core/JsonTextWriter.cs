@@ -1,7 +1,10 @@
+#if !NETFRAMEWORK
+using System.Threading.Tasks;
+#endif
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
+
 
 namespace TeuJson;
 
@@ -21,10 +24,10 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable
 public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
 #endif
 {
+    private readonly Stack<byte> containerStack = new();
     private readonly TextWriter writer;
     private readonly bool minimal;
     private int indent;
-    private Stack<byte> containerStack = new();
 
     private bool arrayBegin;
     private bool wasValue;
@@ -279,6 +282,7 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
     public override void WriteValue(bool value)
     {
         NextValue();
+        // by default, it outputs 'True' or 'False', so we do this instead.
         writer.Write(value ? "true" : "false");
     }
 
