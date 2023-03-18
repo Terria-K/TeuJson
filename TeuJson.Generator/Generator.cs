@@ -13,23 +13,6 @@ namespace TeuJson.Generator;
 public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 {
     private static ulong tempCount;
-    private static readonly DiagnosticDescriptor ThreeArgumentsRule 
-        = new("TE001", "Three type arguments are not supported.", 
-            "Three type arguments are not supported", "Usage", DiagnosticSeverity.Error, true, "Use one type argument to fix this error.");
-
-    private static readonly DiagnosticDescriptor KeyTypeRule
-        = new("TE002", "Key types are not supported.", 
-            "Key types other than string are not supported", "Usage", DiagnosticSeverity.Error, true, "Use string as a key type instead.");
-
-    private static readonly DiagnosticDescriptor RecordRule
-        = new("TE004", "Record is not yet supported.", 
-            "Record is not yet supported, but it will come in the future.", 
-            "Usage", DiagnosticSeverity.Warning, true, "Mark it as class or struct.");
-
-    private static readonly DiagnosticDescriptor StructIfNull
-        = new("TE005", "Struct type does not need to have [IfNull] Atrribute", 
-            "Structs are not nullable, it doesn't makes sense to have this attribute.", 
-            "Usage", DiagnosticSeverity.Warning, true, "Remove the [IfNull] Attribute");
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -113,11 +96,10 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         var classOrStruct = symbol.ClassOrStruct();
         if (classOrStruct == "record")
         {
-            ctx.ReportDiagnostic(Diagnostic.Create(RecordRule, symbol.Locations[0]));
+            ctx.ReportDiagnostic(Diagnostic.Create(TeuDiagnostic.RecordRule, symbol.Locations[0]));
             return;
         }
         var hasBaseType = false;
-        var hasBaseTypeAbstract = false;
         var isAbstract = symbol.IsAbstract;
         var isSealed = symbol.IsSealed;
         var baseType = symbol.BaseType;
@@ -129,34 +111,24 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             if (serializable != null)
             {
                 hasBaseType = true;
-                hasBaseTypeAbstract = baseType.IsAbstract;
             }
         }
 
 
         sb.AppendLine($"partial {classOrStruct} {symbol.Name} : {AttributeFunc.GetStatusInterface(isSerialize)}");
         sb.AppendLine("{");
-        sb.AppendLine(AttributeFunc.GetStatusMethod(isSerialize, hasBaseType, isAbstract, isSealed, classOrStruct));
-        if (!isAbstract) 
-        {
-            sb.AppendLine("{");
-            if (isSerialize)
-                sb.AppendLine($"var __builder = {(hasBaseType && !hasBaseTypeAbstract ? "base.Serialize" : "new JsonObject")}();");
-            if (hasBaseType && !isSerialize && !hasBaseTypeAbstract)
-                sb.AppendLine("base.Deserialize(@__obj);");
-            if (hasBaseTypeAbstract) 
-            {
-                var abstractMembers = baseType?.GetMembers().OfType<ISymbol>().ToList();
-                if (abstractMembers != null)
-                    WriteMembers(ctx, abstractMembers, sb, "base", isSerialize);
-            }
-            WriteMembers(ctx, members, sb, "this", isSerialize);
-            if (isSerialize)
-                sb.AppendLine("return __builder;");
-            sb.AppendLine("}");
-        }
-        else
-            sb.Append(";\n");
+        sb.AppendLine(AttributeFunc.GetStatusMethod(isSerialize, hasBaseType, isSealed, classOrStruct));
+
+        sb.AppendLine("{");
+        if (isSerialize)
+            sb.AppendLine($"var __builder = {(hasBaseType ? "base.Serialize" : "new JsonObject")}();");
+        if (hasBaseType && !isSerialize)
+            sb.AppendLine("base.Deserialize(@__obj);");
+
+        WriteMembers(ctx, members, sb, "this", isSerialize);
+        if (isSerialize)
+            sb.AppendLine("return __builder;");
+        sb.AppendLine("}");
 
         sb.AppendLine("}");
     }
@@ -220,12 +192,14 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     if (type is INamedTypeSymbol named)
                     {
                         if (named.ClassOrStruct() == "struct")
-                            ctx.ReportDiagnostic(Diagnostic.Create(StructIfNull, sym.Locations[0]));
+                            ctx.ReportDiagnostic(Diagnostic.Create(TeuDiagnostic.StructIfNull, sym.Locations[0]));
                     }
 
                     ifNull = AttributeFunc.IfNull(attr);
                 }
             }
+
+            // Collections
             if (type is not null && type is INamedTypeSymbol typeSymbol)
             {
                 var typeArguments = typeSymbol.TypeArguments;
@@ -240,7 +214,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     {
                         if (typeSymbol.TypeArguments[0].Name != "String")
                         {
-                            ctx.ReportDiagnostic(Diagnostic.Create(KeyTypeRule, sym.Locations[0]));
+                            ctx.ReportDiagnostic(Diagnostic.Create(TeuDiagnostic.KeyTypeRule, sym.Locations[0]));
                             goto Ignore;
                         }
 
@@ -250,7 +224,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 
                     else
                     {
-                        ctx.ReportDiagnostic(Diagnostic.Create(ThreeArgumentsRule, sym.Locations[0]));
+                        ctx.ReportDiagnostic(Diagnostic.Create(TeuDiagnostic.ThreeArgumentsRule, sym.Locations[0]));
                         continue;
                     }
 
@@ -265,6 +239,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     additionalCall = Array2DCheck(arrayName, isSerialize);
             }
 
+            // Check if the class has a TeuJsonSerializableAttribute
             if (type != null && AttributeFunc.CheckIfDeserializable(type, isSerialize))
             {
                 if (isSerialize)
@@ -294,28 +269,20 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 tempCount++;
                 continue;
             }
-            if (isSerialize) 
-            {
-                if (type != null && type.IsValueType && type is INamedTypeSymbol typedSymbol) 
-                {
-                    var enumType = typedSymbol.EnumUnderlyingType;
-                    if (enumType != null) 
-                    {
 
+            // Enums
+            if (type != null && type.IsValueType && type is INamedTypeSymbol typedSymbol) 
+            {
+                var enumType = typedSymbol.EnumUnderlyingType;
+                if (enumType != null) 
+                {
+                    if (isSerialize) 
+                    {
                         sb.AppendLine(
                             $"__builder[\"{name}\"] = ({enumType.ToDisplayString()}){variableName}{additionalCall};"
                         );
                     }
-                    continue;
-                }
-                sb.AppendLine($"__builder[\"{name}\"] = {variableName}{additionalCall};");
-            }
-            else 
-            {
-                if (type != null && type.IsValueType && type is INamedTypeSymbol typedSymbol) 
-                {
-                    var enumType = typedSymbol.EnumUnderlyingType;
-                    if (enumType != null) 
+                    else 
                     {
                         sb.AppendLine($"JsonValue @__enumTemp{tempCount} = @__obj[\"{name}\"]{additionalCall};");
                         sb.AppendLine($"if (System.Enum.TryParse(@__enumTemp{tempCount}.AsString, out {typedSymbol.Name} @t{tempCount}))");
@@ -327,12 +294,18 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                         sb.AppendLine(
                             $"{variableName} = ({typedSymbol.Name})({enumType.ToDisplayString()})@__enumTemp{tempCount++};");
                         sb.AppendLine("}");
-
                     }
                     continue;
                 }
-                sb.AppendLine($"{variableName} = @__obj[\"{name}\"]{additionalCall};");
             }
+            if (isSerialize) 
+            {
+                // Implicit Serializer
+                sb.AppendLine($"__builder[\"{name}\"] = {variableName}{additionalCall};");
+                continue;
+            }
+            // Implicit Deserializer
+            sb.AppendLine($"{variableName} = @__obj[\"{name}\"]{additionalCall};");
 
             Ignore:
             sb.Append("");

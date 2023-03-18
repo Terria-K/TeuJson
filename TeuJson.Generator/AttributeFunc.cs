@@ -1,16 +1,12 @@
 using Microsoft.CodeAnalysis;
-using System;
 using System.Collections.Immutable;
 using System.Linq;
 
 namespace TeuJson.Generator;
 
-public static class AttributeFunc 
+internal static class AttributeFunc 
 {
-    private static readonly DiagnosticDescriptor WillNotWork
-        = new("TE003", "Two serialization options are disabled.", 
-            "Two serialization options in this class are disabled", "Usage", DiagnosticSeverity.Warning, true, 
-            "Enable one of the serialization option explicitly to make it work.");
+
 
     public static string TName(AttributeData data) 
     {
@@ -87,7 +83,7 @@ public static class AttributeFunc
             }
         }
         if (!serializable && !deserializable)
-            ctx.ReportDiagnostic(Diagnostic.Create(WillNotWork, symbol.Locations[0]));
+            ctx.ReportDiagnostic(Diagnostic.Create(TeuDiagnostic.WillNotWork, symbol.Locations[0]));
         return new JsonOptions 
         {
             Serializable = serializable,
@@ -148,7 +144,7 @@ public static class AttributeFunc
         return "ITeuJsonDeserializable";
     }
 
-    public static string GetStatusMethod(bool serializable, bool hasBaseType, bool isAbstract, bool isSealed, string classOrStruct) 
+    public static string GetStatusMethod(bool serializable, bool hasBaseType, bool isSealed, string classOrStruct) 
     {
         if (classOrStruct == "struct") 
         {
@@ -157,16 +153,14 @@ public static class AttributeFunc
             return $"public void Deserialize(JsonObject @__obj)";
         }
         if (serializable)
-            return $"public {(hasBaseType ? $"{(isSealed ? "sealed" : "")} override" : $"{GetStatusMethodModifier(isAbstract, isSealed)}")} JsonObject Serialize()";
-        return $"public {(hasBaseType ? $"{(isSealed ? "sealed" : "")} override" : GetStatusMethodModifier(isAbstract, isSealed))} void Deserialize(JsonObject @__obj)";
+            return $"public {(hasBaseType ? $"{(isSealed ? "sealed" : "")} override" : $"{GetStatusMethodModifier(isSealed)}")} JsonObject Serialize()";
+        return $"public {(hasBaseType ? $"{(isSealed ? "sealed" : "")} override" : GetStatusMethodModifier(isSealed))} void Deserialize(JsonObject @__obj)";
     }
 
-    private static string GetStatusMethodModifier(bool isAbstract, bool isSealed) 
+    private static string GetStatusMethodModifier(bool isSealed) 
     {
         if (isSealed)
             return "";
-        if (isAbstract)
-            return "abstract";
         return "virtual";
     }
 
@@ -219,19 +213,13 @@ public static class AttributeFunc
     } 
 }
 
-public struct JsonOptions 
+internal struct JsonOptions 
 {
     public bool Serializable;
     public bool Deserializable;
 }
 
-public struct DefaultImplementationOptions 
-{
-    public bool Ignore;
-    public string Call;
-}
-
-public enum IfNullOptions 
+internal enum IfNullOptions 
 {
     NullPersist,
     Ignore
