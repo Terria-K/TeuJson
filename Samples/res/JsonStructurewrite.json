@@ -40,5 +40,8 @@
 		"Y": 0,
 		"Z": 0,
 		"W": 0
-	}
+	},
+	"NumberEnum": 1,
+	"TextEnum": 4,
+	"Weaponry": 0
 }

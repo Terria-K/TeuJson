@@ -30,6 +30,7 @@ Debug.Assert(structure.Field == "This is my field");
 
 structure.Positions = new List<Vector2>() { new Vector2(0, 2), new Vector2(25, 10)};
 structure.Vec4 = new Structural.Vector4();
+structure.NumberEnum = Enumeration.B;
 
 var structureObject = JsonConvert.Serialize(structure);
 
