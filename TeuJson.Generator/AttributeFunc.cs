@@ -6,8 +6,6 @@ namespace TeuJson.Generator;
 
 internal static class AttributeFunc 
 {
-
-
     public static string TName(AttributeData data) 
     {
         string final = "";
