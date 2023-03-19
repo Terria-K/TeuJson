@@ -19,25 +19,20 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         var teuJsonProvider = context.SyntaxProvider
             .CreateSyntaxProvider(
                 static (node, _) => node is TypeDeclarationSyntax syntax
-                    && syntax.AttributeLists.Count > 0
-                    && syntax.Modifiers.Any(SyntaxKind.PartialKeyword),
+                    && syntax.Modifiers.Any(SyntaxKind.PartialKeyword)
+                    && syntax.BaseList?.Types.Count > 0,
                 static (ctx, _) => 
                 {
                     var jsonSyntax = (TypeDeclarationSyntax)ctx.Node;
-                    foreach (var attribListSyntax in jsonSyntax.AttributeLists) 
-                    {
-                        foreach (var attribSyntax in attribListSyntax.Attributes) 
-                        {
-                            if (ctx.SemanticModel.GetSymbolInfo(attribSyntax).Symbol is not IMethodSymbol attribSymbol)
-                                continue;
-                            
-                            var namedTypeSymbol = attribSymbol.ContainingType;
-                            var fullname = attribSymbol.ToDisplayString();
+                    var interfaces = ctx.SemanticModel.GetDeclaredSymbol(jsonSyntax)?.Interfaces;
+                    if (interfaces is null)
+                        return null;
 
-                            if (fullname == 
-                            "TeuJson.Attributes.TeuJsonSerializableAttribute.TeuJsonSerializableAttribute()")
-                                return jsonSyntax;
-                        }
+                    foreach (var @interface in interfaces) 
+                    {
+                        var fullname = @interface.ToDisplayString();
+                        if (fullname == "TeuJson.ISerialize" || fullname == "TeuJson.IDeserialize")
+                            return jsonSyntax;
                     }
                     return null;
                 }
@@ -54,34 +49,38 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
     {
         if (syn.IsDefaultOrEmpty)
             return;
-        var attribute = comp.GetTypeByMetadataName("TeuJson.Attributes.TeuJsonSerializableAttribute");
-
-        if (attribute is null)  
-            return;
         
 
-        foreach (var symbol in GetSymbols(comp, syn, "TeuJsonSerializable"))
+        foreach (var symbol in GetSymbols(comp, syn, "ISerialize"))
         {
-            var data = symbol.GetAttributes()[0];
-            var option = AttributeFunc.GetOptions(ctx, symbol, data);
-            if (!option.Deserializable && !option.Serializable)
-                continue;
-            
             var members = symbol.GetMembers().OfType<ISymbol>().ToList();
 
             var sb = new StringBuilder();
             sb.AppendLine("// Source Generated code");
             sb.AppendLine("using TeuJson;");
-            sb.AppendLine("using System; // Might needed for some type");
+            sb.AppendLine("using System;");
             var ns = symbol.GetSymbolNamespace();
             if (!string.IsNullOrEmpty(ns))
                 sb.AppendLine("namespace " + ns + ";");
 
-            if (option.Deserializable)
-                GenerateSource(ctx, symbol, members, sb, false);
-            if (option.Serializable) 
-                GenerateSource(ctx, symbol, members, sb, true);
-            ctx.AddSource($"{symbol.Name}.g.cs", sb.ToString());
+            GenerateSource(ctx, symbol, members, sb, true);
+            ctx.AddSource($"{symbol.Name}.serialize.cs", sb.ToString());
+        }
+
+        foreach (var symbol in GetSymbols(comp, syn, "IDeserialize")) 
+        {
+            var members = symbol.GetMembers().OfType<ISymbol>().ToList();
+
+            var sb = new StringBuilder();
+            sb.AppendLine("// Source Generated code");
+            sb.AppendLine("using TeuJson;");
+            sb.AppendLine("using System;");
+            var ns = symbol.GetSymbolNamespace();
+            if (!string.IsNullOrEmpty(ns))
+                sb.AppendLine("namespace " + ns + ";");
+
+            GenerateSource(ctx, symbol, members, sb, false);
+            ctx.AddSource($"{symbol.Name}.deserialize.cs", sb.ToString());
         }
     }
 
@@ -106,8 +105,8 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 
         if (baseType != null)
         {
-            var attributes = baseType.GetAttributes();
-            var serializable = AttributeFunc.GetSerializeAttributeData(attributes);
+            var interfaces = baseType.Interfaces;
+            var serializable = AttributeFunc.GetSerializeInterfaceData(interfaces);
             if (serializable != null)
             {
                 hasBaseType = true;
@@ -313,7 +312,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
     }
 
     private static IEnumerable<INamedTypeSymbol> GetSymbols(
-        Compilation compilation, ImmutableArray<TypeDeclarationSyntax?> syn, string attribute) 
+        Compilation compilation, ImmutableArray<TypeDeclarationSyntax?> syn, string serialize) 
     {
         foreach (var partialClass in syn) 
         {
@@ -324,11 +323,14 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             if (symbol is null)
                 continue;
 
-            if (HasAttributes(symbol, attribute))
+            if (HasInterfaces(symbol, serialize))
                 yield return symbol;
         }
     }
 
     private static bool HasAttributes(ISymbol symbol, string attributeName) => 
         symbol.GetAttributes().Any(attr => attr.AttributeClass!.Name.StartsWith(attributeName));
+
+    private static bool HasInterfaces(INamedTypeSymbol symbol, string interfaceName) => 
+        symbol.Interfaces.Any(intfa => intfa.Name.StartsWith(interfaceName));
 }

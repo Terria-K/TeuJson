@@ -5,7 +5,7 @@ namespace TeuJson;
 public static partial class JsonUtility 
 {
     public static T? Convert<T>(this JsonValue value) 
-    where T : ITeuJsonDeserializable, new()
+    where T : IDeserialize, new()
     {
         if (value.IsNull) 
             return default;
@@ -28,7 +28,7 @@ public static partial class JsonUtility
     }
 
     public static Dictionary<string, T>? ToDictionary<T>(this JsonValue value)
-    where T : ITeuJsonDeserializable, new()
+    where T : IDeserialize, new()
     {
         if (value.IsNull) 
             return null;
@@ -56,7 +56,7 @@ public static partial class JsonUtility
 
 
     public static T[]? ConvertToArray<T>(this JsonValue value) 
-    where T : ITeuJsonDeserializable, new()
+    where T : IDeserialize, new()
     {
         if (value.IsNull || value.Count <= 0)
             return null;
@@ -71,7 +71,7 @@ public static partial class JsonUtility
     }
 
     public static T[,]? ConvertToArray2D<T>(this JsonValue value) 
-    where T : ITeuJsonDeserializable, new()
+    where T : IDeserialize, new()
     {
         if (value.IsNull || value.Count <= 0)
             return null;
@@ -106,7 +106,7 @@ public static partial class JsonUtility
     }
 
     public static List<T>? ConvertToList<T>(this JsonValue value) 
-    where T : ITeuJsonDeserializable, new()
+    where T : IDeserialize, new()
     {
         if (value.IsNull || value.Count <= 0)
             return null;
@@ -120,8 +120,8 @@ public static partial class JsonUtility
         return objectArray;
     }
 
-    public static JsonArray ConvertToJsonArray<T>(this T[] array) 
-    where T : ITeuJsonSerializable
+    public static JsonArray ConvertToJsonArray<T>(this T[]? array) 
+    where T : ISerialize
     {
         if (array == null)
             return new JsonArray();
@@ -133,8 +133,8 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray<T>(this List<T> array) 
-    where T : ITeuJsonSerializable
+    public static JsonArray ConvertToJsonArray<T>(this List<T>? array) 
+    where T : ISerialize
     {
         if (array == null)
             return new JsonArray();
@@ -146,8 +146,8 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject<T>(this Dictionary<string, T> value)
-    where T : ITeuJsonSerializable
+    public static JsonObject ToJsonObject<T>(this Dictionary<string, T>? value)
+    where T : ISerialize
     {
         if (value == null)
             return new JsonObject();
@@ -159,7 +159,7 @@ public static partial class JsonUtility
         return jsonObj;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, JsonValue> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, JsonValue>? value)
     {
         if (value == null)
             return new JsonObject();

@@ -1,6 +1,6 @@
 namespace TeuJson;
 
-public interface ITeuJsonDeserializable 
+public interface IDeserialize 
 {
     void Deserialize(JsonObject value);
 }

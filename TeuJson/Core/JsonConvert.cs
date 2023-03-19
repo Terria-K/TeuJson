@@ -8,14 +8,14 @@ namespace TeuJson;
 public class JsonConvert 
 {
     public static T DeserializeFromFile<T>(string path) 
-    where T : ITeuJsonDeserializable, new()
+    where T : IDeserialize, new()
     {
         var converter = JsonTextReader.FromFile(path);
         return Deserialize<T>(converter.AsJsonObject);
     }
 
     public static T DeserializeFromStream<T>(Stream stream) 
-    where T : ITeuJsonDeserializable, new()
+    where T : IDeserialize, new()
     {
         var converter = JsonTextReader.FromStream(stream);
         return Deserialize<T>(converter.AsJsonObject);
@@ -33,35 +33,35 @@ public class JsonConvert
     }
 
     public static T DeserializeFromFileBinary<T>(string path) 
-    where T : ITeuJsonDeserializable, new()
+    where T : IDeserialize, new()
     {
         var converter = JsonBinaryReader.FromFile(path);
         return Deserialize<T>(converter.AsJsonObject);
     }
 
     public static T DeserializeFromStreamBinary<T>(Stream fs) 
-    where T : ITeuJsonDeserializable, new()
+    where T : IDeserialize, new()
     {
         var converter = JsonBinaryReader.FromStream(fs);
         return Deserialize<T>(converter.AsJsonObject);
     }
 
     public static T Deserialize<T>(JsonValue jsObj)
-    where T : ITeuJsonDeserializable, new() 
+    where T : IDeserialize, new() 
     {
         var obj = new T();
         obj.Deserialize(jsObj.AsJsonObject);
         return obj;
     }
 
-    public static JsonValue Serialize(ITeuJsonSerializable serializable) 
+    public static JsonValue Serialize(ISerialize serializable) 
     {
         if (serializable == null)
             return JsonNull.NullReference;
         return serializable.Serialize();
     }
 
-    public static JsonValue Serialize(ITeuJsonSerializable serializable, Func<JsonValue>? defaultImpl = null) 
+    public static JsonValue Serialize(ISerialize serializable, Func<JsonValue>? defaultImpl = null) 
     {
         if (serializable == null) 
             return defaultImpl?.Invoke() ?? JsonNull.NullReference;
@@ -69,7 +69,7 @@ public class JsonConvert
         return serializable.Serialize();
     }
 
-    public static void SerializeToFile(ITeuJsonSerializable serializable, string path, bool pretty = true) 
+    public static void SerializeToFile(ISerialize serializable, string path, bool pretty = true) 
     {
         JsonTextWriter.WriteToFile(path, serializable.Serialize(), new JsonTextWriterOptions 
         {
@@ -86,7 +86,7 @@ public class JsonConvert
     }
 
 #if !NETFRAMEWORK
-    public static async Task SerializeToFileAsync(ITeuJsonSerializable serializable, string path, bool pretty = true) 
+    public static async Task SerializeToFileAsync(ISerialize serializable, string path, bool pretty = true) 
     {
         await JsonTextWriter.WriteToFileAsync(path, serializable.Serialize(), new JsonTextWriterOptions 
         {

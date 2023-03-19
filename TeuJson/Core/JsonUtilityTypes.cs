@@ -50,7 +50,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<byte> array) 
+    public static JsonArray ConvertToJsonArray(this List<byte>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -62,7 +62,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this byte[] array) 
+    public static JsonArray ConvertToJsonArray(this byte[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -74,7 +74,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this byte[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this byte[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -91,7 +91,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, byte> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, byte>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -148,7 +148,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<short> array) 
+    public static JsonArray ConvertToJsonArray(this List<short>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -160,7 +160,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this short[] array) 
+    public static JsonArray ConvertToJsonArray(this short[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -172,7 +172,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this short[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this short[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -189,7 +189,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, short> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, short>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -246,7 +246,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<int> array) 
+    public static JsonArray ConvertToJsonArray(this List<int>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -258,7 +258,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this int[] array) 
+    public static JsonArray ConvertToJsonArray(this int[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -270,7 +270,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this int[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this int[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -287,7 +287,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, int> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, int>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -344,7 +344,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<long> array) 
+    public static JsonArray ConvertToJsonArray(this List<long>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -356,7 +356,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this long[] array) 
+    public static JsonArray ConvertToJsonArray(this long[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -368,7 +368,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this long[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this long[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -385,7 +385,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, long> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, long>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -442,7 +442,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<sbyte> array) 
+    public static JsonArray ConvertToJsonArray(this List<sbyte>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -454,7 +454,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this sbyte[] array) 
+    public static JsonArray ConvertToJsonArray(this sbyte[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -466,7 +466,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this sbyte[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this sbyte[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -483,7 +483,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, sbyte> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, sbyte>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -540,7 +540,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<ushort> array) 
+    public static JsonArray ConvertToJsonArray(this List<ushort>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -552,7 +552,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this ushort[] array) 
+    public static JsonArray ConvertToJsonArray(this ushort[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -564,7 +564,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this ushort[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this ushort[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -581,7 +581,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, ushort> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, ushort>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -638,7 +638,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<uint> array) 
+    public static JsonArray ConvertToJsonArray(this List<uint>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -650,7 +650,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this uint[] array) 
+    public static JsonArray ConvertToJsonArray(this uint[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -662,7 +662,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this uint[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this uint[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -679,7 +679,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, uint> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, uint>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -736,7 +736,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<ulong> array) 
+    public static JsonArray ConvertToJsonArray(this List<ulong>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -748,7 +748,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this ulong[] array) 
+    public static JsonArray ConvertToJsonArray(this ulong[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -760,7 +760,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this ulong[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this ulong[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -777,7 +777,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, ulong> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, ulong>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -834,7 +834,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<float> array) 
+    public static JsonArray ConvertToJsonArray(this List<float>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -846,7 +846,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this float[] array) 
+    public static JsonArray ConvertToJsonArray(this float[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -858,7 +858,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this float[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this float[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -875,7 +875,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, float> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, float>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -932,7 +932,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<double> array) 
+    public static JsonArray ConvertToJsonArray(this List<double>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -944,7 +944,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this double[] array) 
+    public static JsonArray ConvertToJsonArray(this double[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -956,7 +956,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this double[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this double[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -973,7 +973,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, double> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, double>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -1030,7 +1030,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<string> array) 
+    public static JsonArray ConvertToJsonArray(this List<string>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1042,7 +1042,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this string[] array) 
+    public static JsonArray ConvertToJsonArray(this string[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1054,7 +1054,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this string[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this string[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1071,7 +1071,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, string> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, string>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -1128,7 +1128,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<bool> array) 
+    public static JsonArray ConvertToJsonArray(this List<bool>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1140,7 +1140,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this bool[] array) 
+    public static JsonArray ConvertToJsonArray(this bool[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1152,7 +1152,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this bool[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this bool[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1169,7 +1169,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, bool> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, bool>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -1226,7 +1226,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<decimal> array) 
+    public static JsonArray ConvertToJsonArray(this List<decimal>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1238,7 +1238,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this decimal[] array) 
+    public static JsonArray ConvertToJsonArray(this decimal[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1250,7 +1250,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this decimal[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this decimal[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1267,7 +1267,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, decimal> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, decimal>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -1324,7 +1324,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<char> array) 
+    public static JsonArray ConvertToJsonArray(this List<char>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1336,7 +1336,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this char[] array) 
+    public static JsonArray ConvertToJsonArray(this char[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1348,7 +1348,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this char[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this char[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1365,7 +1365,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, char> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, char>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -1423,7 +1423,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<nint> array) 
+    public static JsonArray ConvertToJsonArray(this List<nint>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1435,7 +1435,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this nint[] array) 
+    public static JsonArray ConvertToJsonArray(this nint[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1447,7 +1447,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this nint[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this nint[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1464,7 +1464,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, nint> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, nint>? value)
     {
         if (value == null)
             return new JsonObject();
@@ -1520,7 +1520,7 @@ public static partial class JsonUtility
         return array2D;
     }
 
-    public static JsonArray ConvertToJsonArray(this List<nuint> array) 
+    public static JsonArray ConvertToJsonArray(this List<nuint>? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1532,7 +1532,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray(this nuint[] array) 
+    public static JsonArray ConvertToJsonArray(this nuint[]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1544,7 +1544,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonArray ConvertToJsonArray2D(this nuint[,] array) 
+    public static JsonArray ConvertToJsonArray2D(this nuint[,]? array) 
     {
         if (array == null)
             return new JsonArray();
@@ -1561,7 +1561,7 @@ public static partial class JsonUtility
         return jsonArray;
     }
 
-    public static JsonObject ToJsonObject(this Dictionary<string, nuint> value)
+    public static JsonObject ToJsonObject(this Dictionary<string, nuint>? value)
     {
         if (value == null)
             return new JsonObject();

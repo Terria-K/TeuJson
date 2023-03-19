@@ -52,13 +52,7 @@ internal static class AttributeFunc
     public static bool CheckIfDeserializable(ITypeSymbol type, bool isSerialize)
     {
         var interfaceToCheck = GetStatusInterface(isSerialize);
-        var interfaceAttribute = "TeuJsonSerializableAttribute";
-        if (type.Interfaces.Any(x => x.Name == interfaceToCheck) || 
-        type.GetAttributes().Any(x => x.AttributeClass?.Name == interfaceAttribute))
-        {
-            return true;
-        }
-        return false;
+        return type.Interfaces.Any(x => x.Name == interfaceToCheck);
     }
 
     public static JsonOptions GetOptions(SourceProductionContext ctx, INamedTypeSymbol symbol, AttributeData data) 
@@ -138,8 +132,8 @@ internal static class AttributeFunc
     public static string GetStatusInterface(bool serializable) 
     {
         if (serializable)
-            return "ITeuJsonSerializable";
-        return "ITeuJsonDeserializable";
+            return "ISerialize";
+        return "IDeserialize";
     }
 
     public static string GetStatusMethod(bool serializable, bool hasBaseType, bool isSealed, string classOrStruct) 
@@ -198,11 +192,11 @@ internal static class AttributeFunc
         return true;
     }
 
-    public static AttributeData? GetSerializeAttributeData(ImmutableArray<AttributeData> datas)
+    public static INamedTypeSymbol? GetSerializeInterfaceData(ImmutableArray<INamedTypeSymbol> datas)
     {
         foreach (var data in datas) 
         {
-            if (data.AttributeClass?.Name == "TeuJsonSerializableAttribute") 
+            if (data?.Name == "ISerialize" || data?.Name == "IDeserialize") 
             {
                 return data;
             }

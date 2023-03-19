@@ -1,6 +1,6 @@
 namespace TeuJson;
 
-public interface ITeuJsonSerializable 
+public interface ISerialize 
 {
     JsonObject Serialize();
 }
