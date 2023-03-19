@@ -32,6 +32,7 @@ public abstract class JsonValue
     public abstract string AsString { get; }
     public abstract JsonArray AsJsonArray { get; }
     public abstract JsonObject AsJsonObject { get; }
+    public abstract object? AsObject { get; }
 
 #if !NETFRAMEWORK
     public abstract nint AsIntPtr { get; }
@@ -363,6 +364,14 @@ public class JsonValue<T> : JsonValue
             if (Value != null)
                 return Value.ToString() ?? "";
             return "";
+        }
+    }
+
+    public override object? AsObject
+    {
+        get
+        {
+            return Value;
         }
     }
 

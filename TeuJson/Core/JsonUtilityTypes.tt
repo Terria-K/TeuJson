@@ -32,7 +32,12 @@ public static partial class JsonUtility
         foreach (var type in types) 
         {
     #>
-public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue value) 
+/// <summary>
+    /// Convert a Json array into an array of <#=type.Key#>. 
+    /// </summary>
+    /// <param name="value">A Json array</param>
+    /// <returns>An array of <#=type.Key#></returns>
+    public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue value) 
     {
         if (value.IsNull || value.Count <= 0)
             return null;
@@ -46,6 +51,11 @@ public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue valu
         return valueArray;
     }
 
+    /// <summary>
+    /// Convert a Json array into a list of <#=type.Key#>. 
+    /// </summary>
+    /// <param name="value">A Json array</param>
+    /// <returns>A list of <#=type.Key#></returns>
     public static List<<#=type.Key#>>? ConvertToList<#=type.Value#>(this JsonValue value) 
     {
         if (value.IsNull || value.Count <= 0)
@@ -60,6 +70,11 @@ public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue valu
         return list;
     }
 
+    /// <summary>
+    /// Convert a Json array into a multi-dimensional array of <#=type.Key#>. 
+    /// </summary>
+    /// <param name="value">A Json array</param>
+    /// <returns>A multi-dimensional array of <#=type.Key#></returns>
     public static <#=type.Key#>[,]? ConvertToArray<#=type.Value#>2D(this JsonValue value) 
     {
         if (value.IsNull || value.Count <= 0)
@@ -77,6 +92,11 @@ public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue valu
         return array2D;
     }
 
+    /// <summary>
+    /// Convert a list of <#=type.Key#> into Json array.
+    /// </summary>
+    /// <param name="value">A list of <#=type.Key#></param>
+    /// <returns>A Json Array</returns>
     public static JsonArray ConvertToJsonArray(this List<<#=type.Key#>>? array) 
     {
         if (array == null)
@@ -89,6 +109,11 @@ public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue valu
         return jsonArray;
     }
 
+    /// <summary>
+    /// Convert an array of <#=type.Key#> into Json array.
+    /// </summary>
+    /// <param name="value">An array of <#=type.Key#></param>
+    /// <returns>A Json Array</returns>
     public static JsonArray ConvertToJsonArray(this <#=type.Key#>[]? array) 
     {
         if (array == null)
@@ -101,6 +126,11 @@ public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue valu
         return jsonArray;
     }
 
+    /// <summary>
+    /// Convert a multi-dimensional array of <#=type.Key#> into Json array.
+    /// </summary>
+    /// <param name="value">A multi-dimensional array of <#=type.Key#></param>
+    /// <returns>A Json Array</returns>
     public static JsonArray ConvertToJsonArray2D(this <#=type.Key#>[,]? array) 
     {
         if (array == null)
@@ -118,6 +148,11 @@ public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue valu
         return jsonArray;
     }
 
+    /// <summary>
+    /// Convert a dictionary of <#=type.Key#> into Json object.
+    /// </summary>
+    /// <param name="value">A dictionary of <#=type.Key#></param>
+    /// <returns>A Json object</returns>
     public static JsonObject ToJsonObject(this Dictionary<string, <#=type.Key#>>? value)
     {
         if (value == null)

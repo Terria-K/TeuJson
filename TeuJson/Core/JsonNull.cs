@@ -52,6 +52,8 @@ public sealed class JsonNull : JsonValue
     public override nint AsIntPtr => 0;
 
     public override nuint AsUIntPtr => 0;
+
+    public override object? AsObject => null;
 #endif
 
     public override int Count => 0;
@@ -65,6 +67,7 @@ public sealed class JsonNull : JsonValue
     public override JsonArray AsJsonArray => new();
 
     public override JsonObject AsJsonObject => new();
+
 
     public override void Add(JsonValue value)
     {
