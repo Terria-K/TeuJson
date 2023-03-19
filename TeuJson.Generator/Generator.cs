@@ -89,18 +89,21 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         INamedTypeSymbol symbol, 
         List<ISymbol> members,
         StringBuilder sb,
-        bool isSerialize 
+        bool isSerialize
     )
     {
         var classOrStruct = symbol.ClassOrStruct();
-        var isRecord = false;
-        if (classOrStruct == "record")
-            isRecord = true;
+        if (classOrStruct == "record" && !isSerialize) 
+        {
+            ctx.ReportDiagnostic(Diagnostic.Create(TeuDiagnostic.RecordRule, symbol.Locations[0]));
+            return;
+        }
         
         var hasBaseType = false;
         var isAbstract = symbol.IsAbstract;
         var isSealed = symbol.IsSealed;
         var baseType = symbol.BaseType;
+        var isRecord = classOrStruct == "record";
 
         if (baseType != null)
         {

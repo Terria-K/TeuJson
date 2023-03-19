@@ -111,7 +111,7 @@ public sealed partial class Vectorized: AbstractVector, ISerialize, IDeserialize
     public float Hello { get; set; }
 }
 
-public partial record Book(string Name, string Author) : ISerialize, IDeserialize;
+public partial record Book(string Name, string Author) : ISerialize;
 
 public static class LocalConverter 
 {
