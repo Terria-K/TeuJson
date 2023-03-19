@@ -111,6 +111,8 @@ public sealed partial class Vectorized: AbstractVector, ISerialize, IDeserialize
     public float Hello { get; set; }
 }
 
+public partial record Book(string Name, string Author) : ISerialize, IDeserialize;
+
 public static class LocalConverter 
 {
     public static TimeSpan ToTimeSpan(this JsonValue value) 

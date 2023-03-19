@@ -17,13 +17,9 @@
         {"bool", "Boolean"},
         {"decimal", "Decimal"},
         {"char", "Char"},
-    };
-    Dictionary<string, string> coreTypes = new Dictionary<string, string>() 
-    {
         {"nint", "IntPtr"},
         {"nuint", "UIntPtr"},
     };
-    
 #>
 using System.Collections.Generic;
 
@@ -137,111 +133,5 @@ public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue valu
     <#
         }
     #>
-#if !NETFRAMEWORK
-    <#
-        foreach (var type in coreTypes) 
-        {
-    #>
-    public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue value) 
-    {
-        if (value.IsNull || value.Count <= 0)
-            return null;
-        var array = value.AsJsonArray;
-        var arrayCount = array.Count;
-        var valueArray = new <#=type.Key#>[arrayCount];
-        for (int i = 0; i < arrayCount; i++) 
-        {
-            valueArray[i] = array[i].As<#=type.Value#>;
-        }
-        return valueArray;
-    }
-
-    public static List<<#=type.Key#>>? ConvertToList<#=type.Value#>(this JsonValue value) 
-    {
-        if (value.IsNull || value.Count <= 0)
-            return null;
-        var array = value.AsJsonArray;
-        var arrayCount = array.Count;
-        var list = new List<<#=type.Key#>>(arrayCount);
-        for (int i = 0; i < arrayCount; i++) 
-        {
-            list.Add(array[i].As<#=type.Value#>);
-        }
-        return list;
-    }
-
-    public static <#=type.Key#>[,]? ConvertToArray<#=type.Value#>2D(this JsonValue value) 
-    {
-        if (value.IsNull || value.Count <= 0)
-            return null;
-        var arrayX = value.AsJsonArray;
-        var arrayY = arrayX[0].AsJsonArray;
-        var array2D = new <#=type.Key#>[arrayX.Count, arrayY.Count];
-        for (int i = 0; i < arrayX.Count; i++) 
-        {
-            for (int j = 0; j < arrayY.Count; j++) 
-            {
-                array2D[i, j] = arrayX[i].AsJsonArray[j].As<#=type.Value#>;
-            }
-        }
-        return array2D;
-    }
-
-    public static JsonArray ConvertToJsonArray(this List<<#=type.Key#>>? array) 
-    {
-        if (array == null)
-            return new JsonArray();
-        var jsonArray = new JsonArray();
-        foreach (<#=type.Key#> v in array) 
-        {
-            jsonArray.Add(v);
-        }
-        return jsonArray;
-    }
-
-    public static JsonArray ConvertToJsonArray(this <#=type.Key#>[]? array) 
-    {
-        if (array == null)
-            return new JsonArray();
-        var jsonArray = new JsonArray();
-        foreach (<#=type.Key#> v in array) 
-        {
-            jsonArray.Add(v);
-        }
-        return jsonArray;
-    }
-
-    public static JsonArray ConvertToJsonArray2D(this <#=type.Key#>[,]? array) 
-    {
-        if (array == null)
-            return new JsonArray();
-        var jsonArray = new JsonArray();
-        for (int i = 0; i < array.GetLength(0); i++) 
-        {
-            var jsonArray2 = new JsonArray();
-            for (int j = 0; j < array.GetLength(1); j++) 
-            {
-                jsonArray2.Add(array[i, j]);
-            }
-            jsonArray.Add(jsonArray2);
-        }
-        return jsonArray;
-    }
-
-    public static JsonObject ToJsonObject(this Dictionary<string, <#=type.Key#>>? value)
-    {
-        if (value == null)
-            return new JsonObject();
-        var jsonObj = new JsonObject();
-        foreach (var cObj in value) 
-        {
-            jsonObj[cObj.Key] = cObj.Value;
-        }
-        return jsonObj;
-    }
-    <#
-        }
-    #>
-#endif
 
 }

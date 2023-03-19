@@ -85,7 +85,6 @@ public class JsonConvert
         });
     }
 
-#if !NETFRAMEWORK
     public static async Task SerializeToFileAsync(ISerialize serializable, string path, bool pretty = true) 
     {
         await JsonTextWriter.WriteToFileAsync(path, serializable.Serialize(), new JsonTextWriterOptions 
@@ -101,5 +100,4 @@ public class JsonConvert
             Minimal = !pretty
         });
     }
-#endif
 }

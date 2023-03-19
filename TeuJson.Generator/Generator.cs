@@ -93,11 +93,10 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
     )
     {
         var classOrStruct = symbol.ClassOrStruct();
+        var isRecord = false;
         if (classOrStruct == "record")
-        {
-            ctx.ReportDiagnostic(Diagnostic.Create(TeuDiagnostic.RecordRule, symbol.Locations[0]));
-            return;
-        }
+            isRecord = true;
+        
         var hasBaseType = false;
         var isAbstract = symbol.IsAbstract;
         var isSealed = symbol.IsSealed;
@@ -114,7 +113,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         }
 
 
-        sb.AppendLine($"partial {classOrStruct} {symbol.Name} : {AttributeFunc.GetStatusInterface(isSerialize)}");
+        sb.AppendLine($"partial {classOrStruct} {symbol.Name}");
         sb.AppendLine("{");
         sb.AppendLine(AttributeFunc.GetStatusMethod(isSerialize, hasBaseType, isSealed, classOrStruct));
 
@@ -124,7 +123,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         if (hasBaseType && !isSerialize)
             sb.AppendLine("base.Deserialize(@__obj);");
 
-        WriteMembers(ctx, members, sb, "this", isSerialize);
+        WriteMembers(ctx, members, sb, "this", isSerialize, isRecord);
         if (isSerialize)
             sb.AppendLine("return __builder;");
         sb.AppendLine("}");
@@ -137,11 +136,14 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         List<ISymbol> members, 
         StringBuilder sb, 
         string qualifier,
-        bool isSerialize
+        bool isSerialize,
+        bool isRecord
     )
     {
         foreach (var sym in members)
         {
+            if (isRecord && sym.Name == "EqualityContract")
+                continue;
             if (sym is not IPropertySymbol && sym is not IFieldSymbol)
                 continue;
 
