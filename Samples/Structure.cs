@@ -53,6 +53,9 @@ public partial class Structure
     public NullishStructure? IgnoreMe;
 
     [TeuObject]
+    public Vector2X? Vec2X;
+
+    [TeuObject]
     public Vector3? Vec3;
 
     [TeuObject]

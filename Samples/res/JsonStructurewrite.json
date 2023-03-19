@@ -30,6 +30,7 @@
 	"Values": {},
 	"RawValue": null,
 	"NullableStructure": null,
+	"Vec2X": null,
 	"Vec3": {
 		"X": 20,
 		"Y": 15,
