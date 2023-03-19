@@ -88,23 +88,6 @@ public static partial class JsonUtility
         return objArray2D;
     }
 
-    public static int[,]? ConvertToArrayInt2D(this JsonValue value) 
-    {
-        if (value.IsNull || value.Count <= 0)
-            return null;
-        var arrayX = value.AsJsonArray;
-        var arrayY = arrayX[0].AsJsonArray;
-        var intArray2D = new int[arrayX.Count, arrayY.Count];
-        for (int i = 0; i < arrayX.Count; i++) 
-        {
-            for (int j = 0; j < arrayY.Count; j++) 
-            {
-                intArray2D[i, j] = arrayX[i].AsJsonArray[j];
-            }
-        }
-        return intArray2D;
-    }
-
     public static List<T>? ConvertToList<T>(this JsonValue value) 
     where T : IDeserialize, new()
     {

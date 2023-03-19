@@ -7,8 +7,8 @@ A Reflection-less and Lightweight Json Library using source generator.
 Install these two required packages.
 
 ```console
-dotnet add package TeuJson --version 1.5.0
-dotnet add package TeuJson.Generator --version 1.5.0
+dotnet add package TeuJson --version 2.0.0
+dotnet add package TeuJson.Generator --version 2.0.0
 ```
 
 ## Features
@@ -44,7 +44,7 @@ var person = new Person {
   Location = "North Pole",
   City = "Santa's City"
 };
-var serialized = person.Serialize();
+var serialized = JsonConvert.Serialize(person);
 JsonTextWriter.WriteToFile("person.json", person);
 
 var johnJson = JsonTextReader.FromFile("person.json");
