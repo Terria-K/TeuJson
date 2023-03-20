@@ -1,5 +1,6 @@
 #tool nuget:?package=NuGet.CommandLine&version=5.9.1
 
+const string version = "2.0.0";
 var target = Argument("target", "Build");
 var configuration = Argument("configuration", "Release");
 var outputFolder = "./artifacts";
@@ -101,13 +102,12 @@ Task("Push")
     .IsDependentOn("Package")
     .Does(() => 
     {
-        var packages = GetFiles("./artifacts/**/*.nupkg");
-        NuGetPush(packages, new NuGetPushSettings {
+        var mainPackage = $"TeuJson.{version}.nupkg";
+        NuGetPush(mainPackage, new NuGetPushSettings {
             Source = "https://api.nuget.org/v3/index.json",
             ApiKey = mainKey
         });
-        CleanDirectory(outputFolder);
-        var generatorPackages = GetFiles("./artifacts/**/*.nupkg");
+        var mainPackage = $"TeuJson.Generator.{version}.nupkg";
         NuGetPush(generatorPackages, new NuGetPushSettings {
             Source = "https://api.nuget.org/v3/index.json",
             ApiKey = generatorKey
