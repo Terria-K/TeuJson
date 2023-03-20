@@ -107,8 +107,8 @@ Task("Push")
             Source = "https://api.nuget.org/v3/index.json",
             ApiKey = mainKey
         });
-        var mainPackage = $"TeuJson.Generator.{version}.nupkg";
-        NuGetPush(generatorPackages, new NuGetPushSettings {
+        var generatorPackage = $"TeuJson.Generator.{version}.nupkg";
+        NuGetPush(generatorPackage, new NuGetPushSettings {
             Source = "https://api.nuget.org/v3/index.json",
             ApiKey = generatorKey
         });
