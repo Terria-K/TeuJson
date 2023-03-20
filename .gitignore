@@ -3,4 +3,5 @@ obj/
 Generated/
 
 .vscode
+.env
 artifacts

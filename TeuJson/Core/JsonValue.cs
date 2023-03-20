@@ -56,6 +56,7 @@ public abstract class JsonValue
     public abstract void Add(JsonValue value);
     public abstract void Remove(JsonValue value);
     public abstract bool Contains(JsonValue value);
+    public abstract bool Contains(string value);
     public abstract JsonValue[] ToArray();
     public abstract List<JsonValue> ToList();
     public abstract Dictionary<string, JsonValue> ToDictionary();
@@ -394,6 +395,11 @@ public class JsonValue<T> : JsonValue
     }
 
     public override bool Contains(JsonValue value)
+    {
+        return false;
+    }
+
+    public override bool Contains(string value)
     {
         return false;
     }

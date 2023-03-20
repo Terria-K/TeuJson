@@ -100,6 +100,26 @@ public static partial class JsonUtility
         return objectArray;
     }
 
+    public static T[]? ConvertToEnumArrayInt<T>(this JsonValue value) 
+    where T : struct, System.Enum
+    {
+        if (value.IsNull || value.Count <= 0)
+            return null;
+        var array = value.AsJsonArray;
+        var arrayCount = array.Count; 
+        var objectArray = new T[arrayCount];
+        for (int i = 0; i < arrayCount; i++) 
+        {
+            if (System.Enum.TryParse<T>(array[i].AsString, out T num)) 
+            {
+                objectArray[i] = num;
+                continue;
+            }
+            objectArray[i] = (T)System.Enum.ToObject(typeof(T), array[i].AsInt32);
+        }
+        return objectArray;
+    }
+
     /// <summary>
     /// Convert a 2D Json array into C# multi-dimensional array with strict types. 
     /// </summary>

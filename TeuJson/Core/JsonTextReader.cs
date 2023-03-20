@@ -21,6 +21,18 @@ public sealed class JsonTextReader : JsonReader, IDisposable
         return textReader.ReadFirstToken();
     }
 
+    public static JsonValue FromText(string text) 
+    {
+        using var memStream = new MemoryStream();
+        var writer = new StreamWriter(memStream);
+        writer.Write(text);
+        writer.Flush();
+        memStream.Position = 0;
+
+        using var textReader = new JsonTextReader(memStream);
+        return textReader.ReadFirstToken();
+    }
+
     public static JsonValue FromStream(Stream fs) 
     {
         using var textReader = new JsonTextReader(fs);

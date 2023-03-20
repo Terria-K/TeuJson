@@ -234,9 +234,20 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 
                 }
             }
+            // Arrays
             else if (type is IArrayTypeSymbol arrayTypeSymbol)
             {
                 var arrayName = arrayTypeSymbol.ToDisplayString(NullableFlowState.None);
+                var elementType = arrayTypeSymbol.ElementType;
+                if (elementType is INamedTypeSymbol namedTypeSymbol) 
+                {
+                    var underlyingType = namedTypeSymbol.EnumUnderlyingType;
+                    if (underlyingType != null) 
+                    {
+                        // TODO Enum arrays
+                        throw new Exception(underlyingType.ToDisplayString());
+                    }
+                }
                 if (arrayTypeSymbol.Rank == 1)
                     additionalCall = ArrayCheck(arrayName, isSerialize);
                 else

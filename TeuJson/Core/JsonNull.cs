@@ -79,6 +79,11 @@ public sealed class JsonNull : JsonValue
         return false;
     }
 
+    public override bool Contains(string value)
+    {
+        return false;
+    }
+
     public override void Remove(JsonValue value)
     {
         throw new System.NotImplementedException();

@@ -37,6 +37,16 @@ public sealed class JsonObject : JsonValue<Dictionary<string, JsonValue>>
     public override IEnumerable<JsonValue> Values => Value.Values;
     public override IEnumerable<KeyValuePair<string, JsonValue>> Pairs => Value;
 
+    public override bool Contains(JsonValue value)
+    {
+        return Value.ContainsValue(value);
+    }
+
+    public override bool Contains(string value)
+    {
+        return Value.ContainsKey(value);
+    }
+
     public override string ToString()
     {
         var sb = new StringBuilder();
