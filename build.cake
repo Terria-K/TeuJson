@@ -102,12 +102,12 @@ Task("Push")
     .IsDependentOn("Package")
     .Does(() => 
     {
-        var mainPackage = $"TeuJson.{version}.nupkg";
+        var mainPackage = $"artifacts/TeuJson.{version}.nupkg";
         NuGetPush(mainPackage, new NuGetPushSettings {
             Source = "https://api.nuget.org/v3/index.json",
             ApiKey = mainKey
         });
-        var generatorPackage = $"TeuJson.Generator.{version}.nupkg";
+        var generatorPackage = $"artifacts/TeuJson.Generator.{version}.nupkg";
         NuGetPush(generatorPackage, new NuGetPushSettings {
             Source = "https://api.nuget.org/v3/index.json",
             ApiKey = generatorKey
