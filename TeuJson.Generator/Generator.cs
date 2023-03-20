@@ -19,25 +19,20 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         var teuJsonProvider = context.SyntaxProvider
             .CreateSyntaxProvider(
                 static (node, _) => node is TypeDeclarationSyntax syntax
-                    && syntax.AttributeLists.Count > 0
-                    && syntax.Modifiers.Any(SyntaxKind.PartialKeyword),
+                    && syntax.Modifiers.Any(SyntaxKind.PartialKeyword)
+                    && syntax.BaseList?.Types.Count > 0,
                 static (ctx, _) => 
                 {
                     var jsonSyntax = (TypeDeclarationSyntax)ctx.Node;
-                    foreach (var attribListSyntax in jsonSyntax.AttributeLists) 
-                    {
-                        foreach (var attribSyntax in attribListSyntax.Attributes) 
-                        {
-                            if (ctx.SemanticModel.GetSymbolInfo(attribSyntax).Symbol is not IMethodSymbol attribSymbol)
-                                continue;
-                            
-                            var namedTypeSymbol = attribSymbol.ContainingType;
-                            var fullname = attribSymbol.ToDisplayString();
+                    var interfaces = ctx.SemanticModel.GetDeclaredSymbol(jsonSyntax)?.Interfaces;
+                    if (interfaces is null)
+                        return null;
 
-                            if (fullname == 
-                            "TeuJson.Attributes.TeuJsonSerializableAttribute.TeuJsonSerializableAttribute()")
-                                return jsonSyntax;
-                        }
+                    foreach (var @interface in interfaces) 
+                    {
+                        var fullname = @interface.ToDisplayString();
+                        if (fullname == "TeuJson.ISerialize" || fullname == "TeuJson.IDeserialize")
+                            return jsonSyntax;
                     }
                     return null;
                 }
@@ -54,34 +49,38 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
     {
         if (syn.IsDefaultOrEmpty)
             return;
-        var attribute = comp.GetTypeByMetadataName("TeuJson.Attributes.TeuJsonSerializableAttribute");
-
-        if (attribute is null)  
-            return;
         
 
-        foreach (var symbol in GetSymbols(comp, syn, "TeuJsonSerializable"))
+        foreach (var symbol in GetSymbols(comp, syn, "ISerialize"))
         {
-            var data = symbol.GetAttributes()[0];
-            var option = AttributeFunc.GetOptions(ctx, symbol, data);
-            if (!option.Deserializable && !option.Serializable)
-                continue;
-            
             var members = symbol.GetMembers().OfType<ISymbol>().ToList();
 
             var sb = new StringBuilder();
             sb.AppendLine("// Source Generated code");
             sb.AppendLine("using TeuJson;");
-            sb.AppendLine("using System; // Might needed for some type");
+            sb.AppendLine("using System;");
             var ns = symbol.GetSymbolNamespace();
             if (!string.IsNullOrEmpty(ns))
                 sb.AppendLine("namespace " + ns + ";");
 
-            if (option.Deserializable)
-                GenerateSource(ctx, symbol, members, sb, false);
-            if (option.Serializable) 
-                GenerateSource(ctx, symbol, members, sb, true);
-            ctx.AddSource($"{symbol.Name}.g.cs", sb.ToString());
+            GenerateSource(ctx, symbol, members, sb, true);
+            ctx.AddSource($"{symbol.Name}.serialize.cs", sb.ToString());
+        }
+
+        foreach (var symbol in GetSymbols(comp, syn, "IDeserialize")) 
+        {
+            var members = symbol.GetMembers().OfType<ISymbol>().ToList();
+
+            var sb = new StringBuilder();
+            sb.AppendLine("// Source Generated code");
+            sb.AppendLine("using TeuJson;");
+            sb.AppendLine("using System;");
+            var ns = symbol.GetSymbolNamespace();
+            if (!string.IsNullOrEmpty(ns))
+                sb.AppendLine("namespace " + ns + ";");
+
+            GenerateSource(ctx, symbol, members, sb, false);
+            ctx.AddSource($"{symbol.Name}.deserialize.cs", sb.ToString());
         }
     }
 
@@ -90,24 +89,26 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         INamedTypeSymbol symbol, 
         List<ISymbol> members,
         StringBuilder sb,
-        bool isSerialize 
+        bool isSerialize
     )
     {
         var classOrStruct = symbol.ClassOrStruct();
-        if (classOrStruct == "record")
+        if (classOrStruct == "record" && !isSerialize) 
         {
             ctx.ReportDiagnostic(Diagnostic.Create(TeuDiagnostic.RecordRule, symbol.Locations[0]));
             return;
         }
+        
         var hasBaseType = false;
         var isAbstract = symbol.IsAbstract;
         var isSealed = symbol.IsSealed;
         var baseType = symbol.BaseType;
+        var isRecord = classOrStruct == "record";
 
         if (baseType != null)
         {
-            var attributes = baseType.GetAttributes();
-            var serializable = AttributeFunc.GetSerializeAttributeData(attributes);
+            var interfaces = baseType.Interfaces;
+            var serializable = AttributeFunc.GetSerializeInterfaceData(interfaces);
             if (serializable != null)
             {
                 hasBaseType = true;
@@ -115,7 +116,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         }
 
 
-        sb.AppendLine($"partial {classOrStruct} {symbol.Name} : {AttributeFunc.GetStatusInterface(isSerialize)}");
+        sb.AppendLine($"partial {classOrStruct} {symbol.Name}");
         sb.AppendLine("{");
         sb.AppendLine(AttributeFunc.GetStatusMethod(isSerialize, hasBaseType, isSealed, classOrStruct));
 
@@ -125,7 +126,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         if (hasBaseType && !isSerialize)
             sb.AppendLine("base.Deserialize(@__obj);");
 
-        WriteMembers(ctx, members, sb, "this", isSerialize);
+        WriteMembers(ctx, members, sb, "this", isSerialize, isRecord);
         if (isSerialize)
             sb.AppendLine("return __builder;");
         sb.AppendLine("}");
@@ -138,11 +139,14 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         List<ISymbol> members, 
         StringBuilder sb, 
         string qualifier,
-        bool isSerialize
+        bool isSerialize,
+        bool isRecord
     )
     {
         foreach (var sym in members)
         {
+            if (isRecord && sym.Name == "EqualityContract")
+                continue;
             if (sym is not IPropertySymbol && sym is not IFieldSymbol)
                 continue;
 
@@ -230,9 +234,24 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 
                 }
             }
+            // Arrays
             else if (type is IArrayTypeSymbol arrayTypeSymbol)
             {
                 var arrayName = arrayTypeSymbol.ToDisplayString(NullableFlowState.None);
+                var elementType = arrayTypeSymbol.ElementType;
+                if (elementType is INamedTypeSymbol namedTypeSymbol) 
+                {
+                    var underlyingType = namedTypeSymbol.EnumUnderlyingType;
+                    if (underlyingType != null)
+                    {
+                        var fullDisplay = elementType.ToFullDisplayString();
+                        if (isSerialize)
+                            SerializeArrayEnum(sb, variableName, name, underlyingType, fullDisplay, ifNull);
+                        else
+                            DeserializeArrayEnum(sb, variableName, name, underlyingType, fullDisplay);
+                        continue;
+                    }
+                }
                 if (arrayTypeSymbol.Rank == 1)
                     additionalCall = ArrayCheck(arrayName, isSerialize);
                 else
@@ -312,8 +331,80 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         }
     }
 
+    private static void DeserializeArrayEnum(
+        StringBuilder sb, 
+        string variableName,
+        string name, 
+        INamedTypeSymbol underlyingType, 
+        string fullDisplay
+    )
+    {
+        sb.AppendLine($$"""
+        if (!@__obj.IsNull && @__obj.Count > 0)
+        {
+            var array = @__obj["{{name}}"].AsJsonArray;
+            var arrayCount = array.Count; 
+            {{variableName}} = new {{fullDisplay}}[arrayCount];
+            for (int i = 0; i < arrayCount; i++) 
+            {
+                if (System.Enum.TryParse<{{fullDisplay}}>(array[i].AsString, out {{fullDisplay}} num)) 
+                {
+                    {{variableName}}[i] = num;
+                    continue;
+                }
+                {{variableName}}[i] = ({{fullDisplay}})({{underlyingType.ToDisplayString()}})array[i];
+            }
+        }
+        """);
+    }
+
+    private static void SerializeArrayEnum(
+        StringBuilder sb,
+        string variableName,
+        string name, 
+        INamedTypeSymbol underlyingType, 
+        string fullDisplay,
+        bool ifNull
+    ) {
+        if (!ifNull) 
+        {
+            sb.AppendLine($"if ({variableName} == null)");
+            sb.AppendLine("{");
+            sb.AppendLine($"__builder[\"{name}\"] = new JsonArray();");
+            sb.AppendLine("}");
+            sb.AppendLine("else");
+        }
+        else 
+        {
+            sb.AppendLine($"if ({variableName} != null)");
+        }
+        sb.AppendLine($$"""
+        {
+            var jsonArray = new JsonArray();
+            foreach ({{fullDisplay}} v in {{variableName}}) 
+            {
+                jsonArray.Add(({{underlyingType.ToDisplayString()}})v);
+            }
+            __builder["{{name}}"] = jsonArray;
+        }
+        """);
+    }
+
+    // public static JsonArray ConvertToJsonArray<T>(this T[]? array) 
+    // where T : ISerialize
+    // {
+    //     if (array == null)
+    //         return new JsonArray();
+    //     var jsonArray = new JsonArray();
+    //     foreach (T v in array) 
+    //     {
+    //         jsonArray.Add(v.Serialize());
+    //     }
+    //     return jsonArray;
+    // }
+
     private static IEnumerable<INamedTypeSymbol> GetSymbols(
-        Compilation compilation, ImmutableArray<TypeDeclarationSyntax?> syn, string attribute) 
+        Compilation compilation, ImmutableArray<TypeDeclarationSyntax?> syn, string serialize) 
     {
         foreach (var partialClass in syn) 
         {
@@ -324,11 +415,14 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             if (symbol is null)
                 continue;
 
-            if (HasAttributes(symbol, attribute))
+            if (HasInterfaces(symbol, serialize))
                 yield return symbol;
         }
     }
 
     private static bool HasAttributes(ISymbol symbol, string attributeName) => 
         symbol.GetAttributes().Any(attr => attr.AttributeClass!.Name.StartsWith(attributeName));
+
+    private static bool HasInterfaces(INamedTypeSymbol symbol, string interfaceName) => 
+        symbol.Interfaces.Any(intfa => intfa.Name.StartsWith(interfaceName));
 }

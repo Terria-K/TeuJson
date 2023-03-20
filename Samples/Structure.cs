@@ -7,8 +7,7 @@ using Utility;
 
 namespace Structural;
 
-[TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public partial class Structure 
+public partial class Structure : TeuJson.ISerialize, IDeserialize
 {
     [Name("array")]
     public int[]? Array { get; set; }
@@ -65,62 +64,61 @@ public partial class Structure
     public Enumeration NumberEnum;
     [TeuObject]
     public Enumeration TextEnum = Enumeration.C;
+    [TeuObject]
+    public Enumeration[] TextEnums = new Enumeration[4] {
+        Enumeration.A,
+        Enumeration.B,
+        Enumeration.C,
+        Enumeration.B
+    };
 
     [TeuObject]
     public Summon Weaponry = Summon.Bow;
 }
 
-[TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public partial struct EmptyStructure {}
-[TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public partial class NullishStructure {}
+public partial struct EmptyStructure : ISerialize, IDeserialize {}
+public partial class NullishStructure : ISerialize, IDeserialize {}
 
-[TeuJsonSerializable]
 public partial class TestWillNotWork {}
 
-[TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public sealed partial class Rect4 
+public sealed partial class Rect4 : ISerialize, IDeserialize
 { 
     public Vector2X? Width { get; set; }
     public Vector2X? Height { get; set; }
 }
 
-[TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public partial class Vector1 
+public partial class Vector1 : ISerialize, IDeserialize
 {
     public float X { get; set; }
 }
 
-[TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public sealed partial class Vector2X : Vector1 
+public sealed partial class Vector2X : Vector1, ISerialize, IDeserialize
 {
     public float Y { get; set; }
 }
 
-[TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public partial class Vector3 : Vector1 
+public partial class Vector3 : Vector1, ISerialize, IDeserialize
 {
     public float Y { get; set; }
     public float Z { get; set; }
 }
 
-[TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public partial class Vector4 : Vector3 
+public partial class Vector4 : Vector3, ISerialize, IDeserialize
 {
     public float W { get; set; }
 }
 
-[TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public abstract partial class AbstractVector 
+public abstract partial class AbstractVector : ISerialize, IDeserialize
 {
     public float X { get; set; }
 }
 
-[TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public sealed partial class Vectorized: AbstractVector
+public sealed partial class Vectorized: AbstractVector, ISerialize, IDeserialize
 {
     public float Hello { get; set; }
 }
+
+public partial record Book(string Name, string Author) : ISerialize;
 
 public static class LocalConverter 
 {

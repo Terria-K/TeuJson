@@ -28,7 +28,7 @@ public abstract class JsonReader
         return value;
     }
 
-    private JsonArray ReadArray() 
+    public JsonArray ReadArray() 
     {
         var list = new JsonArray();
         while (ReadInternal() && Token != JsonToken.RBracket)
@@ -37,7 +37,7 @@ public abstract class JsonReader
         return list;
     }
 
-    private JsonValue ReadValue() 
+    public JsonValue ReadValue() 
     {
         ReadInternal();
         var token = ReadValueFromToken();

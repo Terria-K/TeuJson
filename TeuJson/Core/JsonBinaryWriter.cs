@@ -5,11 +5,7 @@ using System.Threading.Tasks;
 
 namespace TeuJson;
 
-#if NETFRAMEWORK
-public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable
-#else
 public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable, IAsyncDisposable
-#endif
 {
     private readonly Stack<long> positions = new();
     private readonly BinaryWriter writer;
@@ -33,7 +29,6 @@ public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable, IAsyncDi
         textWriter.WriteJson(value);
     }
 
-#if !NETFRAMEWORK
     public static async Task WriteToFileAsync(string path, JsonValue value) 
     {
         using var fs = File.Create(path);
@@ -51,7 +46,6 @@ public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable, IAsyncDi
     {
         await writer.DisposeAsync();
     }
-#endif
 
     public override void BeginArray()
     {

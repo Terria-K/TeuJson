@@ -44,5 +44,10 @@
 	},
 	"NumberEnum": 1,
 	"TextEnum": 4,
+	"TextEnums": [
+		0, 
+		1, 
+		3
+	],
 	"Weaponry": 0
 }

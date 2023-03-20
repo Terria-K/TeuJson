@@ -56,4 +56,14 @@ Debug.Assert(structureBin.Number == 4);
 Debug.Assert(structureBin.Text == "hello_world");
 Debug.Assert(!structureBin.TrueOrFalse);
 Debug.Assert(structureBin.Field == "This is my field");
+
+var value = JsonTextReader.FromFile("Samples/res/JsonArray.json").ConvertToArrayInt32();
+if (value != null) 
+{
+    foreach (var val in value)
+        Console.WriteLine(val);
+}
+
+
 Console.ReadLine();
+

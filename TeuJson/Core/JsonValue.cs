@@ -32,6 +32,7 @@ public abstract class JsonValue
     public abstract string AsString { get; }
     public abstract JsonArray AsJsonArray { get; }
     public abstract JsonObject AsJsonObject { get; }
+    public abstract object? AsObject { get; }
 
 #if !NETFRAMEWORK
     public abstract nint AsIntPtr { get; }
@@ -55,6 +56,7 @@ public abstract class JsonValue
     public abstract void Add(JsonValue value);
     public abstract void Remove(JsonValue value);
     public abstract bool Contains(JsonValue value);
+    public abstract bool Contains(string value);
     public abstract JsonValue[] ToArray();
     public abstract List<JsonValue> ToList();
     public abstract Dictionary<string, JsonValue> ToDictionary();
@@ -366,6 +368,14 @@ public class JsonValue<T> : JsonValue
         }
     }
 
+    public override object? AsObject
+    {
+        get
+        {
+            return Value;
+        }
+    }
+
     public override JsonArray AsJsonArray => throw new InvalidOperationException();
 
     public override JsonObject AsJsonObject => throw new InvalidOperationException();
@@ -385,6 +395,11 @@ public class JsonValue<T> : JsonValue
     }
 
     public override bool Contains(JsonValue value)
+    {
+        return false;
+    }
+
+    public override bool Contains(string value)
     {
         return false;
     }

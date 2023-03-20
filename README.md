@@ -7,8 +7,8 @@ A Reflection-less and Lightweight Json Library using source generator.
 Install these two required packages.
 
 ```console
-dotnet add package TeuJson --version 1.5.0
-dotnet add package TeuJson.Generator --version 1.5.0
+dotnet add package TeuJson --version 2.0.0
+dotnet add package TeuJson.Generator --version 2.0.0
 ```
 
 ## Features
@@ -24,10 +24,9 @@ dotnet add package TeuJson.Generator --version 1.5.0
 ## Creating a class with a Serializable.
 
 ```C#
-// Must be explicitly enabled one of the property or else it wouldn't work.
-// If Serializable is false, you can only deserialize the class.
-[TeuJsonSerializable(Deserializable = true, Serializable = true)]
-public partial class Person 
+// Unlike most libraries, TeuJson uses interfaces instead of an attribute on a type.
+// This is much cleaner way to specify the type if it can serialized or deserialized.
+public partial class Person : IDeserialize, ISerialize
 {
     [Name("name")]
     public string Name { get; set; }
@@ -45,7 +44,7 @@ var person = new Person {
   Location = "North Pole",
   City = "Santa's City"
 };
-var serialized = person.Serialize();
+var serialized = JsonConvert.Serialize(person);
 JsonTextWriter.WriteToFile("person.json", person);
 
 var johnJson = JsonTextReader.FromFile("person.json");
@@ -71,7 +70,7 @@ The reason why the methods are `virtual` is because the class might have a deriv
 // Source Generated code
 using TeuJson;
 
-partial class Person : ITeuJsonDeserializable
+partial class Person
 {
     public virtual void Deserialize(JsonObject @__obj)
     {
@@ -81,7 +80,7 @@ partial class Person : ITeuJsonDeserializable
     }
 }
 
-partial class Rect4 : ITeuJsonSerializable
+partial class Rect4
 {
     public virtual JsonObject Serialize()
     {
@@ -133,8 +132,7 @@ public static class MyMathConverter
 ```
 
 ```C#
-[TeuJsonSerializable(Deserializable = true)]
-public sealed partial class Player 
+public sealed partial class Player : IDeserialize
 {
     [Name("name")]
     public string Name { get; set; }

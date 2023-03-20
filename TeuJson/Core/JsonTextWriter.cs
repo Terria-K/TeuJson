@@ -1,6 +1,4 @@
-#if !NETFRAMEWORK
 using System.Threading.Tasks;
-#endif
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,11 +16,7 @@ public struct JsonTextWriterOptions
     public bool Minimal;
 }
 
-#if NETFRAMEWORK
-public sealed class JsonTextWriter : JsonWriter, IDisposable
-#else
 public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
-#endif
 {
     private readonly Stack<byte> containerStack = new();
     private readonly TextWriter writer;

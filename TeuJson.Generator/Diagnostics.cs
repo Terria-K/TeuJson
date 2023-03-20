@@ -18,8 +18,8 @@ internal static class TeuDiagnostic
             "Enable one of the serialization option explicitly to make it work.");
 
     internal static readonly DiagnosticDescriptor RecordRule
-        = new("TE004", "Record is not yet supported.", 
-            "Record is not yet supported, but it will come in the future.", 
+        = new("TE004", "Record Types are not yet supported with deserialization.", 
+            "Record Types are not yet supported with deserialization, but it will come in the future.", 
             "Usage", DiagnosticSeverity.Warning, true, "Mark it as class or struct.");
 
     internal static readonly DiagnosticDescriptor StructIfNull

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TeuJson;
 
@@ -19,13 +18,40 @@ public sealed class JsonTextReader : JsonReader, IDisposable
     {
         using var reader = File.OpenRead(path);
         using var textReader = new JsonTextReader(reader);
-        return textReader.ReadObject(); 
+        return textReader.ReadFirstToken();
+    }
+
+    public static JsonValue FromText(string text) 
+    {
+        using var memStream = new MemoryStream();
+        var writer = new StreamWriter(memStream);
+        writer.Write(text);
+        writer.Flush();
+        memStream.Position = 0;
+
+        using var textReader = new JsonTextReader(memStream);
+        return textReader.ReadFirstToken();
     }
 
     public static JsonValue FromStream(Stream fs) 
     {
         using var textReader = new JsonTextReader(fs);
-        return textReader.ReadObject(); 
+        return textReader.ReadFirstToken();
+    }
+
+    public JsonValue ReadFirstToken() 
+    {
+        if (PeekChar(out char next)) 
+        {
+            var token = next switch 
+            {
+                '{' => JsonToken.Object,
+                '[' => JsonToken.Array,
+                _ => JsonToken.String
+            };
+            return ReadValue();
+        }
+        return JsonNull.NullReference;
     }
 
     protected override bool ReadInternal()
@@ -83,12 +109,8 @@ public sealed class JsonTextReader : JsonReader, IDisposable
             builder.Clear();
             var first = next;
             builder.Append(next);
-#if !NETFRAMEWORK
-            while (PeekChar(out next) && !("\r\n,}]").Contains(next)) 
-#else
-            while (PeekChar(out next) && !("\r\n,}]").Contains(next.ToString())) 
-#endif
 
+            while (PeekChar(out next) && !("\r\n,}]").Contains(next)) 
             {
                 builder.Append(next);
                 SkipChar();

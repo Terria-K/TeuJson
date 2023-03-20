@@ -52,6 +52,8 @@ public sealed class JsonNull : JsonValue
     public override nint AsIntPtr => 0;
 
     public override nuint AsUIntPtr => 0;
+
+    public override object? AsObject => null;
 #endif
 
     public override int Count => 0;
@@ -66,12 +68,18 @@ public sealed class JsonNull : JsonValue
 
     public override JsonObject AsJsonObject => new();
 
+
     public override void Add(JsonValue value)
     {
         throw new System.NotImplementedException();
     }
 
     public override bool Contains(JsonValue value)
+    {
+        return false;
+    }
+
+    public override bool Contains(string value)
     {
         return false;
     }

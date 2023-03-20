@@ -9,5 +9,6 @@
         "Y": 15,
         "Z": 400
     },
-    "TextEnum": "C"
+    "TextEnum": "C",
+    "TextEnums": ["A", "B", 3]
 }
