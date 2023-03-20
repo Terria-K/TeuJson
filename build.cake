@@ -4,8 +4,9 @@ const string version = "2.0.0";
 var target = Argument("target", "Build");
 var configuration = Argument("configuration", "Release");
 var outputFolder = "./artifacts";
-var mainKey = EnvironmentVariable<string>("MAIN_KEY", "Empty Key");
-var generatorKey = EnvironmentVariable<string>("GENERATOR_KEY", "Empty Key");
+var mainKey = Context.Configuration.GetValue("Keys_MAIN_KEY");
+var generatorKey = Context.Configuration.GetValue("Keys_GENERATOR_KEY");
+
 
 void BuildProject(string project) 
 {
