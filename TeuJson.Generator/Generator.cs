@@ -242,10 +242,14 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 if (elementType is INamedTypeSymbol namedTypeSymbol) 
                 {
                     var underlyingType = namedTypeSymbol.EnumUnderlyingType;
-                    if (underlyingType != null) 
+                    if (underlyingType != null)
                     {
-                        // TODO Enum arrays
-                        throw new Exception(underlyingType.ToDisplayString());
+                        var fullDisplay = elementType.ToFullDisplayString();
+                        if (isSerialize)
+                            SerializeArrayEnum(sb, variableName, name, underlyingType, fullDisplay, ifNull);
+                        else
+                            DeserializeArrayEnum(sb, variableName, name, underlyingType, fullDisplay);
+                        continue;
                     }
                 }
                 if (arrayTypeSymbol.Rank == 1)
@@ -326,6 +330,78 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             sb.Append("");
         }
     }
+
+    private static void DeserializeArrayEnum(
+        StringBuilder sb, 
+        string variableName,
+        string name, 
+        INamedTypeSymbol underlyingType, 
+        string fullDisplay
+    )
+    {
+        sb.AppendLine($$"""
+        if (!@__obj.IsNull && @__obj.Count > 0)
+        {
+            var array = @__obj["{{name}}"].AsJsonArray;
+            var arrayCount = array.Count; 
+            {{variableName}} = new {{fullDisplay}}[arrayCount];
+            for (int i = 0; i < arrayCount; i++) 
+            {
+                if (System.Enum.TryParse<{{fullDisplay}}>(array[i].AsString, out {{fullDisplay}} num)) 
+                {
+                    {{variableName}}[i] = num;
+                    continue;
+                }
+                {{variableName}}[i] = ({{fullDisplay}})({{underlyingType.ToDisplayString()}})array[i];
+            }
+        }
+        """);
+    }
+
+    private static void SerializeArrayEnum(
+        StringBuilder sb,
+        string variableName,
+        string name, 
+        INamedTypeSymbol underlyingType, 
+        string fullDisplay,
+        bool ifNull
+    ) {
+        if (!ifNull) 
+        {
+            sb.AppendLine($"if ({variableName} == null)");
+            sb.AppendLine("{");
+            sb.AppendLine($"__builder[\"{name}\"] = new JsonArray();");
+            sb.AppendLine("}");
+            sb.AppendLine("else");
+        }
+        else 
+        {
+            sb.AppendLine($"if ({variableName} != null)");
+        }
+        sb.AppendLine($$"""
+        {
+            var jsonArray = new JsonArray();
+            foreach ({{fullDisplay}} v in {{variableName}}) 
+            {
+                jsonArray.Add(({{underlyingType.ToDisplayString()}})v);
+            }
+            __builder["{{name}}"] = jsonArray;
+        }
+        """);
+    }
+
+    // public static JsonArray ConvertToJsonArray<T>(this T[]? array) 
+    // where T : ISerialize
+    // {
+    //     if (array == null)
+    //         return new JsonArray();
+    //     var jsonArray = new JsonArray();
+    //     foreach (T v in array) 
+    //     {
+    //         jsonArray.Add(v.Serialize());
+    //     }
+    //     return jsonArray;
+    // }
 
     private static IEnumerable<INamedTypeSymbol> GetSymbols(
         Compilation compilation, ImmutableArray<TypeDeclarationSyntax?> syn, string serialize) 

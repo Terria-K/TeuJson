@@ -64,13 +64,13 @@ public partial class Structure : TeuJson.ISerialize, IDeserialize
     public Enumeration NumberEnum;
     [TeuObject]
     public Enumeration TextEnum = Enumeration.C;
-    // [TeuObject]
-    // public Enumeration[] TextEnums = new Enumeration[4] {
-    //     Enumeration.A,
-    //     Enumeration.B,
-    //     Enumeration.C,
-    //     Enumeration.B
-    // };
+    [TeuObject]
+    public Enumeration[] TextEnums = new Enumeration[4] {
+        Enumeration.A,
+        Enumeration.B,
+        Enumeration.C,
+        Enumeration.B
+    };
 
     [TeuObject]
     public Summon Weaponry = Summon.Bow;
