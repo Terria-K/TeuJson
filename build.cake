@@ -1,3 +1,5 @@
+#tool nuget:?package=NuGet.CommandLine&version=5.9.1
+
 var target = Argument("target", "Build");
 var configuration = Argument("configuration", "Release");
 var outputFolder = "./artifacts";
@@ -99,14 +101,14 @@ Task("Push")
     .IsDependentOn("Package")
     .Does(() => 
     {
-        var packages = GetFiles("./artifacts/**/*.nupkg")
-        NugetPush(packages, new NuGetPushSettings {
+        var packages = GetFiles("./artifacts/**/*.nupkg");
+        NuGetPush(packages, new NuGetPushSettings {
             Source = "https://api.nuget.org/v3/index.json",
             ApiKey = mainKey
         });
         CleanDirectory(outputFolder);
-        var packages = GetFiles("./artifacts/**/*.nupkg")
-        NugetPush(packages, new NuGetPushSettings {
+        var generatorPackages = GetFiles("./artifacts/**/*.nupkg");
+        NuGetPush(generatorPackages, new NuGetPushSettings {
             Source = "https://api.nuget.org/v3/index.json",
             ApiKey = generatorKey
         });
