@@ -94,4 +94,22 @@ Task("Package")
         });
     });
 
+Task("Push")
+    .IsDependentOn("Clean")
+    .IsDependentOn("Package")
+    .Does(() => 
+    {
+        var packages = GetFiles("./artifacts/**/*.nupkg")
+        NugetPush(packages, new NuGetPushSettings {
+            Source = "https://api.nuget.org/v3/index.json",
+            ApiKey = mainKey
+        });
+        CleanDirectory(outputFolder);
+        var packages = GetFiles("./artifacts/**/*.nupkg")
+        NugetPush(packages, new NuGetPushSettings {
+            Source = "https://api.nuget.org/v3/index.json",
+            ApiKey = generatorKey
+        });
+    });
+
 RunTarget(target);
