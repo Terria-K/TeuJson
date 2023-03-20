@@ -4,4 +4,7 @@ Generated/
 
 .vscode
 .env
+cake.config
 artifacts
+tools
+build.ps1
