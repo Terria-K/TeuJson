@@ -12,7 +12,6 @@ public struct JsonTextWriterOptions
     {
         Minimal = false
     };
-    public int ArrayDepth;
     public bool Minimal;
 }
 
@@ -36,6 +35,54 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
     {
         writer = new StreamWriter(fs);
         minimal = options.Minimal;
+    }
+
+    public static string Write(JsonValue value) 
+    {
+        return Write(value, JsonTextWriterOptions.Default);
+    }
+
+    public static string Write(JsonValue value, JsonTextWriterOptions options) 
+    {
+        using var ms = new MemoryStream();
+        var textWriter = new JsonTextWriter(ms, options);
+        textWriter.WriteJson(value);
+        textWriter.writer.Flush(); 
+        ms.Position = 0;
+        using var sr = new StreamReader(ms);
+        try 
+        {
+            return sr.ReadToEnd();
+        }
+        finally 
+        {
+            textWriter.Dispose();
+            sr.Dispose();
+        }
+    }
+
+    public static async Task<string> WriteAsync(JsonValue value) 
+    {
+        return await WriteAsync(value, JsonTextWriterOptions.Default);
+    }
+
+    public static async Task<string> WriteAsync(JsonValue value, JsonTextWriterOptions options) 
+    {
+        using var ms = new MemoryStream();
+        var textWriter = new JsonTextWriter(ms, options);
+        textWriter.WriteJson(value);
+        await textWriter.writer.FlushAsync(); 
+        ms.Position = 0;
+        using var sr = new StreamReader(ms);
+        try 
+        {
+            return await sr.ReadToEndAsync();
+        }
+        finally 
+        {
+            sr.Dispose();
+            await textWriter.DisposeAsync();
+        }
     }
 
     public static void WriteToFile(string path, JsonValue value) 

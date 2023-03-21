@@ -60,6 +60,7 @@ public abstract class JsonValue
     public abstract JsonValue[] ToArray();
     public abstract List<JsonValue> ToList();
     public abstract Dictionary<string, JsonValue> ToDictionary();
+    public abstract string ToString(JsonTextWriterOptions options);
     public static implicit operator JsonValue(bool value) => new JsonValue<bool>(JsonToken.Boolean, value);
     public static implicit operator JsonValue(decimal value) => new JsonValue<decimal>(JsonToken.Number, value);
     public static implicit operator JsonValue(float value) => new JsonValue<float>(JsonToken.Number, value);
@@ -425,6 +426,11 @@ public class JsonValue<T> : JsonValue
     }
 
     public override string ToString()
+    {
+        return ToString(JsonTextWriterOptions.Default);
+    }
+
+    public override string ToString(JsonTextWriterOptions options)
     {
         if (Value == null)
             return "null";
