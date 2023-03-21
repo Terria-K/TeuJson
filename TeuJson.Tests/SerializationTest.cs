@@ -7,6 +7,7 @@ namespace TeuJson.Tests
     {
         public string? Name { get; set; }
         public int Age { get; set; }
+        public int[]? FavoriteNumbers { get; set; }
         [Ignore]
         public string? City { get; set; }
     }
@@ -70,19 +71,25 @@ namespace TeuJson.Tests
             {
                 "Name": "Gorden Lockmen",
                 "Age": 17,
-                "City": "Hot Mesa"
+                "City": "Hot Mesa",
+                "FavoriteNumbers": [2, 5, 1, 18]
             }
             """;
 
             var jsonObj = JsonTextReader.FromText(json);
             var person = JsonConvert.Deserialize<Person>(jsonObj);
             Assert.True(jsonObj.IsObject);
-            Assert.Equal(3, jsonObj.Count);
+            Assert.Equal(4, jsonObj.Count);
             Assert.True(jsonObj.Contains("Name"));
 
             Assert.Equal("Gorden Lockmen", person.Name);
             Assert.Equal(17, person.Age);
             Assert.Null(person.City);
+
+            Assert.True(jsonObj.Contains("FavoriteNumbers"));
+            Assert.True(jsonObj["FavoriteNumbers"].IsArray);
+            Assert.Equal(4, jsonObj["FavoriteNumbers"].Count);
+            Assert.Equal<int>(1, jsonObj["FavoriteNumbers"][2]);
         }
 
         [Fact]
@@ -93,12 +100,17 @@ namespace TeuJson.Tests
 
 
             Assert.True(jsonObj.IsObject);
-            Assert.Equal(3, jsonObj.Count);
+            Assert.Equal(4, jsonObj.Count);
             Assert.True(jsonObj.Contains("Name"));
 
             Assert.Equal("Gorden Lockmen", person.Name);
             Assert.Equal(17, person.Age);
             Assert.Null(person.City);
+
+            Assert.True(jsonObj.Contains("FavoriteNumbers"));
+            Assert.True(jsonObj["FavoriteNumbers"].IsArray);
+            Assert.Equal(4, jsonObj["FavoriteNumbers"].Count);
+            Assert.Equal<int>(1, jsonObj["FavoriteNumbers"][2]);
         }
 
         [Fact]
@@ -108,17 +120,26 @@ namespace TeuJson.Tests
             {
                 Name = "Barney Dinosaur",
                 Age = 20,
-                City = "Loco"
+                City = "Loco",
+                FavoriteNumbers = new int[4] { 2, 1, 4, 20 }
             };
 
             var jsonObj = JsonConvert.Serialize(person);
             Assert.True(jsonObj.IsObject);
-            Assert.Equal(2, jsonObj.Count);
+            Assert.Equal(3, jsonObj.Count);
             Assert.True(jsonObj.Contains("Name"));
             Assert.False(jsonObj.Contains("City"));
 
             Assert.Equal("Barney Dinosaur", jsonObj["Name"]);
             Assert.Equal<int>(20, jsonObj["Age"]);
+            var jsonObjText = jsonObj.ToString();
+
+            Assert.True(jsonObj.Contains("FavoriteNumbers"));
+            Assert.True(jsonObj["FavoriteNumbers"].IsArray);
+            Assert.Equal(4, jsonObj["FavoriteNumbers"].Count);
+            Assert.Equal<int>(4, jsonObj["FavoriteNumbers"][2]);
+
+            Assert.Equal("""{"Name": "Barney Dinosaur","Age": 20,"FavoriteNumbers": [2, 1, 4, 20]}""", jsonObjText);
         }
 
         [Fact]
@@ -158,6 +179,12 @@ namespace TeuJson.Tests
 
             Assert.Equal(Durability.Weak, (Durability)weakBlockJson["Durability"].AsInt32);
             Assert.Equal(Durability.Strong, (Durability)strongBlockJson["Durability"].AsInt32);
+
+            var weakBlockJsonText = weakBlockJson.ToString();
+            var strongBlockJsonText = strongBlockJson.ToString();
+
+            Assert.Equal("""{"Health": 50,"Velocity": 2.5,"Durability": 2}""", weakBlockJsonText);
+            Assert.Equal("""{"Health": 100,"Velocity": 0.5,"Durability": 0}""", strongBlockJsonText);
         }
     }
 }

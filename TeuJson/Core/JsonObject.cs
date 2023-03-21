@@ -49,14 +49,12 @@ public sealed class JsonObject : JsonValue<Dictionary<string, JsonValue>>
 
     public override string ToString()
     {
-        var sb = new StringBuilder();
-        sb.AppendLine("{");
-        foreach (var obj in Value) 
-        {
-            sb.AppendLine($"\"{obj.Key}\": {obj.Value}");
-        }
-        sb.AppendLine("}");
-        return sb.ToString();
+        return ToString(new JsonTextWriterOptions { Minimal = true });
+    }
+
+    public override string ToString(JsonTextWriterOptions options)
+    {
+        return JsonTextWriter.Write(this, options);
     }
 
     public override Dictionary<string, JsonValue> ToDictionary()

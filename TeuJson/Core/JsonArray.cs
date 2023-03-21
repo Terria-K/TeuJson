@@ -57,15 +57,12 @@ public sealed class JsonArray : JsonValue<List<JsonValue>>, IEnumerable
 
     public override string ToString()
     {
-        var sb = new StringBuilder();
-        sb.AppendLine("[");
-        foreach (var element in Value) 
-        {
-            sb.Append(element.ToString());
-            sb.Append(",");
-            sb.AppendLine();
-        }
-        sb.AppendLine("]");
-        return sb.ToString();
+        return ToString(new JsonTextWriterOptions { Minimal = true });
+    }
+
+    public override string ToString(JsonTextWriterOptions options)
+    {
+    
+        return JsonTextWriter.Write(this, options);
     }
 }

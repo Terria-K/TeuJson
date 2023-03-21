@@ -11,6 +11,7 @@ var reader = JsonTextReader.FromFile("Samples/res/Jsontester.json");
 JsonTextWriter.WriteToFile("Samples/res/Jsontesterwrite.json", reader);
 
 var readingStructure = JsonTextReader.FromFile("Samples/res/JsonStructure.json");
+var text = readingStructure.ToString();
 var structure = JsonConvert.Deserialize<Structure>(readingStructure);
 
 var numberToAssert = new int[4] { 2, 3, 1, 5};

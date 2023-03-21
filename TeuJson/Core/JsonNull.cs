@@ -103,4 +103,14 @@ public sealed class JsonNull : JsonValue
     {
         throw new System.NullReferenceException();
     }
+
+    public override string ToString(JsonTextWriterOptions options)
+    {
+        return ToString();
+    }
+
+    public override string ToString()
+    {
+        return "null";
+    }
 }
