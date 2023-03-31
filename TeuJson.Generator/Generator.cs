@@ -57,6 +57,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 
             var sb = new StringBuilder();
             sb.AppendLine("// Source Generated code");
+            sb.AppendLine("#nullable disable");
             sb.AppendLine("using TeuJson;");
             sb.AppendLine("using System;");
             var ns = symbol.GetSymbolNamespace();
@@ -73,6 +74,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 
             var sb = new StringBuilder();
             sb.AppendLine("// Source Generated code");
+            sb.AppendLine("#nullable disable");
             sb.AppendLine("using TeuJson;");
             sb.AppendLine("using System;");
             var ns = symbol.GetSymbolNamespace();
@@ -295,6 +297,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 var enumType = typedSymbol.EnumUnderlyingType;
                 if (enumType != null) 
                 {
+                    var fullDisplay = typedSymbol.ToFullDisplayString();
                     if (isSerialize) 
                     {
                         sb.AppendLine(
@@ -304,14 +307,14 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     else 
                     {
                         sb.AppendLine($"JsonValue @__enumTemp{tempCount} = @__obj[\"{name}\"]{additionalCall};");
-                        sb.AppendLine($"if (System.Enum.TryParse(@__enumTemp{tempCount}.AsString, out {typedSymbol.Name} @t{tempCount}))");
+                        sb.AppendLine($"if (System.Enum.TryParse(@__enumTemp{tempCount}.AsString, out {fullDisplay} @t{tempCount}))");
                         sb.AppendLine("{");
                         sb.AppendLine($"{variableName} = @t{tempCount};");
                         sb.AppendLine("}");
                         sb.AppendLine("else");
                         sb.AppendLine("{");
                         sb.AppendLine(
-                            $"{variableName} = ({typedSymbol.Name})({enumType.ToDisplayString()})@__enumTemp{tempCount++};");
+                            $"{variableName} = ({fullDisplay})({enumType.ToDisplayString()})@__enumTemp{tempCount++};");
                         sb.AppendLine("}");
                     }
                     continue;
