@@ -155,12 +155,12 @@ internal static class AttributeFunc
         if (classOrStruct == "struct") 
         {
             if (serializable)
-                return $"public JsonObject Serialize()";
-            return $"public void Deserialize(JsonObject @__obj)";
+                return $"JsonObject Serialize()";
+            return $"void Deserialize(JsonObject @__obj)";
         }
         if (serializable)
-            return $"public {(hasBaseType ? $"{(isSealed ? "sealed" : "")} override" : $"{GetStatusMethodModifier(isSealed)}")} JsonObject Serialize()";
-        return $"public {(hasBaseType ? $"{(isSealed ? "sealed" : "")} override" : GetStatusMethodModifier(isSealed))} void Deserialize(JsonObject @__obj)";
+            return $"{(hasBaseType ? $"{(isSealed ? "sealed" : "")} override" : $"{GetStatusMethodModifier(isSealed)}")} JsonObject Serialize()";
+        return $"{(hasBaseType ? $"{(isSealed ? "sealed" : "")} override" : GetStatusMethodModifier(isSealed))} void Deserialize(JsonObject @__obj)";
     }
 
     private static string GetStatusMethodModifier(bool isSealed) 
