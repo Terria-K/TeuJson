@@ -14,6 +14,11 @@ public sealed class JsonTextReader : JsonReader, IDisposable
         reader = new StreamReader(fs);
     }
 
+    private JsonTextReader(string text) 
+    {
+        reader = new StringReader(text);
+    }
+
     public static JsonValue FromFile(string path) 
     {
         using var reader = File.OpenRead(path);
@@ -23,13 +28,7 @@ public sealed class JsonTextReader : JsonReader, IDisposable
 
     public static JsonValue FromText(string text) 
     {
-        using var memStream = new MemoryStream();
-        var writer = new StreamWriter(memStream);
-        writer.Write(text);
-        writer.Flush();
-        memStream.Position = 0;
-
-        using var textReader = new JsonTextReader(memStream);
+        using var textReader = new JsonTextReader(text);
         return textReader.ReadFirstToken();
     }
 

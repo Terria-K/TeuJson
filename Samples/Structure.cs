@@ -110,6 +110,7 @@ public partial class Vector4 : Vector3, ISerialize, IDeserialize
 
 public abstract partial class AbstractVector : ISerialize, IDeserialize
 {
+    [Ignore("X == 0")]
     public float X { get; set; }
 }
 

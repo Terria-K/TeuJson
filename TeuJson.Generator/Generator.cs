@@ -51,38 +51,51 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             return;
         
 
-        foreach (var symbol in GetSymbols(comp, syn, "ISerialize"))
+        foreach (var symbol in GetSerializableSymbols(comp, syn, "ISerialize"))
         {
-            var members = symbol.GetMembers().OfType<ISymbol>().ToList();
-
-            var sb = new StringBuilder();
-            sb.AppendLine("// Source Generated code");
-            sb.AppendLine("#nullable disable");
-            sb.AppendLine("using TeuJson;");
-            sb.AppendLine("using System;");
-            var ns = symbol.GetSymbolNamespace();
-            if (!string.IsNullOrEmpty(ns))
-                sb.AppendLine("namespace " + ns + ";");
-
-            GenerateSource(ctx, symbol, members, sb, true);
-            ctx.AddSource($"{symbol.Name}.serialize.cs", sb.ToString());
+            GenerateCode(symbol, true);
         }
 
-        foreach (var symbol in GetSymbols(comp, syn, "IDeserialize")) 
+        foreach (var symbol in GetSerializableSymbols(comp, syn, "IDeserialize")) 
         {
+            GenerateCode(symbol, false);
+        }
+
+        void GenerateCode(INamedTypeSymbol symbol, bool serialize) 
+        {
+            var filename = serialize ? "serialize" : "deserialize";
             var members = symbol.GetMembers().OfType<ISymbol>().ToList();
 
-            var sb = new StringBuilder();
-            sb.AppendLine("// Source Generated code");
-            sb.AppendLine("#nullable disable");
-            sb.AppendLine("using TeuJson;");
-            sb.AppendLine("using System;");
-            var ns = symbol.GetSymbolNamespace();
-            if (!string.IsNullOrEmpty(ns))
-                sb.AppendLine("namespace " + ns + ";");
+            var quoteWriter = new QuoteWriter();
 
-            GenerateSource(ctx, symbol, members, sb, false);
-            ctx.AddSource($"{symbol.Name}.deserialize.cs", sb.ToString());
+            quoteWriter.AddQuoteMacro("ns", () => 
+            {
+                var ns = symbol.GetSymbolNamespace();
+                if (string.IsNullOrEmpty(ns)) 
+                {
+                    return string.Empty;
+                }
+                return $"namespace {ns};";
+            });
+
+            GenerateSource(ctx, symbol, members, quoteWriter, serialize);
+            var quote = quoteWriter.Quote("""
+            // Source Generated Code
+            #nullable disable
+            using TeuJson;
+            using System;
+
+            <#ns>
+
+            partial <#class> <#classname> 
+            {
+                public <#method> 
+                {
+                    <#body>
+                }
+            }
+            """);
+            ctx.AddSource($"{symbol.Name}.{filename}.cs", quote);
         }
     }
 
@@ -90,7 +103,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         SourceProductionContext ctx, 
         INamedTypeSymbol symbol, 
         List<ISymbol> members,
-        StringBuilder sb,
+        QuoteWriter writer,
         bool isSerialize
     )
     {
@@ -117,23 +130,23 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             }
         }
 
+        writer.AddQuoteMacro("class", () => classOrStruct);
+        writer.AddQuoteMacro("classname", () => symbol.Name);
 
-        sb.AppendLine($"partial {classOrStruct} {symbol.Name}");
-        sb.AppendLine("{");
-        sb.AppendLine(AttributeFunc.GetStatusMethod(isSerialize, hasBaseType, isSealed, classOrStruct));
+        writer.AddQuoteMacro("method", () => AttributeFunc.GetStatusMethod(isSerialize, hasBaseType, isSealed, classOrStruct));
 
-        sb.AppendLine("{");
-        if (isSerialize)
-            sb.AppendLine($"var __builder = {(hasBaseType ? "base.Serialize" : "new JsonObject")}();");
-        if (hasBaseType && !isSerialize)
-            sb.AppendLine("base.Deserialize(@__obj);");
+        writer.AddQuoteMacro("body", sb => 
+        {
+            if (isSerialize)
+                sb.AppendLine($"var __builder = {(hasBaseType ? "base.Serialize" : "new JsonObject")}();");
+            if (hasBaseType && !isSerialize)
+                sb.AppendLine("base.Deserialize(@__obj);");
 
-        WriteMembers(ctx, members, sb, "this", isSerialize, isRecord);
-        if (isSerialize)
-            sb.AppendLine("return __builder;");
-        sb.AppendLine("}");
-
-        sb.AppendLine("}");
+            WriteMembers(ctx, members, sb, "this", isSerialize, isRecord);
+            if (isSerialize)
+                sb.AppendLine("return __builder;");
+            return sb.ToString();
+        });
     }
 
     private static void WriteMembers(
@@ -147,24 +160,22 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
     {
         foreach (var sym in members)
         {
-            if (isRecord && sym.Name == "EqualityContract")
+            if (isRecord && sym.Name == "EqualityContract" || 
+                sym is not IPropertySymbol && sym is not IFieldSymbol ||
+                sym is IFieldSymbol && !sym.HasAttributeName("TeuObject")
+            )
                 continue;
-            if (sym is not IPropertySymbol && sym is not IFieldSymbol)
-                continue;
-
-            if (sym is IFieldSymbol && !sym.HasAttributeName("TeuObject"))
-                continue;
-
             var name = $"{sym.Name}";
             var variableName = $"{qualifier}.{name}";
-            ITypeSymbol? type;
-            if (sym is IPropertySymbol prop)
-                type = prop.Type;
-            else if (sym is IFieldSymbol field)
-                type = field.Type;
-            else type = null;
+            ITypeSymbol? type = sym switch 
+            {
+                IPropertySymbol prop => prop.Type,
+                IFieldSymbol field => field.Type,
+                _ => null
+            };
 
             var additionalCall = "";
+            var ignoreStatement = "";
             bool ifNull = false;
 
             foreach (var attr in sym.GetAttributes())
@@ -172,9 +183,18 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 var attributeClassName = attr.AttributeClass?.Name;
                 if (attributeClassName is null)
                     continue;
-                if (attributeClassName == "IgnoreAttribute")
-                    // Idk how to get out of the 1st loop 
-                    goto Ignore;
+                if (attributeClassName == "IgnoreAttribute") 
+                {
+                    var attrib = AttributeFunc.GetIgnoreCondition(attr);
+                    if (attrib == string.Empty) 
+                    {
+                        // Idk how to get out of the 1st loop 
+                        goto Ignore;
+                    }
+                    ignoreStatement = attrib;
+                    sb.AppendLine($"if (!({ignoreStatement})) {{");
+                }
+
 
                 if (attributeClassName == "NameAttribute")
                 {
@@ -233,7 +253,6 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                         ctx.ReportDiagnostic(Diagnostic.Create(TeuDiagnostic.ThreeArgumentsRule, sym.Locations[0]));
                         continue;
                     }
-
                 }
             }
             // Arrays
@@ -251,6 +270,9 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                             SerializeArrayEnum(sb, variableName, name, underlyingType, fullDisplay, ifNull);
                         else
                             DeserializeArrayEnum(sb, variableName, name, underlyingType, fullDisplay);
+
+                        if (!string.IsNullOrEmpty(ignoreStatement))
+                            sb.AppendLine("}");
                         continue;
                     }
                 }
@@ -269,10 +291,17 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     {
                         sb.AppendLine($"if ({variableName} != null)");
                         sb.AppendLine($"__builder[\"{name}\"] = {variableName}.Serialize();");
-                        if (ifNull)
+                        if (ifNull) 
+                        {
+                            if (!string.IsNullOrEmpty(ignoreStatement))
+                                sb.AppendLine("}");
                             continue;
+                        }
+
                         sb.AppendLine($"else");
                         sb.AppendLine($"__builder[\"{name}\"] = new JsonNull();");
+                        if (!string.IsNullOrEmpty(ignoreStatement))
+                            sb.AppendLine("}");
                     }
                     continue;
                 }
@@ -288,6 +317,8 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 sb.AppendLine($"{variableName} = result;");
                 sb.AppendLine("}");
                 tempCount++;
+                if (!string.IsNullOrEmpty(ignoreStatement))
+                    sb.AppendLine("}");
                 continue;
             }
 
@@ -317,6 +348,8 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                             $"{variableName} = ({fullDisplay})({enumType.ToDisplayString()})@__enumTemp{tempCount++};");
                         sb.AppendLine("}");
                     }
+                    if (!string.IsNullOrEmpty(ignoreStatement))
+                        sb.AppendLine("}");
                     continue;
                 }
             }
@@ -324,10 +357,14 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             {
                 // Implicit Serializer
                 sb.AppendLine($"__builder[\"{name}\"] = {variableName}{additionalCall};");
+                if (!string.IsNullOrEmpty(ignoreStatement))
+                    sb.AppendLine("}");
                 continue;
             }
             // Implicit Deserializer
             sb.AppendLine($"{variableName} = @__obj[\"{name}\"]{additionalCall};");
+            if (!string.IsNullOrEmpty(ignoreStatement))
+                sb.AppendLine("}");
 
             Ignore:
             sb.Append("");
@@ -393,20 +430,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         """);
     }
 
-    // public static JsonArray ConvertToJsonArray<T>(this T[]? array) 
-    // where T : ISerialize
-    // {
-    //     if (array == null)
-    //         return new JsonArray();
-    //     var jsonArray = new JsonArray();
-    //     foreach (T v in array) 
-    //     {
-    //         jsonArray.Add(v.Serialize());
-    //     }
-    //     return jsonArray;
-    // }
-
-    private static IEnumerable<INamedTypeSymbol> GetSymbols(
+    private static IEnumerable<INamedTypeSymbol> GetSerializableSymbols(
         Compilation compilation, ImmutableArray<TypeDeclarationSyntax?> syn, string serialize) 
     {
         foreach (var partialClass in syn) 

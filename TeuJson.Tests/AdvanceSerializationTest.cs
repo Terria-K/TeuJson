@@ -16,6 +16,8 @@ public partial class SuperHuman : Human, IDeserialize, ISerialize
 {
     public int Damage { get; set; }
     public SuperPowers[]? Powers { get; set; }
+    [Ignore("Powers[0] != SuperPowers.IceSpike")]
+    public int IceSpikeDamage { get; set; }
 }
 
 public enum SuperPowers 
@@ -132,7 +134,8 @@ public class AdvanceSerializationTest
             Name = "Tony Stark",
             Position = new Vector2(150, 400),
             Damage = 100,
-            Powers = new SuperPowers[2] { SuperPowers.Fireball, SuperPowers.Flying }
+            Powers = new SuperPowers[2] { SuperPowers.Fireball, SuperPowers.Flying },
+            IceSpikeDamage = 10
         };
 
         var jsonObj = JsonConvert.Serialize(superHuman);
@@ -149,5 +152,24 @@ public class AdvanceSerializationTest
         Assert.Equal(SuperPowers.Flying, (SuperPowers)(int)jsonObj["Powers"][1]);
 
         Assert.Equal("""{"Name": "Tony Stark","Position": {"x": 150,"y": 400},"Damage": 100,"Powers": [0, 2]}""", jsonObjText);
+    }
+
+    [Fact]
+    public void ShouldSerializeAndNotIgnoreIfEvalutedTrue() 
+    {
+        var superHuman = new SuperHuman 
+        {
+            Name = "Elsa",
+            Position = new Vector2(150, 400),
+            Damage = 100,
+            Powers = new SuperPowers[2] { SuperPowers.IceSpike, SuperPowers.Fireball},
+            IceSpikeDamage = 10
+        };
+
+        var jsonObj = JsonConvert.Serialize(superHuman);
+        var jsonObjText = jsonObj.ToString(new JsonTextWriterOptions { Minimal = true });
+
+        Assert.Equal<int>(10, jsonObj["IceSpikeDamage"]);
+        Assert.Equal("""{"Name": "Elsa","Position": {"x": 150,"y": 400},"Damage": 100,"Powers": [1, 0],"IceSpikeDamage": 10}""", jsonObjText);
     }
 }
