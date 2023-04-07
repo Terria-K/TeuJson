@@ -147,24 +147,22 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
     {
         foreach (var sym in members)
         {
-            if (isRecord && sym.Name == "EqualityContract")
+            if (isRecord && sym.Name == "EqualityContract" || 
+                sym is not IPropertySymbol && sym is not IFieldSymbol ||
+                sym is IFieldSymbol && !sym.HasAttributeName("TeuObject")
+            )
                 continue;
-            if (sym is not IPropertySymbol && sym is not IFieldSymbol)
-                continue;
-
-            if (sym is IFieldSymbol && !sym.HasAttributeName("TeuObject"))
-                continue;
-
             var name = $"{sym.Name}";
             var variableName = $"{qualifier}.{name}";
-            ITypeSymbol? type;
-            if (sym is IPropertySymbol prop)
-                type = prop.Type;
-            else if (sym is IFieldSymbol field)
-                type = field.Type;
-            else type = null;
+            ITypeSymbol? type = sym switch 
+            {
+                IPropertySymbol prop => prop.Type,
+                IFieldSymbol field => field.Type,
+                _ => null
+            };
 
             var additionalCall = "";
+            var ignoreStatement = "";
             bool ifNull = false;
 
             foreach (var attr in sym.GetAttributes())
@@ -172,9 +170,18 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 var attributeClassName = attr.AttributeClass?.Name;
                 if (attributeClassName is null)
                     continue;
-                if (attributeClassName == "IgnoreAttribute")
-                    // Idk how to get out of the 1st loop 
-                    goto Ignore;
+                if (attributeClassName == "IgnoreAttribute") 
+                {
+                    var attrib = AttributeFunc.GetIgnoreCondition(attr);
+                    if (attrib == string.Empty) 
+                    {
+                        // Idk how to get out of the 1st loop 
+                        goto Ignore;
+                    }
+                    ignoreStatement = attrib;
+                    sb.AppendLine($"if ({ignoreStatement}) {{");
+                }
+
 
                 if (attributeClassName == "NameAttribute")
                 {
@@ -233,7 +240,6 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                         ctx.ReportDiagnostic(Diagnostic.Create(TeuDiagnostic.ThreeArgumentsRule, sym.Locations[0]));
                         continue;
                     }
-
                 }
             }
             // Arrays
@@ -251,6 +257,9 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                             SerializeArrayEnum(sb, variableName, name, underlyingType, fullDisplay, ifNull);
                         else
                             DeserializeArrayEnum(sb, variableName, name, underlyingType, fullDisplay);
+
+                        if (!string.IsNullOrEmpty(ignoreStatement))
+                            sb.AppendLine("}");
                         continue;
                     }
                 }
@@ -269,10 +278,17 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     {
                         sb.AppendLine($"if ({variableName} != null)");
                         sb.AppendLine($"__builder[\"{name}\"] = {variableName}.Serialize();");
-                        if (ifNull)
+                        if (ifNull) 
+                        {
+                            if (!string.IsNullOrEmpty(ignoreStatement))
+                                sb.AppendLine("}");
                             continue;
+                        }
+
                         sb.AppendLine($"else");
                         sb.AppendLine($"__builder[\"{name}\"] = new JsonNull();");
+                        if (!string.IsNullOrEmpty(ignoreStatement))
+                            sb.AppendLine("}");
                     }
                     continue;
                 }
@@ -288,6 +304,8 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                 sb.AppendLine($"{variableName} = result;");
                 sb.AppendLine("}");
                 tempCount++;
+                if (!string.IsNullOrEmpty(ignoreStatement))
+                    sb.AppendLine("}");
                 continue;
             }
 
@@ -317,6 +335,8 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                             $"{variableName} = ({fullDisplay})({enumType.ToDisplayString()})@__enumTemp{tempCount++};");
                         sb.AppendLine("}");
                     }
+                    if (!string.IsNullOrEmpty(ignoreStatement))
+                        sb.AppendLine("}");
                     continue;
                 }
             }
@@ -324,10 +344,14 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             {
                 // Implicit Serializer
                 sb.AppendLine($"__builder[\"{name}\"] = {variableName}{additionalCall};");
+                if (!string.IsNullOrEmpty(ignoreStatement))
+                    sb.AppendLine("}");
                 continue;
             }
             // Implicit Deserializer
             sb.AppendLine($"{variableName} = @__obj[\"{name}\"]{additionalCall};");
+            if (!string.IsNullOrEmpty(ignoreStatement))
+                sb.AppendLine("}");
 
             Ignore:
             sb.Append("");
@@ -392,19 +416,6 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         }
         """);
     }
-
-    // public static JsonArray ConvertToJsonArray<T>(this T[]? array) 
-    // where T : ISerialize
-    // {
-    //     if (array == null)
-    //         return new JsonArray();
-    //     var jsonArray = new JsonArray();
-    //     foreach (T v in array) 
-    //     {
-    //         jsonArray.Add(v.Serialize());
-    //     }
-    //     return jsonArray;
-    // }
 
     private static IEnumerable<INamedTypeSymbol> GetSymbols(
         Compilation compilation, ImmutableArray<TypeDeclarationSyntax?> syn, string serialize) 

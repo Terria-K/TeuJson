@@ -83,6 +83,20 @@ internal static class AttributeFunc
         };
     }
 
+    public static string GetIgnoreCondition(AttributeData data) 
+    {
+        if (!data.ConstructorArguments.IsEmpty) 
+        {
+            var arg = data.ConstructorArguments[0];
+            var typedConstant = arg.Value;
+            if (typedConstant != null) 
+            {
+                return (string)typedConstant;
+            }
+        }
+        return string.Empty;
+    }
+
     public static (bool, string) GetCustomConverter(bool serializable, string? typeName, AttributeData data) 
     {
         var directCall = false;
