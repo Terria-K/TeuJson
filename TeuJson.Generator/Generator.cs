@@ -192,7 +192,7 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                         goto Ignore;
                     }
                     ignoreStatement = attrib;
-                    sb.AppendLine($"if ({ignoreStatement}) {{");
+                    sb.AppendLine($"if (!({ignoreStatement})) {{");
                 }
 
 

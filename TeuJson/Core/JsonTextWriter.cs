@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Text;
 
 namespace TeuJson;
 
@@ -37,6 +37,17 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
         minimal = options.Minimal;
     }
 
+    private JsonTextWriter(StringBuilder builder) 
+    {
+        writer = new StringWriter(builder);
+    }
+
+    private JsonTextWriter(StringBuilder builder, JsonTextWriterOptions options) 
+    {
+        writer = new StringWriter(builder);
+        minimal = options.Minimal;
+    }
+
     public static string Write(JsonValue value) 
     {
         return Write(value, JsonTextWriterOptions.Default);
@@ -44,21 +55,10 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
 
     public static string Write(JsonValue value, JsonTextWriterOptions options) 
     {
-        using var ms = new MemoryStream();
-        var textWriter = new JsonTextWriter(ms, options);
+        var sb = new StringBuilder();
+        using var textWriter = new JsonTextWriter(sb, options);
         textWriter.WriteJson(value);
-        textWriter.writer.Flush(); 
-        ms.Position = 0;
-        using var sr = new StreamReader(ms);
-        try 
-        {
-            return sr.ReadToEnd();
-        }
-        finally 
-        {
-            textWriter.Dispose();
-            sr.Dispose();
-        }
+        return sb.ToString();
     }
 
     public static async Task<string> WriteAsync(JsonValue value) 
@@ -68,21 +68,10 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
 
     public static async Task<string> WriteAsync(JsonValue value, JsonTextWriterOptions options) 
     {
-        using var ms = new MemoryStream();
-        var textWriter = new JsonTextWriter(ms, options);
+        var sb = new StringBuilder();
+        await using var textWriter = new JsonTextWriter(sb, options);
         textWriter.WriteJson(value);
-        await textWriter.writer.FlushAsync(); 
-        ms.Position = 0;
-        using var sr = new StreamReader(ms);
-        try 
-        {
-            return await sr.ReadToEndAsync();
-        }
-        finally 
-        {
-            sr.Dispose();
-            await textWriter.DisposeAsync();
-        }
+        return sb.ToString();
     }
 
     public static void WriteToFile(string path, JsonValue value) 
@@ -111,7 +100,6 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
         textWriter.WriteJson(value);
     }
 
-#if !NETFRAMEWORK
     public static async Task WriteToFileAsync(string path, JsonValue value) 
     {
         using var fs = File.Create(path);
@@ -142,7 +130,6 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
     {
         await writer.DisposeAsync();
     }
-#endif
 
     private void Newline() 
     {

@@ -22,7 +22,7 @@ public class QuoteWriter
 
     public string Quote(string quote) 
     {
-        var full = new StringBuilder();
+        var full = new StringBuilder(quote.Length);
         var idBuilder = new StringBuilder();
         using TextReader reader = new StringReader(quote);
 
