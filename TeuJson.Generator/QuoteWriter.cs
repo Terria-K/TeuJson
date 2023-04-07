@@ -14,6 +14,12 @@ public class QuoteWriter
         quotes.Add(quoteID, quoteAct());
     }
 
+    public void AddQuoteMacro(string quoteID, Func<StringBuilder, string> quoteAct) 
+    {
+        var sb = new StringBuilder();
+        quotes.Add(quoteID, quoteAct(sb));
+    }
+
     public string Quote(string quote) 
     {
         var full = new StringBuilder();

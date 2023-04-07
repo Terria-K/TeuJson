@@ -66,20 +66,26 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
             var filename = serialize ? "serialize" : "deserialize";
             var members = symbol.GetMembers().OfType<ISymbol>().ToList();
 
-            var sb = new StringBuilder();
             var quoteWriter = new QuoteWriter();
 
-            quoteWriter.AddQuoteMacro("ns", () => symbol.GetSymbolNamespace());
+            quoteWriter.AddQuoteMacro("ns", () => 
+            {
+                var ns = symbol.GetSymbolNamespace();
+                if (string.IsNullOrEmpty(ns)) 
+                {
+                    return string.Empty;
+                }
+                return $"namespace {ns};";
+            });
 
-            GenerateSource(ctx, symbol, members, sb, quoteWriter, serialize);
-            quoteWriter.AddQuoteMacro("body", () => sb.ToString());
+            GenerateSource(ctx, symbol, members, quoteWriter, serialize);
             var quote = quoteWriter.Quote("""
             // Source Generated Code
             #nullable disable
             using TeuJson;
             using System;
 
-            namespace <#ns>;
+            <#ns>
 
             partial <#class> <#classname> 
             {
@@ -88,7 +94,6 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
                     <#body>
                 }
             }
-            
             """);
             ctx.AddSource($"{symbol.Name}.{filename}.cs", quote);
         }
@@ -98,7 +103,6 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         SourceProductionContext ctx, 
         INamedTypeSymbol symbol, 
         List<ISymbol> members,
-        StringBuilder sb,
         QuoteWriter writer,
         bool isSerialize
     )
@@ -131,14 +135,18 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
 
         writer.AddQuoteMacro("method", () => AttributeFunc.GetStatusMethod(isSerialize, hasBaseType, isSealed, classOrStruct));
 
-        if (isSerialize)
-            sb.AppendLine($"var __builder = {(hasBaseType ? "base.Serialize" : "new JsonObject")}();");
-        if (hasBaseType && !isSerialize)
-            sb.AppendLine("base.Deserialize(@__obj);");
+        writer.AddQuoteMacro("body", sb => 
+        {
+            if (isSerialize)
+                sb.AppendLine($"var __builder = {(hasBaseType ? "base.Serialize" : "new JsonObject")}();");
+            if (hasBaseType && !isSerialize)
+                sb.AppendLine("base.Deserialize(@__obj);");
 
-        WriteMembers(ctx, members, sb, "this", isSerialize, isRecord);
-        if (isSerialize)
-            sb.AppendLine("return __builder;");
+            WriteMembers(ctx, members, sb, "this", isSerialize, isRecord);
+            if (isSerialize)
+                sb.AppendLine("return __builder;");
+            return sb.ToString();
+        });
     }
 
     private static void WriteMembers(
