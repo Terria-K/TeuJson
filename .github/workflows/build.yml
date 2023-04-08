@@ -1,5 +1,9 @@
 name: Build
-on: [push, pull_request]
+on:   
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -10,10 +14,8 @@ jobs:
       - name: Build
         uses: cake-build/cake-action@v1.4.1
         with:
-          script-path: ../build.cake
           target: Build
       - name: Build Generator
         uses: cake-build/cake-action@v1.4.1
         with:
-          script-path: ../build.cake
           target: BuildGenerator
