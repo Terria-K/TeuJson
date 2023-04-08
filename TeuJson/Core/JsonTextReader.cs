@@ -19,6 +19,11 @@ public sealed class JsonTextReader : JsonReader, IDisposable
         reader = new StringReader(text);
     }
 
+    /// <summary>
+    /// Create a Json value from reading a Json file
+    /// </summary>
+    /// <param name="path">A path to Json file</param>
+    /// <returns>A Json value</returns>
     public static JsonValue FromFile(string path) 
     {
         using var reader = File.OpenRead(path);
@@ -26,19 +31,29 @@ public sealed class JsonTextReader : JsonReader, IDisposable
         return textReader.ReadFirstToken();
     }
 
+    /// <summary>
+    /// Create a Json value from reading a Json string
+    /// </summary>
+    /// <param name="path">A Json string</param>
+    /// <returns>A Json value</returns>
     public static JsonValue FromText(string text) 
     {
         using var textReader = new JsonTextReader(text);
         return textReader.ReadFirstToken();
     }
 
+    /// <summary>
+    /// Create a Json value from reading a stream
+    /// </summary>
+    /// <param name="path">A stream containing Json</param>
+    /// <returns>A Json value</returns>
     public static JsonValue FromStream(Stream fs) 
     {
         using var textReader = new JsonTextReader(fs);
         return textReader.ReadFirstToken();
     }
 
-    public JsonValue ReadFirstToken() 
+    private JsonValue ReadFirstToken() 
     {
         if (PeekChar(out char next)) 
         {

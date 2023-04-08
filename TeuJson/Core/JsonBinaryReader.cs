@@ -13,6 +13,12 @@ public sealed class JsonBinaryReader : JsonReader, IDisposable
         this.reader = reader;
     }
 
+
+    /// <summary>
+    /// Create a Json value from reading a Json binary file
+    /// </summary>
+    /// <param name="path">A path to Json file</param>
+    /// <returns>A Json value</returns>
     public static JsonValue FromFile(string path) 
     {
         using var reader = File.OpenRead(path);
@@ -20,10 +26,27 @@ public sealed class JsonBinaryReader : JsonReader, IDisposable
         return textReader.ReadObject(); 
     }
 
+    /// <summary>
+    /// Create a Json value from reading a stream
+    /// </summary>
+    /// <param name="path">A stream containing Json binary</param>
+    /// <returns>A Json value</returns>
     public static JsonValue FromStream(Stream fs) 
     {
         using var textReader = new JsonBinaryReader(fs);
         return textReader.ReadObject(); 
+    }
+
+    /// <summary>
+    /// Create a Json value from a bytes
+    /// </summary>
+    /// <param name="bytes">A bytes representing a Json binary</param>
+    /// <returns>A Json value</returns>
+    public static JsonValue FromBytes(byte[] bytes) 
+    {
+        using var memStream = new MemoryStream(bytes);
+        using var textReader = new JsonBinaryReader(memStream);
+        return textReader.ReadObject();
     }
 
     protected override bool ReadInternal()

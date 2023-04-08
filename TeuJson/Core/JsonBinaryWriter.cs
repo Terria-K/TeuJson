@@ -16,6 +16,24 @@ public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable, IAsyncDi
         this.writer = writer;
     }
 
+    /// <summary>
+    /// Write a Json binary from a Json value
+    /// </summary>
+    /// <param name="value">A Json value</param>
+    /// <returns>A Json bytes representing a Json binary</returns>
+    public static byte[] Write(JsonValue value) 
+    {
+        using var memStream = new MemoryStream();
+        using var textWriter = new JsonBinaryWriter(memStream);
+        textWriter.WriteJson(value);
+        return memStream.ToArray();
+    }
+
+    /// <summary>
+    /// Write a Json string to a file from a Json Value. 
+    /// </summary>
+    /// <param name="path">A path to write on</param>
+    /// <param name="value">A Json value</param>
     public static void WriteToFile(string path, JsonValue value) 
     {
         using var fs = File.Create(path);
@@ -23,12 +41,22 @@ public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable, IAsyncDi
         textWriter.WriteJson(value);
     }
 
+    /// <summary>
+    /// Write a Json string to a stream from a Json Value. 
+    /// </summary>
+    /// <param name="fs">A stream to write on</param>
+    /// <param name="value">A Json value</param>
     public static void WriteToFile(Stream fs, JsonValue value) 
     {
         using var textWriter = new JsonBinaryWriter(fs);
         textWriter.WriteJson(value);
     }
 
+    /// <summary>
+    /// Write a Json string to a file from a Json Value asynchronously. 
+    /// </summary>
+    /// <param name="path">A path to write on</param>
+    /// <param name="value">A Json value</param>
     public static async Task WriteToFileAsync(string path, JsonValue value) 
     {
         using var fs = File.Create(path);
@@ -36,6 +64,11 @@ public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable, IAsyncDi
         textWriter.WriteJson(value);
     }
 
+    /// <summary>
+    /// Write a Json string to a stream from a Json Value asynchronously. 
+    /// </summary>
+    /// <param name="fs">A stream to write on</param>
+    /// <param name="value">A Json value</param>
     public static async Task WriteToFileAsync(Stream fs, JsonValue value) 
     {
         await using var textWriter = new JsonBinaryWriter(fs);
