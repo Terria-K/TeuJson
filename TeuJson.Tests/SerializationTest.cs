@@ -186,4 +186,26 @@ public class SerializationTest
         Assert.Equal("""{"Health": 50,"Velocity": 2.5,"Durability": 2}""", weakBlockJsonText);
         Assert.Equal("""{"Health": 100,"Velocity": 0.5,"Durability": 0}""", strongBlockJsonText);
     }
+
+    [Fact]
+    public void ShouldReadAndWriteWithBytes() 
+    {
+        var strongBlock = new Block
+        {
+            Health = 100,
+            Velocity = 0.5f,
+            Durability = Durability.Strong
+        };
+
+        var strongBlockJson = JsonConvert.Serialize(strongBlock);
+        var strongBlockBytes = JsonBinaryWriter.Write(strongBlockJson);
+
+        var strongBlockJsonNew = JsonBinaryReader.FromBytes(strongBlockBytes);
+
+
+        Assert.Equal(3, strongBlockJsonNew.Count);
+        Assert.Equal<int>(100, strongBlockJsonNew["Health"]);
+        Assert.Equal<float>(0.5f, strongBlockJsonNew["Velocity"]);
+        Assert.Equal<int>((int)Durability.Strong, (int)strongBlockJsonNew["Durability"]);
+    }
 }
