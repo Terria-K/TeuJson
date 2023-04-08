@@ -1,0 +1,17 @@
+name: Build
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macOS-latest]
+    steps:
+      - name: Build
+        uses: cake-build/cake-action@v1.4.1
+        with:
+          target: Build
+      - name: Build Generator
+        uses: cake-build/cake-action@v1.4.1
+        with:
+          target: BuildGenerator
