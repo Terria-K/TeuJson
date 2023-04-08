@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macOS-latest]
+        os: [windows-latest]
     steps:
       - name: Build
         uses: cake-build/cake-action@v1.4.1
