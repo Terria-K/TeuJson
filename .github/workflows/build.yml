@@ -10,10 +10,10 @@ jobs:
       - name: Build
         uses: cake-build/cake-action@v1.4.1
         with:
-          script-path: ./build.cake
+          script-path: ../build.cake
           target: Build
       - name: Build Generator
         uses: cake-build/cake-action@v1.4.1
         with:
-          script-path: ./build.cake
+          script-path: ../build.cake
           target: BuildGenerator
