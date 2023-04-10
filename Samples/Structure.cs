@@ -35,6 +35,7 @@ public partial class Structure : TeuJson.ISerialize, IDeserialize
     public int[,]? Array2D { get; set; }
     public EmptyStructure[]? Structures { get; set; }
     public List<EmptyStructure>? StructureList { get; set; }
+    public List<string>? Strings { get; set; }
     public EmptyStructure StructureObject { get; set; }
     public Dictionary<string, EmptyStructure>? ValueDictionary { get; set; }
     public Dictionary<string, JsonValue>? Values { get; set; }

@@ -87,10 +87,12 @@ partial class TeuJsonGenerator
         return typeName switch 
         {
             <#
-                foreach (var type in types) 
+                for (int i = 0; i < types.Count; i++)  
                 {
+                    var type = types[i];
+                    var smallType = smallTypes[i];
             #>
-nameof(<#=type#>) => ".ConvertToList<#=type#>()",
+nameof(<#=type#>) or "<#=smallType#>" => ".ConvertToList<#=type#>()",
             <#
                 }
             #>
