@@ -19,17 +19,17 @@ public partial class Structure : TeuJson.ISerialize, IDeserialize
     [TeuObject]
     public string? Field;
     // Local Converters.
-    [Custom]
+    [Custom<LocalConverter>()]
     public TimeSpan Span { get; set; }
 
     // Converters outside of a namespace of a structure class need to use the fully qualified name of a converter class.
-    [Custom("Utility.CustomConverters")]
+    [Custom<CustomConverters>()]
     public Vector2 Position { get; set; }
     // Constant should work too!
-    [Custom(CustomConverters.Use)]
+    [Custom<CustomConverters>()]
     public List<Vector2>? Positions { get; set; }
 
-    [Custom(CustomConverters.Use, Write = "CustomizedBooleanWriter", Read = "CustomizedBoolean")]
+    [Custom<CustomConverters>(Write = "CustomizedBooleanWriter", Read = "CustomizedBoolean")]
     public bool IsNull { get; set; }
 
     public int[,]? Array2D { get; set; }
@@ -122,16 +122,16 @@ public sealed partial class Vectorized: AbstractVector, ISerialize, IDeserialize
 
 public partial record Book(string Name, string Author) : ISerialize;
 
-public static class LocalConverter 
+public class LocalConverter 
 {
-    public static TimeSpan ToTimeSpan(this JsonValue value) 
+    public static TimeSpan ToTimeSpan(JsonValue value) 
     {
         if (value.IsNumber)
             return TimeSpan.FromTicks(value.AsInt64);
         return TimeSpan.Zero;
     }
 
-    public static JsonValue ToJson(this TimeSpan value) 
+    public static JsonValue ToJson(TimeSpan value) 
     {
         var ticks = value.Ticks;
         return new JsonValue<long>(JsonToken.Number, ticks);

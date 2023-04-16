@@ -100,20 +100,36 @@ internal static class AttributeFunc
     public static (bool, string) GetCustomConverter(bool serializable, string? typeName, AttributeData data) 
     {
         var directCall = false;
-        var converter = string.Empty;
-        if (!data.ConstructorArguments.IsEmpty) 
+        var converter = GetName();
+
+        string GetName() 
         {
-            var arg = data.ConstructorArguments[0];
-            
-            var typedConstant = arg.Value;
-            if (typedConstant != null) 
+            if (!data.AttributeClass!.TypeArguments.IsEmpty) 
             {
+                var typeArgument = data.AttributeClass.TypeArguments[0];
                 directCall = true;
-                var converterType = (string)typedConstant;
-                converter = converterType;
+                return typeArgument.ToFullDisplayString();
             }
+            if (!data.ConstructorArguments.IsEmpty) 
+            {
+                var arg = data.ConstructorArguments[0];
+                
+                var typedConstant = arg.Value;
+                if (typedConstant != null) 
+                {
+                    directCall = true;
+                    var converterType = (string)typedConstant;
+                    return converterType;
+                }
+            }
+            return string.Empty;
+        }
+
+        if (!string.IsNullOrEmpty(converter)) 
+        {
             string? write = string.Empty;
             string? read = string.Empty;
+
             if (!data.NamedArguments.IsEmpty) 
             {
                 var args = data.NamedArguments;

@@ -1,6 +1,6 @@
 #tool nuget:?package=NuGet.CommandLine&version=5.9.1
 
-const string version = "2.2.2";
+const string version = "3.0.0";
 var target = Argument("target", "Build");
 var configuration = Argument("configuration", "Release");
 var outputFolder = "./artifacts";

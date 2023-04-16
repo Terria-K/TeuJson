@@ -8,7 +8,7 @@ public partial class Human : IDeserialize, ISerialize
 {
     public string? Name { get; set; }
     
-    [Custom("TeuJson.Tests.TestConverter", Write = "Vector2ToJson")]
+    [Custom<TestConverter>(Write = "Vector2ToJson")]
     public Vector2 Position { get; set; }
 }
 
@@ -28,9 +28,9 @@ public enum SuperPowers
     SpinWeb
 }
 
-public static class TestConverter 
+public class TestConverter 
 {
-    public static Vector2 ToVector2(this JsonValue value) 
+    public static Vector2 ToVector2(JsonValue value) 
     {
         if (value.IsNull)
             return Vector2.Zero;
@@ -38,7 +38,7 @@ public static class TestConverter
         return new Vector2(value["x"], value["y"]);
     }
 
-    public static JsonValue Vector2ToJson(this Vector2 value) 
+    public static JsonValue Vector2ToJson(Vector2 value) 
     {
         return new JsonObject 
         {

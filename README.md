@@ -7,8 +7,8 @@ A Reflection-less and Lightweight Json Library using source generator.
 Install these two required packages.
 
 ```console
-dotnet add package TeuJson --version 2.2.2
-dotnet add package TeuJson.Generator --version 2.2.2
+dotnet add package TeuJson --version 3.0.0
+dotnet add package TeuJson.Generator --version 3.0.0
 ```
 
 ## Features
@@ -97,17 +97,22 @@ partial class Rect4
 
 You can create your own converters by defining a function inside of a static class. You will not necessarily needed if you have an access to that specific class or struct.
 
+The way to declare it is differs from NET 6 and NET 7.
 ```C#
 // Creating the converter
 /* MyMathConverter.cs */
 namespace Maths;
-public static class MyMathConverter 
+
+/* NET 6.0 */
+/** public class MyMathConverter **/
+public class MyMathConverter 
 {
 // Converters are named sensitive, it must follow the naming convetion in order to work.
 // Writer = JsonValue ToJson(this <T> value);
 // Reader = <T> To<T>(this JsonValue value);
 
-    public static JsonValue ToJson(this Vector2 value) 
+    // Extensions are possible in NET 6, but not in NET 7 due to its limitation.
+    public static JsonValue ToJson(Vector2 value) 
     {
         // Json object is similar to Dictionary.
         return new JsonObject 
@@ -117,7 +122,7 @@ public static class MyMathConverter
         };
     }
 
-    public static Vector2 ToVector2(this JsonValue value) 
+    public static Vector2 ToVector2(JsonValue value) 
     {
         // check if the json value is object
         if (value.IsObject) 
@@ -136,8 +141,10 @@ public sealed partial class Player : IDeserialize
 {
     [Name("name")]
     public string Name { get; set; }
-    // Name must be fully qualified
-    [Custom("Maths.MyMathConverter")]
+    /* NET 6: Name must be fully qualified*/
+    /** Name must be fully qualified **/
+    /** [Custom("Maths.MyMathConverter")] **/
+    [Custom<MyMathConverter>()]
     [Name("position")]
     public Vector2 Position { get; set;}
 }
