@@ -7,8 +7,8 @@ A Reflection-less and Lightweight Json Library using source generator.
 Install these two required packages.
 
 ```console
-dotnet add package TeuJson --version 3.1.1
-dotnet add package TeuJson.Generator --version 3.1.1
+dotnet add package TeuJson --version 3.1.2
+dotnet add package TeuJson.Generator --version 3.1.2
 ```
 
 ## Features
