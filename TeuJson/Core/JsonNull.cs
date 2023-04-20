@@ -48,7 +48,7 @@ public sealed class JsonNull : JsonValue
     public override bool AsBoolean => false;
 
     public override string AsString => string.Empty;
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
     public override nint AsIntPtr => 0;
 
     public override nuint AsUIntPtr => 0;

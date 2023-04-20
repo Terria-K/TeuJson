@@ -105,7 +105,7 @@ public abstract class JsonWriter
                     WriteValue(UInt.AsUInt32);
                     return;
                 }
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
                 if (value is JsonValue<nint> NInt)
                 {
                     WriteValue(NInt.AsIntPtr);

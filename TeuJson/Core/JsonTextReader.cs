@@ -124,7 +124,7 @@ public sealed class JsonTextReader : JsonReader, IDisposable
             var first = next;
             builder.Append(next);
 
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
             while (PeekChar(out next) && !("\r\n,}]").Contains(next)) 
 #else
             while (PeekChar(out next) && !("\r\n,}]").Contains(next.ToString())) 

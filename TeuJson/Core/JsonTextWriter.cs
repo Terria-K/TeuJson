@@ -15,7 +15,7 @@ public struct JsonTextWriterOptions
     public bool Minimal;
 }
 
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
 public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
 #else
 public sealed class JsonTextWriter : JsonWriter, IDisposable
@@ -124,7 +124,7 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable
         textWriter.WriteJson(value);
     }
 
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
     /// <summary>
     /// Write a Json string from a Json value asynchronously. 
     /// </summary>
