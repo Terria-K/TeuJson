@@ -100,6 +100,7 @@ Task("Package")
 
 Task("Push")
     .IsDependentOn("Clean")
+    .IsDependentOn("Build")
     .IsDependentOn("Package")
     .Does(() => 
     {
