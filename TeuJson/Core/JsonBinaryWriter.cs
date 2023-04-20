@@ -1,11 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+#if NET6_0_OR_GREATER
 using System.Threading.Tasks;
+#endif
 
 namespace TeuJson;
 
+#if NET6_0_OR_GREATER
 public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable, IAsyncDisposable
+#else
+public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable
+#endif
 {
     private readonly Stack<long> positions = new();
     private readonly BinaryWriter writer;
@@ -51,6 +57,7 @@ public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable, IAsyncDi
         using var textWriter = new JsonBinaryWriter(fs);
         textWriter.WriteJson(value);
     }
+#if NET6_0_OR_GREATER
 
     /// <summary>
     /// Write a Json string to a file from a Json Value asynchronously. 
@@ -79,6 +86,7 @@ public sealed partial class JsonBinaryWriter : JsonWriter, IDisposable, IAsyncDi
     {
         await writer.DisposeAsync();
     }
+#endif
 
     public override void BeginArray()
     {

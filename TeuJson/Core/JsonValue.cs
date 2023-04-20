@@ -34,7 +34,7 @@ public abstract class JsonValue
     public abstract JsonObject AsJsonObject { get; }
     public abstract object? AsObject { get; }
 
-#if !NETFRAMEWORK
+#if NET6_0_OR_GREATER
     public abstract nint AsIntPtr { get; }
     public abstract nuint AsUIntPtr { get; }
 #endif
@@ -78,7 +78,7 @@ public abstract class JsonValue
     public static implicit operator JsonValue(string? value) => new JsonValue<string>(JsonToken.String, value ?? "");
     public static implicit operator JsonValue(List<JsonValue> value) => new JsonArray(value);
     public static implicit operator JsonValue(JsonValue[] value) => new JsonArray(value);
-#if !NETFRAMEWORK
+#if NET6_0_OR_GREATER
     public static implicit operator JsonValue(nint value) => new JsonValue<nint>(JsonToken.Number, value);
     public static implicit operator JsonValue(nuint value) => new JsonValue<nuint>(JsonToken.Number, value);
 #endif
@@ -96,7 +96,7 @@ public abstract class JsonValue
     public static implicit operator long(JsonValue value) => value.AsInt64;
     public static implicit operator ulong(JsonValue value) => value.AsUInt64;
     public static implicit operator string(JsonValue value) => value.AsString;
-#if !NETFRAMEWORK
+#if NET6_0_OR_GREATER
     public static implicit operator nint(JsonValue value) => value.AsIntPtr;
     public static implicit operator nuint(JsonValue value) => value.AsUIntPtr;
 #endif
@@ -189,7 +189,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-#if !NETFRAMEWORK
+#if NET6_0_OR_GREATER
     public override nint AsIntPtr 
     {
         get 
@@ -289,7 +289,7 @@ public class JsonValue<T> : JsonValue
         }
     }
 
-#if !NETFRAMEWORK
+#if NET6_0_OR_GREATER
     public override nuint AsUIntPtr 
     {
         get 

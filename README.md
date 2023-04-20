@@ -7,8 +7,8 @@ A Reflection-less and Lightweight Json Library using source generator.
 Install these two required packages.
 
 ```console
-dotnet add package TeuJson --version 3.0.0
-dotnet add package TeuJson.Generator --version 3.0.0
+dotnet add package TeuJson --version 3.1.0
+dotnet add package TeuJson.Generator --version 3.1.0
 ```
 
 ## Features
@@ -103,7 +103,7 @@ The way to declare it is differs from NET 6 and NET 7.
 /* MyMathConverter.cs */
 namespace Maths;
 
-/* NET 6.0 */
+/* NET 6.0 and below */
 /** public class MyMathConverter **/
 public class MyMathConverter 
 {
@@ -141,7 +141,7 @@ public sealed partial class Player : IDeserialize
 {
     [Name("name")]
     public string Name { get; set; }
-    /* NET 6: Name must be fully qualified*/
+    /* NET 6 and below: Name must be fully qualified*/
     /** Name must be fully qualified **/
     /** [Custom("Maths.MyMathConverter")] **/
     [Custom<MyMathConverter>()]

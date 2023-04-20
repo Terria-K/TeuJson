@@ -48,13 +48,12 @@ public sealed class JsonNull : JsonValue
     public override bool AsBoolean => false;
 
     public override string AsString => string.Empty;
-#if !NETFRAMEWORK
+#if NET6_0_OR_GREATER
     public override nint AsIntPtr => 0;
 
     public override nuint AsUIntPtr => 0;
-
-    public override object? AsObject => null;
 #endif
+    public override object? AsObject => null;
 
     public override int Count => 0;
 

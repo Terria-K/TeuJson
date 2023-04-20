@@ -1867,6 +1867,8 @@ public static partial class JsonUtility
         return jsonObj;
     }
 
+    
+#if NET6_0_OR_GREATER
     /// <summary>
     /// Convert a Json array into an array of nint. 
     /// </summary>
@@ -2134,4 +2136,5 @@ public static partial class JsonUtility
     }
 
     
+#endif
 }

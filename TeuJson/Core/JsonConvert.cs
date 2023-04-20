@@ -137,6 +137,7 @@ public static class JsonConvert
             Minimal = !pretty
         });
     }
+#if NET6_0_OR_GREATER
 
     /// <summary>
     /// Serialize a C# object to Json value and directly write it to a file asynchronously. 
@@ -165,4 +166,5 @@ public static class JsonConvert
             Minimal = !pretty
         });
     }
+#endif
 }

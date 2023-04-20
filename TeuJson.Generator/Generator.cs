@@ -432,9 +432,6 @@ public sealed partial class TeuJsonGenerator : IIncrementalGenerator
         }
     }
 
-    private static bool HasAttributes(ISymbol symbol, string attributeName) => 
-        symbol.GetAttributes().Any(attr => attr.AttributeClass!.Name.StartsWith(attributeName));
-
     private static bool HasInterfaces(INamedTypeSymbol symbol, string interfaceName) => 
         symbol.Interfaces.Any(intfa => intfa.Name.StartsWith(interfaceName));
 }

@@ -15,7 +15,11 @@ public struct JsonTextWriterOptions
     public bool Minimal;
 }
 
+#if NET6_0_OR_GREATER
 public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
+#else
+public sealed class JsonTextWriter : JsonWriter, IDisposable
+#endif
 {
     private readonly Stack<byte> containerStack = new();
     private readonly TextWriter writer;
@@ -73,30 +77,6 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
     }
 
     /// <summary>
-    /// Write a Json string from a Json value asynchronously. 
-    /// </summary>
-    /// <param name="value">A Json value</param>
-    /// <returns>A Json string</returns>
-    public static async Task<string> WriteAsync(JsonValue value) 
-    {
-        return await WriteAsync(value, JsonTextWriterOptions.Default);
-    }
-
-    /// <summary>
-    /// Write a Json string from a Json value asynchronously. 
-    /// </summary>
-    /// <param name="value">A Json value</param>
-    /// <param name="options">A JsonTextWriterOptions to change the behaviour of the writer</param>
-    /// <returns>A Json string</returns>
-    public static async Task<string> WriteAsync(JsonValue value, JsonTextWriterOptions options) 
-    {
-        var sb = new StringBuilder();
-        await using var textWriter = new JsonTextWriter(sb, options);
-        textWriter.WriteJson(value);
-        return sb.ToString();
-    }
-
-    /// <summary>
     /// Write a Json string to a file from a Json value. 
     /// </summary>
     /// <param name="path">A path to write on</param>
@@ -142,6 +122,31 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
     {
         using var textWriter = new JsonTextWriter(fs, options);
         textWriter.WriteJson(value);
+    }
+
+#if NET6_0_OR_GREATER
+    /// <summary>
+    /// Write a Json string from a Json value asynchronously. 
+    /// </summary>
+    /// <param name="value">A Json value</param>
+    /// <returns>A Json string</returns>
+    public static async Task<string> WriteAsync(JsonValue value) 
+    {
+        return await WriteAsync(value, JsonTextWriterOptions.Default);
+    }
+
+    /// <summary>
+    /// Write a Json string from a Json value asynchronously. 
+    /// </summary>
+    /// <param name="value">A Json value</param>
+    /// <param name="options">A JsonTextWriterOptions to change the behaviour of the writer</param>
+    /// <returns>A Json string</returns>
+    public static async Task<string> WriteAsync(JsonValue value, JsonTextWriterOptions options) 
+    {
+        var sb = new StringBuilder();
+        await using var textWriter = new JsonTextWriter(sb, options);
+        textWriter.WriteJson(value);
+        return sb.ToString();
     }
 
 
@@ -197,6 +202,7 @@ public sealed class JsonTextWriter : JsonWriter, IDisposable, IAsyncDisposable
     {
         await writer.DisposeAsync();
     }
+#endif
 
     private void Newline() 
     {

@@ -4,7 +4,7 @@ using System;
 namespace TeuJson.Attributes;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-#if NET6_0
+#if !NET7_0_OR_GREATER
 public class CustomAttribute : Attribute 
 #else
 public class CustomAttribute<T> : Attribute 
@@ -13,7 +13,7 @@ public class CustomAttribute<T> : Attribute
     public string? Write;
     public string? Read;
 
-#if NET6_0
+#if !NET7_0_OR_GREATER
     public CustomAttribute(string converter) {}
 #endif
 
