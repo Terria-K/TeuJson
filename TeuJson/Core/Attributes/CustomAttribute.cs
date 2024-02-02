@@ -3,7 +3,7 @@ using System;
 
 namespace TeuJson.Attributes;
 
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 #if !NET7_0_OR_GREATER
 public class CustomAttribute : Attribute 
 #else

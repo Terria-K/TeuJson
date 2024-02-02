@@ -3,7 +3,7 @@ using System;
 
 namespace TeuJson.Attributes;
 
-[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
 public sealed class IfNullAttribute : Attribute 
 {
     public IfNullAttribute(IfNullOptions option) {}

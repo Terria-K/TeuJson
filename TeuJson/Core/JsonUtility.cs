@@ -88,7 +88,7 @@ public static partial class JsonUtility
     public static T[]? ConvertToArray<T>(this JsonValue value) 
     where T : IDeserialize, new()
     {
-        if (value.IsNull || value.Count <= 0)
+        if (value.IsNull)
             return null;
         var array = value.AsJsonArray;
         var arrayCount = array.Count; 
@@ -103,7 +103,7 @@ public static partial class JsonUtility
     public static T[]? ConvertToEnumArrayInt<T>(this JsonValue value) 
     where T : struct, System.Enum
     {
-        if (value.IsNull || value.Count <= 0)
+        if (value.IsNull)
             return null;
         var array = value.AsJsonArray;
         var arrayCount = array.Count; 
@@ -129,7 +129,7 @@ public static partial class JsonUtility
     public static T[,]? ConvertToArray2D<T>(this JsonValue value) 
     where T : IDeserialize, new()
     {
-        if (value.IsNull || value.Count <= 0)
+        if (value.IsNull)
             return null;
         var arrayX = value.AsJsonArray;
         var arrayY = arrayX[0].AsJsonArray;
@@ -153,7 +153,7 @@ public static partial class JsonUtility
     public static List<T>? ConvertToList<T>(this JsonValue value) 
     where T : IDeserialize, new()
     {
-        if (value.IsNull || value.Count <= 0)
+        if (value.IsNull)
             return null;
         var array = value.AsJsonArray;
         var arrayCount = array.Count; 

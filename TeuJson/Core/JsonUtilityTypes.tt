@@ -43,7 +43,7 @@ public static partial class JsonUtility
     /// <returns>An array of <#=type.Key#></returns>
     public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue value) 
     {
-        if (value.IsNull || value.Count <= 0)
+        if (value.IsNull)
             return null;
         var array = value.AsJsonArray;
         var arrayCount = array.Count;
@@ -62,7 +62,7 @@ public static partial class JsonUtility
     /// <returns>A list of <#=type.Key#></returns>
     public static List<<#=type.Key#>>? ConvertToList<#=type.Value#>(this JsonValue value) 
     {
-        if (value.IsNull || value.Count <= 0)
+        if (value.IsNull)
             return null;
         var array = value.AsJsonArray;
         var arrayCount = array.Count;
@@ -81,7 +81,7 @@ public static partial class JsonUtility
     /// <returns>A multi-dimensional array of <#=type.Key#></returns>
     public static <#=type.Key#>[,]? ConvertToArray<#=type.Value#>2D(this JsonValue value) 
     {
-        if (value.IsNull || value.Count <= 0)
+        if (value.IsNull)
             return null;
         var arrayX = value.AsJsonArray;
         var arrayY = arrayX[0].AsJsonArray;
@@ -185,7 +185,7 @@ public static partial class JsonUtility
     /// <returns>An array of <#=type.Key#></returns>
     public static <#=type.Key#>[]? ConvertToArray<#=type.Value#>(this JsonValue value) 
     {
-        if (value.IsNull || value.Count <= 0)
+        if (value.IsNull)
             return null;
         var array = value.AsJsonArray;
         var arrayCount = array.Count;
@@ -204,7 +204,7 @@ public static partial class JsonUtility
     /// <returns>A list of <#=type.Key#></returns>
     public static List<<#=type.Key#>>? ConvertToList<#=type.Value#>(this JsonValue value) 
     {
-        if (value.IsNull || value.Count <= 0)
+        if (value.IsNull)
             return null;
         var array = value.AsJsonArray;
         var arrayCount = array.Count;
@@ -223,7 +223,7 @@ public static partial class JsonUtility
     /// <returns>A multi-dimensional array of <#=type.Key#></returns>
     public static <#=type.Key#>[,]? ConvertToArray<#=type.Value#>2D(this JsonValue value) 
     {
-        if (value.IsNull || value.Count <= 0)
+        if (value.IsNull)
             return null;
         var arrayX = value.AsJsonArray;
         var arrayY = arrayX[0].AsJsonArray;
